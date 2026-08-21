@@ -58,6 +58,13 @@ $$\text{User/Role} \rightarrow \text{Participant} \rightarrow \text{Registration
 \label{tab:c4_entity_inventory}
 \end{table}
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth,keepaspectratio]{figures/fig_conceptual_erd.png}
+    \caption{Sơ đồ Thực thể -- Liên kết Ý niệm mở rộng (Extended Conceptual ERD) theo ký hiệu Chen mở rộng}
+    \label{fig:c4_conceptual_erd}
+\end{figure}
+
 % ----------------------------------------------------------------------
 \section{Bản số (Cardinality) và Ràng buộc Quan hệ Ý niệm}
 \label{s:c4_cardinalities}
@@ -129,8 +136,15 @@ Mỗi quan hệ logic sử dụng khóa thay thế nhân tạo (\textit{Surrogat
     \item \texttt{JudgeAssignment}: \texttt{(round\_id, judge\_user\_id)} (UNIQUE Composite).
     \item \texttt{Evaluation}: \texttt{(round\_id, submission\_id, judge\_user\_id)} (UNIQUE Composite -- BR-O-009).
     \item \texttt{EvaluationScore}: \texttt{(evaluation\_id, criterion\_id)} (UNIQUE Composite).
-    \item \texttt{Result}: \texttt{(category_id, submission_id)} (UNIQUE Composite).
+    \item \texttt{Result}: \texttt{(category\_id, submission\_id)} (UNIQUE Composite).
 \end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth,keepaspectratio]{figures/fig_logical_erd.png}
+    \caption{Sơ đồ Lớp / Mô hình Quan hệ Logic (Logical Schema / UML Class Diagram) đạt chuẩn 3NF}
+    \label{fig:c4_logical_erd}
+\end{figure}
 
 % ----------------------------------------------------------------------
 \section{Chứng minh Chuẩn hóa Dữ liệu (Normalization Proof to 3NF)}

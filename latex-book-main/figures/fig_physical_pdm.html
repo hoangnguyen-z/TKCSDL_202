@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Times New Roman', 'Arial', sans-serif;
+    padding: 20px;
+  }
+  .diagram-container {
+    border: 2px solid #000000;
+    background-color: #ffffff;
+    padding: 16px;
+    box-shadow: none;
+    width: 1520px;
+    height: 1080px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .caption {
+    margin-top: 14px;
+    font-size: 20px;
+    font-style: italic;
+    font-family: 'Times New Roman', serif;
+    color: #000000;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+  <div class="diagram-container">
+    <svg width="1480" height="1040" viewBox="0 0 1480 1040" xmlns="http://www.w3.org/2000/svg" style="font-family: 'Segoe UI', Arial, sans-serif;">
+    
+    <!-- Outer Group Headers -->
+    <text x="50" y="35" font-size="15" font-weight="bold" fill="#000000">SƠ ĐỒ VẬT LÝ CƠ SỞ DỮ LIỆU MICROSOFT SQL SERVER 2022 (FilmContestDB - 24 TABLES)</text>
+
+    <!-- SUBSYSTEM 1: IAM & PROFILES (Top Left) -->
+    <rect x="40" y="55" width="440" height="280" rx="4" fill="#fafafa" stroke="#333333" stroke-width="1.2"/>
+    <text x="55" y="75" font-size="11.5" font-weight="bold" fill="#003366">PHÂN HỆ 1: IDENTITY &amp; ACCESS (iam)</text>
+
+    <!-- Table: iam.UserAccount -->
+    <g transform="translate(55, 90)">
+      <rect x="0" y="0" width="190" height="140" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <rect x="0" y="0" width="190" height="22" fill="#e2e8f0" stroke="#000000" stroke-width="1"/>
+      <text x="95" y="15" text-anchor="middle" font-size="10" font-weight="bold">dbo.UserAccount</text>
+      <text x="8" y="38" font-size="9" font-weight="bold" fill="#cc0000">[PK] user_id : INT IDENTITY</text>
+      <text x="8" y="54" font-size="9">+ username : NVARCHAR(50) NOT NULL</text>
+      <text x="8" y="70" font-size="9">+ email : VARCHAR(100) NOT NULL UQ</text>
+      <text x="8" y="86" font-size="9">+ password_hash : VARCHAR(255)</text>
+      <text x="8" y="102" font-size="9">+ full_name : NVARCHAR(100) NOT NULL</text>
+      <text x="8" y="118" font-size="9">+ is_active : BIT NOT NULL DEFAULT 1</text>
+      <text x="8" y="134" font-size="9">+ created_at : DATETIME2(7) NOT NULL</text>
+    </g>
+
+    <!-- Table: iam.Role & UserRole -->
+    <g transform="translate(265, 90)">
+      <rect x="0" y="0" width="190" height="85" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <rect x="0" y="0" width="190" height="22" fill="#e2e8f0" stroke="#000000" stroke-width="1"/>
+      <text x="95" y="15" text-anchor="middle" font-size="10" font-weight="bold">dbo.Role</text>
+      <text x="8" y="38" font-size="9" font-weight="bold" fill="#cc0000">[PK] role_id : INT IDENTITY</text>
+      <text x="8" y="54" font-size="9">+ role_code : VARCHAR(30) NOT NULL UQ</text>
+      <text x="8" y="70" font-size="9">+ role_name : NVARCHAR(100) NOT NULL</text>
+    </g>
+
+    <g transform="translate(265, 190)">
+      <rect x="0" y="0" width="190" height="75" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <rect x="0" y="0" width="190" height="22" fill="#e2e8f0" stroke="#000000" stroke-width="1"/>
+      <text x="95" y="15" text-anchor="middle" font-size="10" font-weight="bold">dbo.UserRole</text>
+      <text x="8" y="38" font-size="9" font-weight="bold" fill="#cc0000">[PK,FK1] user_id : INT</text>
+      <text x="8" y="54" font-size="9" font-weight="bold" fill="#cc0000">[PK,FK2] role_id : INT</text>
+      <text x="8" y="70" font-size="9">+ assigned_at : DATETIME2(7)</text>
+    </g>
+
+    <g transform="translate(55, 245)">
+      <rect x="0" y="0" width="190" height="75" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <rect x="0" y="0" width="190" height="20" fill="#e2e8f0" stroke="#000000" stroke-width="1"/>
+      <text x="95" y="14" text-anchor="middle" font-size="9.5" font-weight="bold">dbo.ParticipantProfile</text>
+      <text x="8" y="34" font-size="8.5" font-weight="bold" fill="#cc0000">[PK,FK] user_id : INT</text>
+      <text x="8" y="48" font-size="8.5">+ portfolio_url : NVARCHAR(255)</text>
+      <text x="8" y="62" font-size="8.5">+ experience_level : NVARCHAR(50)</text>
+    </g>
+
+
+    <!-- SUBSYSTEM 2: CONTESTS & REGISTRATION (Top Right) -->
+    <rect x="510" y="55" width="450" height="280" rx="4" fill="#fafafa" stroke="#333333" stroke-width="1.2"/>
+    <text x="525" y="75" font-size="11.5" font-weight="bold" fill="#003366">PHÂN HỆ 2: CONTEST MANAGEMENT &amp; REGISTRATION</text>
+
+    <!-- Table: dbo.Contest -->
+    <g transform="translate(525, 90)">
+      <rect x="0" y="0" width="200" height="135" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <rect x="0" y="0" width="200" height="22" fill="#e2e8f0" stroke="#000000" stroke-width="1"/>
+      <text x="100" y="15" text-anchor="middle" font-size="10" font-weight="bold">dbo.Contest</text>
+      <text x="8" y="38" font-size="9" font-weight="bold" fill="#cc0000">[PK] contest_id : INT IDENTITY</text>
+      <text x="8" y="54" font-size="9">+ title : NVARCHAR(200) NOT NULL</text>
+      <text x="8" y="70" font-size="9">+ start_date : DATE NOT NULL</text>
+      <text x="8" y="86" font-size="9">+ end_date : DATE NOT NULL</text>
+      <text x="8" y="102" font-size="9">+ status : NVARCHAR(30) NOT NULL</text>
+      <text x="8" y="118" font-size="9">+ created_by : INT FK NOT NULL</text>
+      <text x="8" y="130" font-size="8" fill="#555555">CK(start_date &lt; end_date)</text>
+    </g>
+
+    <!-- Table: dbo.ContestCategory & Registration -->
+    <g transform="translate(740, 90)">
+      <rect x="0" y="0" width="205" height="90" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <rect x="0" y="0" width="205" height="22" fill="#e2e8f0" stroke="#000000" stroke-width="1"/>
+      <text x="102" y="15" text-anchor="middle" font-size="10" font-weight="bold">dbo.ContestCategory</text>
+      <text x="8" y="38" font-size="9" font-weight="bold" fill="#cc0000">[PK] category_id : INT IDENTITY</text>
+      <text x="8" y="54" font-size="9">+ contest_id : INT FK NOT NULL</text>
+      <text x="8" y="70" font-size="9">+ name : NVARCHAR(100) NOT NULL</text>
+      <text x="8" y="86" font-size="9">+ description : NVARCHAR(500)</text>
+    </g>
+
+    <g transform="translate(740, 195)">
+      <rect x="0" y="0" width="205" height="125" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <rect x="0" y="0" width="205" height="22" fill="#e2e8f0" stroke="#000000" stroke-width="1"/>
+      <text x="102" y="15" text-anchor="middle" font-size="10" font-weight="bold">dbo.Registration</text>
+      <text x="8" y="38" font-size="9" font-weight="bold" fill="#cc0000">[PK] registration_id : INT IDENTITY</text>
+      <text x="8" y="54" font-size="9">+ contest_id : INT FK NOT NULL</text>
+      <text x="8" y="70" font-size="9">+ user_id : INT FK NOT NULL</text>
+      <text x="8" y="86" font-size="9">+ registered_at : DATETIME2 NOT NULL</text>
+      <text x="8" y="102" font-size="9">+ reg_status : NVARCHAR(30) NOT NULL</text>
+      <text x="8" y="118" font-size="8.5" fill="#0066cc">UQ(contest_id, user_id)</text>
+    </g>
+
+
+    <!-- SUBSYSTEM 3: CATALOGS & LABS (Top Far Right) -->
+    <rect x="990" y="55" width="450" height="280" rx="4" fill="#fafafa" stroke="#333333" stroke-width="1.2"/>
+    <text x="1005" y="75" font-size="11.5" font-weight="bold" fill="#003366">PHÂN HỆ 3: DANH MỤC THAM CHIẾU (catalogs)</text>
+
+    <g transform="translate(1005, 90)">
+      <rect x="0" y="0" width="200" height="85" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <rect x="0" y="0" width="200" height="20" fill="#e2e8f0" stroke="#000000" stroke-width="1"/>
+      <text x="100" y="14" text-anchor="middle" font-size="9.5" font-weight="bold">dbo.FilmStock</text>
+      <text x="8" y="34" font-size="8.5" font-weight="bold" fill="#cc0000">[PK] film_stock_id : INT IDENTITY</text>
+      <text x="8" y="48" font-size="8.5">+ brand : NVARCHAR(50) NOT NULL</text>
+      <text x="8" y="62" font-size="8.5">+ name : NVARCHAR(100) NOT NULL</text>
+      <text x="8" y="76" font-size="8.5">+ nominal_iso : INT NOT NULL</text>
+    </g>
+
+    <g transform="translate(1225, 90)">
+      <rect x="0" y="0" width="200" height="85" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <rect x="0" y="0" width="200" height="20" fill="#e2e8f0" stroke="#000000" stroke-width="1"/>
+      <text x="100" y="14" text-anchor="middle" font-size="9.5" font-weight="bold">dbo.Lab</text>
+      <text x="8" y="34" font-size="8.5" font-weight="bold" fill="#cc0000">[PK] lab_id : INT IDENTITY</text>
+      <text x="8" y="48" font-size="8.5">+ name : NVARCHAR(100) NOT NULL</text>
+      <text x="8" y="62" font-size="8.5">+ address : NVARCHAR(255)</text>
+      <text x="8" y="76" font-size="8.5">+ contact_phone : VARCHAR(30)</text>
+    </g>
+
+    <g transform="translate(1005, 190)">
+      <rect x="0" y="0" width="200" height="85" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <rect x="0" y="0" width="200" height="20" fill="#e2e8f0" stroke="#000000" stroke-width="1"/>
+      <text x="100" y="14" text-anchor="middle" font-size="9.5" font-weight="bold">dbo.Camera</text>
+      <text x="8" y="34" font-size="8.5" font-weight="bold" fill="#cc0000">[PK] camera_id : INT IDENTITY</text>
+      <text x="8" y="48" font-size="8.5">+ brand : NVARCHAR(50) NOT NULL</text>
+      <text x="8" y="62" font-size="8.5">+ model : NVARCHAR(100) NOT NULL</text>
+      <text x="8" y="76" font-size="8.5">+ format : VARCHAR(30)</text>
+    </g>
+
+    <g transform="translate(1225, 190)">
+      <rect x="0" y="0" width="200" height="85" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <rect x="0" y="0" width="200" height="20" fill="#e2e8f0" stroke="#000000" stroke-width="1"/>
+      <text x="100" y="14" text-anchor="middle" font-size="9.5" font-weight="bold">dbo.Lens</text>
+      <text x="8" y="34" font-size="8.5" font-weight="bold" fill="#cc0000">[PK] lens_id : INT IDENTITY</text>
+      <text x="8" y="48" font-size="8.5">+ brand : NVARCHAR(50) NOT NULL</text>
+      <text x="8" y="62" font-size="8.5">+ focal_length : NVARCHAR(50)</text>
+      <text x="8" y="76" font-size="8.5">+ max_aperture : NVARCHAR(20)</text>
+    </g>
+
+
+    <!-- SUBSYSTEM 4: FILM ASSETS & SUBMISSION (Middle Row) -->
+    <rect x="40" y="360" width="920" height="285" rx="4" fill="#fafafa" stroke="#333333" stroke-width="1.2"/>
+    <text x="55" y="380" font-size="11.5" font-weight="bold" fill="#003366">PHÂN HỆ 4: TÀI SẢN PHIM (film), BÀI THI (submission) &amp; THẨM ĐỊNH AI</text>
+
+    <!-- Table: dbo.FilmRoll -->
+    <g transform="translate(55, 395)">
+      <rect x="0" y="0" width="190" height="135" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <rect x="0" y="0" width="190" height="22" fill="#e2e8f0" stroke="#000000" stroke-width="1"/>
+      <text x="95" y="15" text-anchor="middle" font-size="10" font-weight="bold">dbo.FilmRoll</text>
+      <text x="8" y="38" font-size="9" font-weight="bold" fill="#cc0000">[PK] roll_id : INT IDENTITY</text>
+      <text x="8" y="54" font-size="9">+ user_id : INT FK NOT NULL</text>
+      <text x="8" y="70" font-size="9">+ film_stock_id : INT FK NOT NULL</text>
+      <text x="8" y="86" font-size="9">+ iso_used : INT NOT NULL</text>
+      <text x="8" y="102" font-size="9">+ camera_id : INT FK</text>
+      <text x="8" y="118" font-size="9">+ lab_id : INT FK NOT NULL</text>
+      <text x="8" y="132" font-size="8.5" fill="#555555">CK(iso_used &gt; 0)</text>
+    </g>
+
+    <!-- Table: dbo.FilmFrame -->
+    <g transform="translate(265, 395)">
+      <rect x="0" y="0" width="190" height="135" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <rect x="0" y="0" width="190" height="22" fill="#e2e8f0" stroke="#000000" stroke-width="1"/>
+      <text x="95" y="15" text-anchor="middle" font-size="10" font-weight="bold">dbo.FilmFrame</text>
+      <text x="8" y="38" font-size="9" font-weight="bold" fill="#cc0000">[PK] frame_id : INT IDENTITY</text>
+      <text x="8" y="54" font-size="9">+ roll_id : INT FK NOT NULL</text>
+      <text x="8" y="70" font-size="9">+ frame_number : INT NOT NULL</text>
+      <text x="8" y="86" font-size="9">+ scan_image_uri : NVARCHAR(500)</text>
+      <text x="8" y="102" font-size="9">+ exposure_notes : NVARCHAR(255)</text>
+      <text x="8" y="118" font-size="8.5" fill="#0066cc">UQ(roll_id, frame_number)</text>
+      <text x="8" y="130" font-size="8" fill="#555555">CK(frame_number &gt; 0)</text>
+    </g>
+
+    <!-- Table: dbo.Submission -->
+    <g transform="translate(480, 395)">
+      <rect x="0" y="0" width="225" height="160" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+      <rect x="0" y="0" width="225" height="22" fill="#cbd5e1" stroke="#000000" stroke-width="1"/>
+      <text x="112" y="15" text-anchor="middle" font-size="10.5" font-weight="bold">dbo.Submission (CỐT LÕI)</text>
+      <text x="8" y="38" font-size="9" font-weight="bold" fill="#cc0000">[PK] submission_id : INT IDENTITY</text>
+      <text x="8" y="54" font-size="9">+ registration_id : INT FK NOT NULL</text>
+      <text x="8" y="70" font-size="9">+ frame_id : INT FK NOT NULL UQ</text>
+      <text x="8" y="86" font-size="9">+ category_id : INT FK NOT NULL</text>
+      <text x="8" y="102" font-size="9">+ title : NVARCHAR(200) NOT NULL</text>
+      <text x="8" y="118" font-size="9">+ description : NVARCHAR(MAX)</text>
+      <text x="8" y="134" font-size="9">+ submission_status : NVARCHAR(30)</text>
+      <text x="8" y="150" font-size="9">+ submitted_at : DATETIME2 NOT NULL</text>
+    </g>
+
+    <!-- Table: dbo.VerificationCase & AIAnalysisResult -->
+    <g transform="translate(730, 395)">
+      <rect x="0" y="0" width="215" height="115" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <rect x="0" y="0" width="215" height="22" fill="#e2e8f0" stroke="#000000" stroke-width="1"/>
+      <text x="107" y="15" text-anchor="middle" font-size="10" font-weight="bold">dbo.VerificationCase</text>
+      <text x="8" y="38" font-size="9" font-weight="bold" fill="#cc0000">[PK] case_id : INT IDENTITY</text>
+      <text x="8" y="54" font-size="9">+ submission_id : INT FK NOT NULL UQ</text>
+      <text x="8" y="70" font-size="9">+ verified_by : INT FK NOT NULL</text>
+      <text x="8" y="86" font-size="9">+ decision : NVARCHAR(30) NOT NULL</text>
+      <text x="8" y="102" font-size="9">+ verified_at : DATETIME2 NOT NULL</text>
+    </g>
+
+    <g transform="translate(730, 520)">
+      <rect x="0" y="0" width="215" height="115" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <rect x="0" y="0" width="215" height="22" fill="#e2e8f0" stroke="#000000" stroke-width="1"/>
+      <text x="107" y="15" text-anchor="middle" font-size="10" font-weight="bold">dbo.AIAnalysisResult</text>
+      <text x="8" y="38" font-size="9" font-weight="bold" fill="#cc0000">[PK] ai_result_id : INT IDENTITY</text>
+      <text x="8" y="54" font-size="9">+ submission_id : INT FK NOT NULL</text>
+      <text x="8" y="70" font-size="9">+ similarity_score : DECIMAL(5,2)</text>
+      <text x="8" y="86" font-size="9">+ is_flagged : BIT NOT NULL DEFAULT 0</text>
+      <text x="8" y="102" font-size="9">+ synthetic_confidence : DECIMAL(5,2)</text>
+    </g>
+
+
+    <!-- SUBSYSTEM 5: JUDGING & SCORING (Bottom Left & Middle) -->
+    <rect x="40" y="665" width="920" height="340" rx="4" fill="#fafafa" stroke="#333333" stroke-width="1.2"/>
+    <text x="55" y="685" font-size="11.5" font-weight="bold" fill="#003366">PHÂN HỆ 5: HỘI ĐỒNG GIÁM KHẢO, TIÊU CHÍ &amp; CHẤM THI NHIỀU VÒNG (judging)</text>
+
+    <!-- Table: dbo.JudgingRound -->
+    <g transform="translate(55, 700)">
+      <rect x="0" y="0" width="190" height="115" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <rect x="0" y="0" width="190" height="22" fill="#e2e8f0" stroke="#000000" stroke-width="1"/>
+      <text x="95" y="15" text-anchor="middle" font-size="10" font-weight="bold">dbo.JudgingRound</text>
+      <text x="8" y="38" font-size="9" font-weight="bold" fill="#cc0000">[PK] round_id : INT IDENTITY</text>
+      <text x="8" y="54" font-size="9">+ contest_id : INT FK NOT NULL</text>
+      <text x="8" y="70" font-size="9">+ round_name : NVARCHAR(100) NOT NULL</text>
+      <text x="8" y="86" font-size="9">+ round_order : INT NOT NULL</text>
+      <text x="8" y="102" font-size="9">+ status : NVARCHAR(30) NOT NULL</text>
+    </g>
+
+    <!-- Table: dbo.ScoringCriterion -->
+    <g transform="translate(55, 830)">
+      <rect x="0" y="0" width="190" height="115" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <rect x="0" y="0" width="190" height="22" fill="#e2e8f0" stroke="#000000" stroke-width="1"/>
+      <text x="95" y="15" text-anchor="middle" font-size="10" font-weight="bold">dbo.ScoringCriterion</text>
+      <text x="8" y="38" font-size="9" font-weight="bold" fill="#cc0000">[PK] criterion_id : INT IDENTITY</text>
+      <text x="8" y="54" font-size="9">+ round_id : INT FK NOT NULL</text>
+      <text x="8" y="70" font-size="9">+ criterion_name : NVARCHAR(100)</text>
+      <text x="8" y="86" font-size="9">+ weight : DECIMAL(5,2) NOT NULL</text>
+      <text x="8" y="102" font-size="8.5" fill="#555555">CK(weight &gt; 0 AND weight &lt;= 1)</text>
+    </g>
+
+    <!-- Table: dbo.JudgeAssignment -->
+    <g transform="translate(265, 700)">
+      <rect x="0" y="0" width="190" height="95" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <rect x="0" y="0" width="190" height="22" fill="#e2e8f0" stroke="#000000" stroke-width="1"/>
+      <text x="95" y="15" text-anchor="middle" font-size="10" font-weight="bold">dbo.JudgeAssignment</text>
+      <text x="8" y="38" font-size="9" font-weight="bold" fill="#cc0000">[PK,FK1] round_id : INT</text>
+      <text x="8" y="54" font-size="9" font-weight="bold" fill="#cc0000">[PK,FK2] judge_user_id : INT</text>
+      <text x="8" y="70" font-size="9">+ assigned_at : DATETIME2 NOT NULL</text>
+      <text x="8" y="86" font-size="9">+ is_head_judge : BIT NOT NULL</text>
+    </g>
+
+    <!-- Table: dbo.Evaluation -->
+    <g transform="translate(480, 700)">
+      <rect x="0" y="0" width="225" height="155" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+      <rect x="0" y="0" width="225" height="22" fill="#cbd5e1" stroke="#000000" stroke-width="1"/>
+      <text x="112" y="15" text-anchor="middle" font-size="10.5" font-weight="bold">dbo.Evaluation</text>
+      <text x="8" y="38" font-size="9" font-weight="bold" fill="#cc0000">[PK] evaluation_id : INT IDENTITY</text>
+      <text x="8" y="54" font-size="9">+ submission_id : INT FK NOT NULL</text>
+      <text x="8" y="70" font-size="9">+ judge_user_id : INT FK NOT NULL</text>
+      <text x="8" y="86" font-size="9">+ round_id : INT FK NOT NULL</text>
+      <text x="8" y="102" font-size="9">+ total_score : DECIMAL(5,2)</text>
+      <text x="8" y="118" font-size="9">+ feedback : NVARCHAR(MAX)</text>
+      <text x="8" y="134" font-size="9">+ eval_status : NVARCHAR(30) NOT NULL</text>
+      <text x="8" y="148" font-size="8.5" fill="#0066cc">UQ(submission_id, judge_user_id, round_id)</text>
+    </g>
+
+    <!-- Table: dbo.EvaluationScore -->
+    <g transform="translate(730, 700)">
+      <rect x="0" y="0" width="215" height="120" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <rect x="0" y="0" width="215" height="22" fill="#e2e8f0" stroke="#000000" stroke-width="1"/>
+      <text x="107" y="15" text-anchor="middle" font-size="10" font-weight="bold">dbo.EvaluationScore</text>
+      <text x="8" y="38" font-size="9" font-weight="bold" fill="#cc0000">[PK] score_id : INT IDENTITY</text>
+      <text x="8" y="54" font-size="9">+ evaluation_id : INT FK NOT NULL</text>
+      <text x="8" y="70" font-size="9">+ criterion_id : INT FK NOT NULL</text>
+      <text x="8" y="86" font-size="9">+ score : DECIMAL(5,2) NOT NULL</text>
+      <text x="8" y="102" font-size="8.5" fill="#0066cc">UQ(evaluation_id, criterion_id)</text>
+      <text x="8" y="114" font-size="8" fill="#555555">CK(score BETWEEN 0 AND 100)</text>
+    </g>
+
+
+    <!-- SUBSYSTEM 6: RESULT, AWARDS, ARCHIVE & AUDIT (Bottom Right) -->
+    <rect x="990" y="360" width="450" height="645" rx="4" fill="#fafafa" stroke="#333333" stroke-width="1.2"/>
+    <text x="1005" y="380" font-size="11.5" font-weight="bold" fill="#003366">PHÂN HỆ 6: XẾP HẠNG, GIẢI THƯỞNG, DI SẢN &amp; AUDIT LOG</text>
+
+    <!-- Table: dbo.Result -->
+    <g transform="translate(1005, 395)">
+      <rect x="0" y="0" width="200" height="120" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <rect x="0" y="0" width="200" height="22" fill="#e2e8f0" stroke="#000000" stroke-width="1"/>
+      <text x="100" y="15" text-anchor="middle" font-size="10" font-weight="bold">dbo.Result</text>
+      <text x="8" y="38" font-size="9" font-weight="bold" fill="#cc0000">[PK] result_id : INT IDENTITY</text>
+      <text x="8" y="54" font-size="9">+ submission_id : INT FK NOT NULL UQ</text>
+      <text x="8" y="70" font-size="9">+ final_score : DECIMAL(5,2) NOT NULL</text>
+      <text x="8" y="86" font-size="9">+ rank_position : INT NOT NULL</text>
+      <text x="8" y="102" font-size="9">+ is_published : BIT NOT NULL DEFAULT 0</text>
+    </g>
+
+    <!-- Table: dbo.AwardDefinition & AwardAssignment -->
+    <g transform="translate(1225, 395)">
+      <rect x="0" y="0" width="200" height="110" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <rect x="0" y="0" width="200" height="22" fill="#e2e8f0" stroke="#000000" stroke-width="1"/>
+      <text x="100" y="15" text-anchor="middle" font-size="10" font-weight="bold">dbo.AwardDefinition</text>
+      <text x="8" y="38" font-size="9" font-weight="bold" fill="#cc0000">[PK] award_id : INT IDENTITY</text>
+      <text x="8" y="54" font-size="9">+ contest_id : INT FK NOT NULL</text>
+      <text x="8" y="70" font-size="9">+ award_name : NVARCHAR(100) NOT NULL</text>
+      <text x="8" y="86" font-size="9">+ prize_value : DECIMAL(18,2)</text>
+      <text x="8" y="102" font-size="9">+ quantity : INT NOT NULL DEFAULT 1</text>
+    </g>
+
+    <g transform="translate(1005, 530)">
+      <rect x="0" y="0" width="200" height="95" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <rect x="0" y="0" width="200" height="22" fill="#e2e8f0" stroke="#000000" stroke-width="1"/>
+      <text x="100" y="15" text-anchor="middle" font-size="10" font-weight="bold">dbo.AwardAssignment</text>
+      <text x="8" y="38" font-size="9" font-weight="bold" fill="#cc0000">[PK] assignment_id : INT IDENTITY</text>
+      <text x="8" y="54" font-size="9">+ award_id : INT FK NOT NULL</text>
+      <text x="8" y="70" font-size="9">+ result_id : INT FK NOT NULL UQ</text>
+      <text x="8" y="86" font-size="9">+ assigned_at : DATETIME2 NOT NULL</text>
+    </g>
+
+    <!-- Table: dbo.ArchiveItem -->
+    <g transform="translate(1225, 530)">
+      <rect x="0" y="0" width="200" height="135" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+      <rect x="0" y="0" width="200" height="22" fill="#cbd5e1" stroke="#000000" stroke-width="1"/>
+      <text x="100" y="15" text-anchor="middle" font-size="10" font-weight="bold">dbo.ArchiveItem (SNAPSHOT)</text>
+      <text x="8" y="38" font-size="9" font-weight="bold" fill="#cc0000">[PK] archive_item_id : INT IDENTITY</text>
+      <text x="8" y="54" font-size="9">+ submission_id : INT FK NOT NULL</text>
+      <text x="8" y="70" font-size="9">+ snapshot_title : NVARCHAR(200)</text>
+      <text x="8" y="86" font-size="9">+ snapshot_metadata : NVARCHAR(MAX)</text>
+      <text x="8" y="102" font-size="9">+ archived_at : DATETIME2 NOT NULL</text>
+      <text x="8" y="118" font-size="8.5" fill="#cc0000">ON DELETE RESTRICT</text>
+      <text x="8" y="130" font-size="8" fill="#555555">(Di sản số bất biến)</text>
+    </g>
+
+    <!-- Table: dbo.AuditLog -->
+    <g transform="translate(1005, 680)">
+      <rect x="0" y="0" width="420" height="150" fill="#ffffff" stroke="#000000" stroke-width="1.3"/>
+      <rect x="0" y="0" width="420" height="22" fill="#e2e8f0" stroke="#000000" stroke-width="1"/>
+      <text x="210" y="15" text-anchor="middle" font-size="10.5" font-weight="bold">dbo.AuditLog (NHẬT KÝ KIỂM TOÁN HỆ THỐNG)</text>
+      <text x="12" y="40" font-size="9.5" font-weight="bold" fill="#cc0000">[PK] log_id : BIGINT IDENTITY</text>
+      <text x="12" y="58" font-size="9.5">+ event_type : VARCHAR(50) NOT NULL (INSERT / UPDATE / DELETE / LOGIN / STATE_CHANGE)</text>
+      <text x="12" y="76" font-size="9.5">+ table_name : VARCHAR(100) NOT NULL</text>
+      <text x="12" y="94" font-size="9.5">+ record_id : VARCHAR(100) NOT NULL</text>
+      <text x="12" y="112" font-size="9.5">+ actor_user_id : INT FK NOT NULL</text>
+      <text x="12" y="130" font-size="9.5">+ old_values / new_values : NVARCHAR(MAX)</text>
+      <text x="12" y="144" font-size="9.5">+ logged_at : DATETIME2(7) NOT NULL DEFAULT SYSDATETIME()</text>
+    </g>
+  </svg>
+  </div>
+  <div class="caption">Hình 7. Sơ đồ Vật lý Cơ sở Dữ liệu (Physical Database Diagram - PDM) trên Microsoft SQL Server 2022</div>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Times New Roman', 'Arial', sans-serif;
+    padding: 20px;
+  }
+  .diagram-container {
+    border: 2px solid #000000;
+    background-color: #ffffff;
+    padding: 16px;
+    box-shadow: none;
+    width: 1520px;
+    height: 1020px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .caption {
+    margin-top: 14px;
+    font-size: 20px;
+    font-style: italic;
+    font-family: 'Times New Roman', serif;
+    color: #000000;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+  <div class="diagram-container">
+    <svg width="1460" height="960" viewBox="0 0 1460 960" xmlns="http://www.w3.org/2000/svg" style="font-family: 'Segoe UI', Arial, sans-serif;">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#000000"/>
+      </marker>
+      <marker id="open-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M 0 1 L 9 5 L 0 9" fill="none" stroke="#000000" stroke-width="1.3"/>
+      </marker>
+    </defs>
+
+    <!-- System Boundary Box -->
+    <rect x="250" y="30" width="940" height="900" rx="8" fill="#fafafa" stroke="#000000" stroke-width="2" stroke-dasharray="8,5"/>
+    <text x="720" y="62" text-anchor="middle" font-size="16" font-weight="bold" fill="#000000" letter-spacing="1">HỆ THỐNG QUẢN LÝ CUỘC THI NHIẾP ẢNH PHIM TÍCH HỢP AI</text>
+
+    <!-- Subsystem Boxes -->
+    <rect x="270" y="85" width="900" height="200" rx="6" fill="#ffffff" stroke="#888888" stroke-width="1.2" stroke-dasharray="4,4"/>
+    <text x="290" y="108" font-size="12.5" font-weight="bold" fill="#003366">PHÂN HỆ 1: THÍ SINH, ĐĂNG KÝ &amp; KHAI BÁO TÀI SẢN PHIM</text>
+
+    <rect x="270" y="300" width="900" height="235" rx="6" fill="#ffffff" stroke="#888888" stroke-width="1.2" stroke-dasharray="4,4"/>
+    <text x="290" y="323" font-size="12.5" font-weight="bold" fill="#003366">PHÂN HỆ 2: BAN TỔ CHỨC &amp; THẨM ĐỊNH AI HUMAN-IN-THE-LOOP</text>
+
+    <rect x="270" y="550" width="900" height="175" rx="6" fill="#ffffff" stroke="#888888" stroke-width="1.2" stroke-dasharray="4,4"/>
+    <text x="290" y="573" font-size="12.5" font-weight="bold" fill="#003366">PHÂN HỆ 3: HỘI ĐỒNG GIÁM KHẢO &amp; CHẤM THI NHIỀU VÒNG</text>
+
+    <rect x="270" y="740" width="900" height="175" rx="6" fill="#ffffff" stroke="#888888" stroke-width="1.2" stroke-dasharray="4,4"/>
+    <text x="290" y="763" font-size="12.5" font-weight="bold" fill="#003366">PHÂN HỆ 4: QUẢN TRỊ HỆ THỐNG, DANH MỤC &amp; AUDIT LOG</text>
+
+    <!-- ACTORS -->
+    <!-- Actor 1: Thí sinh -->
+    <g transform="translate(80, 140)">
+      <circle cx="35" cy="20" r="15" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+      <line x1="35" y1="35" x2="35" y2="75" stroke="#000000" stroke-width="2"/>
+      <line x1="5" y1="50" x2="65" y2="50" stroke="#000000" stroke-width="2"/>
+      <line x1="35" y1="75" x2="10" y2="115" stroke="#000000" stroke-width="2"/>
+      <line x1="35" y1="75" x2="60" y2="115" stroke="#000000" stroke-width="2"/>
+      <text x="35" y="135" text-anchor="middle" font-size="13" font-weight="bold">Thí sinh</text>
+      <text x="35" y="152" text-anchor="middle" font-size="11" fill="#444444">(Participant)</text>
+    </g>
+
+    <!-- Actor 2: Ban tổ chức -->
+    <g transform="translate(80, 370)">
+      <circle cx="35" cy="20" r="15" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+      <line x1="35" y1="35" x2="35" y2="75" stroke="#000000" stroke-width="2"/>
+      <line x1="5" y1="50" x2="65" y2="50" stroke="#000000" stroke-width="2"/>
+      <line x1="35" y1="75" x2="10" y2="115" stroke="#000000" stroke-width="2"/>
+      <line x1="35" y1="75" x2="60" y2="115" stroke="#000000" stroke-width="2"/>
+      <text x="35" y="135" text-anchor="middle" font-size="13" font-weight="bold">Ban tổ chức</text>
+      <text x="35" y="152" text-anchor="middle" font-size="11" fill="#444444">(Organizer)</text>
+    </g>
+
+    <!-- Actor 3: Giám khảo -->
+    <g transform="translate(1310, 570)">
+      <circle cx="35" cy="20" r="15" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+      <line x1="35" y1="35" x2="35" y2="75" stroke="#000000" stroke-width="2"/>
+      <line x1="5" y1="50" x2="65" y2="50" stroke="#000000" stroke-width="2"/>
+      <line x1="35" y1="75" x2="10" y2="115" stroke="#000000" stroke-width="2"/>
+      <line x1="35" y1="75" x2="60" y2="115" stroke="#000000" stroke-width="2"/>
+      <text x="35" y="135" text-anchor="middle" font-size="13" font-weight="bold">Giám khảo</text>
+      <text x="35" y="152" text-anchor="middle" font-size="11" fill="#444444">(Judge)</text>
+    </g>
+
+    <!-- Actor 4: Quản trị viên -->
+    <g transform="translate(1310, 760)">
+      <circle cx="35" cy="20" r="15" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+      <line x1="35" y1="35" x2="35" y2="75" stroke="#000000" stroke-width="2"/>
+      <line x1="5" y1="50" x2="65" y2="50" stroke="#000000" stroke-width="2"/>
+      <line x1="35" y1="75" x2="10" y2="115" stroke="#000000" stroke-width="2"/>
+      <line x1="35" y1="75" x2="60" y2="115" stroke="#000000" stroke-width="2"/>
+      <text x="35" y="135" text-anchor="middle" font-size="13" font-weight="bold">Quản trị viên</text>
+      <text x="35" y="152" text-anchor="middle" font-size="11" fill="#444444">(System Admin)</text>
+    </g>
+
+    <!-- USE CASES (OVALS) -->
+    <!-- Phân hệ 1 UCs -->
+    <g transform="translate(350, 130)">
+      <ellipse cx="100" cy="22" rx="95" ry="22" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <text x="100" y="27" text-anchor="middle" font-size="11.5" font-weight="600">UC-03: Đăng ký Cuộc thi</text>
+    </g>
+    <g transform="translate(620, 130)">
+      <ellipse cx="115" cy="22" rx="110" ry="22" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <text x="115" y="27" text-anchor="middle" font-size="11.5" font-weight="600">UC-04: Khai báo Cuộn &amp; Khung phim</text>
+    </g>
+    <g transform="translate(450, 215)">
+      <ellipse cx="105" cy="22" rx="100" ry="22" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <text x="105" y="27" text-anchor="middle" font-size="11.5" font-weight="600">UC-05: Nộp Bài dự thi</text>
+    </g>
+    <g transform="translate(770, 215)">
+      <ellipse cx="115" cy="22" rx="110" ry="22" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <text x="115" y="27" text-anchor="middle" font-size="11.5" font-weight="600">UC-09: Xem Kết quả &amp; Di sản</text>
+    </g>
+
+    <!-- Phân hệ 2 UCs -->
+    <g transform="translate(340, 350)">
+      <ellipse cx="115" cy="22" rx="110" ry="22" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <text x="115" y="27" text-anchor="middle" font-size="11.5" font-weight="600">UC-01: Cấu hình Cuộc thi &amp; Hạng mục</text>
+    </g>
+    <g transform="translate(630, 350)">
+      <ellipse cx="105" cy="22" rx="100" ry="22" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <text x="105" y="27" text-anchor="middle" font-size="11.5" font-weight="600">UC-02: Duyệt Đăng ký Thí sinh</text>
+    </g>
+    <g transform="translate(380, 435)">
+      <ellipse cx="125" cy="25" rx="120" ry="25" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <text x="125" y="23" text-anchor="middle" font-size="11.5" font-weight="600">UC-06: Thẩm định Bài thi</text>
+      <text x="125" y="38" text-anchor="middle" font-size="10.5" fill="#444444">&amp; Xử lý Cảnh báo AI</text>
+    </g>
+    <g transform="translate(730, 435)">
+      <ellipse cx="120" cy="25" rx="115" ry="25" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <text x="120" y="23" text-anchor="middle" font-size="11.5" font-weight="600">Tiếp nhận Phân tích AI</text>
+      <text x="120" y="38" text-anchor="middle" font-size="10.5" fill="#444444">(Tương đồng &amp; Phát hiện AI)</text>
+    </g>
+    <g transform="translate(540, 485)">
+      <ellipse cx="125" cy="22" rx="120" ry="22" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <text x="125" y="27" text-anchor="middle" font-size="11.5" font-weight="600">UC-08: Tổng hợp Điểm &amp; Gán Giải</text>
+    </g>
+
+    <!-- Phân hệ 3 UCs -->
+    <g transform="translate(480, 610)">
+      <ellipse cx="130" cy="25" rx="125" ry="25" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <text x="130" y="23" text-anchor="middle" font-size="11.5" font-weight="600">UC-07: Chấm thi &amp; Đánh giá</text>
+      <text x="130" y="38" text-anchor="middle" font-size="10.5" fill="#444444">theo Tiêu chí &amp; Trọng số</text>
+    </g>
+    <g transform="translate(850, 610)">
+      <ellipse cx="115" cy="22" rx="110" ry="22" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <text x="115" y="27" text-anchor="middle" font-size="11.5" font-weight="600">Xem Hồ sơ Bài thi &amp; Lab</text>
+    </g>
+
+    <!-- Phân hệ 4 UCs -->
+    <g transform="translate(320, 810)">
+      <ellipse cx="120" cy="22" rx="115" ry="22" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <text x="120" y="27" text-anchor="middle" font-size="11.5" font-weight="600">UC-10: Quản trị User &amp; RBAC</text>
+    </g>
+    <g transform="translate(610, 810)">
+      <ellipse cx="120" cy="22" rx="115" ry="22" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <text x="120" y="27" text-anchor="middle" font-size="11.5" font-weight="600">UC-11: Quản trị Lab &amp; Thiết bị</text>
+    </g>
+    <g transform="translate(900, 810)">
+      <ellipse cx="115" cy="22" rx="110" ry="22" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <text x="115" y="27" text-anchor="middle" font-size="11.5" font-weight="600">UC-12: Giám sát Audit Log</text>
+    </g>
+
+    <!-- ACTOR CONNECTIONS -->
+    <!-- Participant Lines -->
+    <line x1="145" y1="190" x2="355" y2="152" stroke="#000000" stroke-width="1.3"/>
+    <line x1="145" y1="190" x2="455" y2="232" stroke="#000000" stroke-width="1.3"/>
+    <line x1="145" y1="190" x2="775" y2="235" stroke="#000000" stroke-width="1.3"/>
+
+    <!-- Organizer Lines -->
+    <line x1="145" y1="420" x2="345" y2="370" stroke="#000000" stroke-width="1.3"/>
+    <line x1="145" y1="420" x2="635" y2="370" stroke="#000000" stroke-width="1.3"/>
+    <line x1="145" y1="420" x2="385" y2="455" stroke="#000000" stroke-width="1.3"/>
+    <line x1="145" y1="420" x2="545" y2="505" stroke="#000000" stroke-width="1.3"/>
+
+    <!-- Judge Lines -->
+    <path d="M 1310 620 L 1220 620 L 735 635" fill="none" stroke="#000000" stroke-width="1.3"/>
+    <line x1="1310" y1="620" x2="1075" y2="632" stroke="#000000" stroke-width="1.3"/>
+
+    <!-- Admin Lines -->
+    <path d="M 1310 810 L 1260 880 L 440 880 L 440 855" fill="none" stroke="#000000" stroke-width="1.3"/>
+    <path d="M 1310 810 L 1270 860 L 730 860 L 730 855" fill="none" stroke="#000000" stroke-width="1.3"/>
+    <line x1="1310" y1="810" x2="1130" y2="832" stroke="#000000" stroke-width="1.3"/>
+
+    <!-- INCLUDES / EXTENDS -->
+    <!-- UC-05 include UC-04 -->
+    <path d="M 555 215 L 670 174" fill="none" stroke="#000000" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#open-arrow)"/>
+    <text x="635" y="198" font-size="10.5" font-style="italic" fill="#333333">&lt;&lt;include&gt;&gt;</text>
+
+    <!-- UC-06 extend AI -->
+    <path d="M 730 460 L 625 460" fill="none" stroke="#000000" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#open-arrow)"/>
+    <text x="675" y="452" font-size="10.5" font-style="italic" fill="#333333">&lt;&lt;extend&gt;&gt;</text>
+
+    <!-- UC-07 include view -->
+    <path d="M 735 635 L 850 635" fill="none" stroke="#000000" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#open-arrow)"/>
+    <text x="792" y="627" font-size="10.5" font-style="italic" fill="#333333">&lt;&lt;include&gt;&gt;</text>
+  </svg>
+  </div>
+  <div class="caption">Hình 1. Sơ đồ Use Case phân định các chức năng theo 4 vai trò người dùng trong hệ thống</div>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Times New Roman', 'Arial', sans-serif;
+    padding: 20px;
+  }
+  .diagram-container {
+    border: 2px solid #000000;
+    background-color: #ffffff;
+    padding: 16px;
+    box-shadow: none;
+    width: 1440px;
+    height: 980px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .caption {
+    margin-top: 14px;
+    font-size: 20px;
+    font-style: italic;
+    font-family: 'Times New Roman', serif;
+    color: #000000;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+  <div class="diagram-container">
+    <svg width="1400" height="940" viewBox="0 0 1400 940" xmlns="http://www.w3.org/2000/svg" style="font-family: 'Segoe UI', Arial, sans-serif;">
+    <defs>
+      <marker id="arch-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#000000"/>
+      </marker>
+    </defs>
+
+    <!-- LAYER 1: PRESENTATION LAYER -->
+    <rect x="40" y="25" width="1320" height="125" rx="6" fill="#f8f9fa" stroke="#000000" stroke-width="1.8"/>
+    <text x="60" y="50" font-size="13.5" font-weight="bold" fill="#000000">TẦNG TRÌNH DIỄN (PRESENTATION &amp; CLIENT TIER)</text>
+    
+    <g transform="translate(60, 65)">
+      <rect x="0" y="0" width="225" height="65" rx="4" fill="#ffffff" stroke="#333333" stroke-width="1.2"/>
+      <text x="112" y="26" text-anchor="middle" font-size="12" font-weight="bold">Participant Web Portal</text>
+      <text x="112" y="46" text-anchor="middle" font-size="10.5" fill="#555555">Đăng ký, Khai báo &amp; Nộp bài</text>
+    </g>
+    <g transform="translate(315, 65)">
+      <rect x="0" y="0" width="225" height="65" rx="4" fill="#ffffff" stroke="#333333" stroke-width="1.2"/>
+      <text x="112" y="26" text-anchor="middle" font-size="12" font-weight="bold">Organizer Console</text>
+      <text x="112" y="46" text-anchor="middle" font-size="10.5" fill="#555555">Cấu hình, Thẩm định &amp; Trao giải</text>
+    </g>
+    <g transform="translate(570, 65)">
+      <rect x="0" y="0" width="225" height="65" rx="4" fill="#ffffff" stroke="#333333" stroke-width="1.2"/>
+      <text x="112" y="26" text-anchor="middle" font-size="12" font-weight="bold">Judge Evaluation UI</text>
+      <text x="112" y="46" text-anchor="middle" font-size="10.5" fill="#555555">Chấm thi &amp; Đánh giá Tiêu chí</text>
+    </g>
+    <g transform="translate(825, 65)">
+      <rect x="0" y="0" width="225" height="65" rx="4" fill="#ffffff" stroke="#333333" stroke-width="1.2"/>
+      <text x="112" y="26" text-anchor="middle" font-size="12" font-weight="bold">Public Gallery / Archive</text>
+      <text x="112" y="46" text-anchor="middle" font-size="10.5" fill="#555555">Tra cứu Triển lãm &amp; Di sản số</text>
+    </g>
+    <g transform="translate(1080, 65)">
+      <rect x="0" y="0" width="250" height="65" rx="4" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+      <text x="125" y="26" text-anchor="middle" font-size="12" font-weight="bold">SSMS 22 (DB Admin)</text>
+      <text x="125" y="46" text-anchor="middle" font-size="10.5" fill="#555555">Direct T-SQL Client (Port 14333)</text>
+    </g>
+
+    <!-- CONNECTOR ARROWS -->
+    <line x1="700" y1="150" x2="700" y2="185" stroke="#000000" stroke-width="1.6" marker-end="url(#arch-arrow)"/>
+
+    <!-- LAYER 2: API GATEWAY & SECURITY LAYER -->
+    <rect x="40" y="185" width="1320" height="80" rx="6" fill="#ffffff" stroke="#000000" stroke-width="1.8"/>
+    <text x="60" y="208" font-size="13" font-weight="bold" fill="#000000">TẦNG CỔNG GIAO TIẾP &amp; BẢO MẬT (API GATEWAY &amp; SECURITY INTERCEPTOR)</text>
+    
+    <g transform="translate(60, 222)">
+      <rect x="0" y="0" width="280" height="32" rx="3" fill="#f0f0f0" stroke="#666666" stroke-width="1"/>
+      <text x="140" y="21" text-anchor="middle" font-size="11" font-weight="600">HTTPS / REST API Gateway</text>
+    </g>
+    <g transform="translate(380, 222)">
+      <rect x="0" y="0" width="280" height="32" rx="3" fill="#f0f0f0" stroke="#666666" stroke-width="1"/>
+      <text x="140" y="21" text-anchor="middle" font-size="11" font-weight="600">Authentication &amp; RBAC Token Validator</text>
+    </g>
+    <g transform="translate(700, 222)">
+      <rect x="0" y="0" width="280" height="32" rx="3" fill="#f0f0f0" stroke="#666666" stroke-width="1"/>
+      <text x="140" y="21" text-anchor="middle" font-size="11" font-weight="600">Input Validation &amp; Rate Limiter</text>
+    </g>
+    <g transform="translate(1020, 222)">
+      <rect x="0" y="0" width="310" height="32" rx="3" fill="#f0f0f0" stroke="#666666" stroke-width="1"/>
+      <text x="155" y="21" text-anchor="middle" font-size="11" font-weight="600">Audit Logging &amp; Actor Interceptor</text>
+    </g>
+
+    <!-- CONNECTOR ARROWS -->
+    <line x1="700" y1="265" x2="700" y2="300" stroke="#000000" stroke-width="1.6" marker-end="url(#arch-arrow)"/>
+
+    <!-- LAYER 3: BUSINESS LOGIC & 11 MODULES -->
+    <rect x="40" y="300" width="1320" height="295" rx="6" fill="#fcfcfc" stroke="#000000" stroke-width="1.8"/>
+    <text x="60" y="325" font-size="13.5" font-weight="bold" fill="#000000">TẦNG LOGIC NGHIỆP VỤ &amp; 11 PHÂN HỆ CHỨC NĂNG (APPLICATION CORE MODULES)</text>
+
+    <!-- Column 1 -->
+    <g transform="translate(60, 340)">
+      <rect x="0" y="0" width="390" height="68" rx="4" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <text x="15" y="22" font-size="12" font-weight="bold">M01: Identity &amp; Access (iam)</text>
+      <text x="15" y="42" font-size="10.5" fill="#555555">Quản lý User, Roles, User_Roles &amp; Participant Profile</text>
+      <text x="15" y="58" font-size="10" font-style="italic" fill="#0066cc">Write: users, roles, user_roles</text>
+    </g>
+    <g transform="translate(60, 420)">
+      <rect x="0" y="0" width="390" height="68" rx="4" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <text x="15" y="22" font-size="12" font-weight="bold">M02: Contest Management (contest)</text>
+      <text x="15" y="42" font-size="10.5" fill="#555555">Cấu hình cuộc thi, hạng mục, vòng thi &amp; tiêu chí</text>
+      <text x="15" y="58" font-size="10" font-style="italic" fill="#0066cc">Write: contests, contest_categories, rounds</text>
+    </g>
+    <g transform="translate(60, 500)">
+      <rect x="0" y="0" width="390" height="68" rx="4" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <text x="15" y="22" font-size="12" font-weight="bold">M03: Registration Management</text>
+      <text x="15" y="42" font-size="10.5" fill="#555555">Đăng ký tham gia &amp; xét duyệt điều kiện dự thi</text>
+      <text x="15" y="58" font-size="10" font-style="italic" fill="#0066cc">Write: registrations</text>
+    </g>
+
+    <!-- Column 2 -->
+    <g transform="translate(485, 340)">
+      <rect x="0" y="0" width="400" height="68" rx="4" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <text x="15" y="22" font-size="12" font-weight="bold">M04: Film Asset &amp; Provenance (film)</text>
+      <text x="15" y="42" font-size="10.5" fill="#555555">Quản lý cuộn phim, khung hình scan, ISO, lab</text>
+      <text x="15" y="58" font-size="10" font-style="italic" fill="#0066cc">Write: film_rolls, film_frames</text>
+    </g>
+    <g transform="translate(485, 420)">
+      <rect x="0" y="0" width="400" height="68" rx="4" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <text x="15" y="22" font-size="12" font-weight="bold">M05: Submission Management</text>
+      <text x="15" y="42" font-size="10.5" fill="#555555">Tiếp nhận bài thi, ràng buộc 1 khung hình / 1 cuộc thi</text>
+      <text x="15" y="58" font-size="10" font-style="italic" fill="#0066cc">Write: submissions</text>
+    </g>
+    <g transform="translate(485, 500)">
+      <rect x="0" y="0" width="400" height="68" rx="4" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <text x="15" y="22" font-size="12" font-weight="bold">M06: Verification &amp; AI Human-in-the-Loop</text>
+      <text x="15" y="42" font-size="10.5" fill="#555555">Thẩm định tính hợp lệ, tiếp nhận AI cờ cảnh báo tư vấn</text>
+      <text x="15" y="58" font-size="10" font-style="italic" fill="#0066cc">Write: verification_cases, ai_analysis_results</text>
+    </g>
+
+    <!-- Column 3 -->
+    <g transform="translate(920, 340)">
+      <rect x="0" y="0" width="410" height="58" rx="4" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <text x="15" y="20" font-size="11" font-weight="bold">M07: Judging &amp; Scoring Engine</text>
+      <text x="15" y="36" font-size="9.5" fill="#555555">Phân công giám khảo, chấm điểm tiêu chí có trọng số</text>
+      <text x="15" y="50" font-size="9.5" font-style="italic" fill="#0066cc">Write: judge_assignments, evaluations, evaluation_scores</text>
+    </g>
+    <g transform="translate(920, 408)">
+      <rect x="0" y="0" width="410" height="58" rx="4" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <text x="15" y="20" font-size="11" font-weight="bold">M08: Result Ranking &amp; Award</text>
+      <text x="15" y="36" font-size="9.5" fill="#555555">Tổng hợp điểm, xếp hạng &amp; gán giải thưởng</text>
+      <text x="15" y="50" font-size="9.5" font-style="italic" fill="#0066cc">Write: results, award_definitions, award_assignments</text>
+    </g>
+    <g transform="translate(920, 476)">
+      <rect x="0" y="0" width="410" height="58" rx="4" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <text x="15" y="20" font-size="11" font-weight="bold">M09 &amp; M10: Digital Archive &amp; Catalogs</text>
+      <text x="15" y="36" font-size="9.5" fill="#555555">Bản chụp bất biến tác phẩm đạt giải &amp; Danh mục lab/máy</text>
+      <text x="15" y="50" font-size="9.5" font-style="italic" fill="#0066cc">Write: archive_items, film_stocks, cameras, lenses, labs</text>
+    </g>
+    <g transform="translate(920, 542)">
+      <rect x="0" y="0" width="410" height="45" rx="4" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <text x="15" y="18" font-size="11" font-weight="bold">M11: Audit Trail &amp; System Views</text>
+      <text x="15" y="35" font-size="9.5" font-style="italic" fill="#0066cc">Write: audit_logs (append-only) | Read-only Views</text>
+    </g>
+
+    <!-- CONNECTOR ARROWS -->
+    <line x1="700" y1="595" x2="700" y2="630" stroke="#000000" stroke-width="1.6" marker-end="url(#arch-arrow)"/>
+
+    <!-- LAYER 4: EXTERNAL INTEGRATION ADAPTERS -->
+    <rect x="40" y="630" width="1320" height="75" rx="6" fill="#ffffff" stroke="#000000" stroke-width="1.8"/>
+    <text x="60" y="653" font-size="13" font-weight="bold" fill="#000000">TẦNG TÍCH HỢP DỊCH VỤ NGOÀI (EXTERNAL INTEGRATION LAYER)</text>
+
+    <g transform="translate(160, 665)">
+      <rect x="0" y="0" width="460" height="30" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="1"/>
+      <text x="230" y="20" text-anchor="middle" font-size="11" font-weight="600">Cloud Object Storage Adapter (S3 / GCS Image Bucket)</text>
+    </g>
+    <g transform="translate(710, 665)">
+      <rect x="0" y="0" width="550" height="30" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="1"/>
+      <text x="275" y="20" text-anchor="middle" font-size="11" font-weight="600">AI Advisory Pipeline Engine (Async Similarity &amp; Synthetic Detector)</text>
+    </g>
+
+    <!-- CONNECTOR ARROWS -->
+    <line x1="700" y1="705" x2="700" y2="740" stroke="#000000" stroke-width="1.6" marker-end="url(#arch-arrow)"/>
+
+    <!-- LAYER 5: DATABASE TIER -->
+    <rect x="40" y="740" width="1320" height="175" rx="6" fill="#f8f9fa" stroke="#000000" stroke-width="2"/>
+    <text x="60" y="765" font-size="13.5" font-weight="bold" fill="#000000">TẦNG CƠ SỞ DỮ LIỆU (RELATIONAL DATABASE TIER - MICROSOFT SQL SERVER 2022 IN DOCKER)</text>
+
+    <g transform="translate(60, 780)">
+      <rect x="0" y="0" width="290" height="115" rx="4" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <text x="15" y="22" font-size="11.5" font-weight="bold">24 Relational Tables (3NF)</text>
+      <text x="15" y="42" font-size="10" fill="#444444">• Phân chia 6 schema logic</text>
+      <text x="15" y="60" font-size="10" fill="#444444">• Khóa chính PK Clustered</text>
+      <text x="15" y="78" font-size="10" fill="#444444">• Khóa ngoại FK có ràng buộc</text>
+      <text x="15" y="96" font-size="10" fill="#444444">• Chuẩn hóa triệt để 3NF</text>
+    </g>
+    <g transform="translate(385, 780)">
+      <rect x="0" y="0" width="290" height="115" rx="4" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <text x="15" y="22" font-size="11.5" font-weight="bold">Integrity Constraints</text>
+      <text x="15" y="42" font-size="10" fill="#444444">• CHECK (Status, Score 0-100, Weight)</text>
+      <text x="15" y="60" font-size="10" fill="#444444">• UNIQUE (1 Frame / Contest, Email)</text>
+      <text x="15" y="78" font-size="10" fill="#444444">• Date Ordering (Start &lt; End Date)</text>
+      <text x="15" y="96" font-size="10" fill="#444444">• ON DELETE RESTRICT bảo toàn dữ liệu</text>
+    </g>
+    <g transform="translate(710, 780)">
+      <rect x="0" y="0" width="290" height="115" rx="4" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <text x="15" y="22" font-size="11.5" font-weight="bold">Programmability (T-SQL)</text>
+      <text x="15" y="42" font-size="10" fill="#444444">• SP Calculate Round Scores (Trọng số)</text>
+      <text x="15" y="60" font-size="10" fill="#444444">• SP Finalize Award &amp; Snapshot</text>
+      <text x="15" y="78" font-size="10" fill="#444444">• Function Scalar &amp; Inline TVF</text>
+      <text x="15" y="96" font-size="10" fill="#444444">• Trigger Audit Log &amp; Immutability</text>
+    </g>
+    <g transform="translate(1035, 780)">
+      <rect x="0" y="0" width="305" height="115" rx="4" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      <text x="15" y="22" font-size="11.5" font-weight="bold">Indexes &amp; Views</text>
+      <text x="15" y="42" font-size="10" fill="#444444">• Nonclustered Indexes trên FK, Status</text>
+      <text x="15" y="60" font-size="10" fill="#444444">• Filtered Index cho Active Submissions</text>
+      <text x="15" y="78" font-size="10" fill="#444444">• Views: Leaderboard, Audit, Gallery</text>
+      <text x="15" y="96" font-size="10" fill="#444444">• Target: FilmContestDB (Port 14333)</text>
+    </g>
+  </svg>
+  </div>
+  <div class="caption">Hình 3. Sơ đồ Kiến trúc Tổng thể phân tầng, các phân hệ module và cơ sở dữ liệu quan hệ</div>
+</body>
+</html>

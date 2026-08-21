@@ -30,6 +30,13 @@ Hệ thống được thiết lập với ranh giới rõ ràng giữa các phâ
     \end{itemize}
 \end{itemize}
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth,keepaspectratio]{figures/fig_system_context.png}
+    \caption{Sơ đồ Ngữ cảnh Hệ thống (System Context Diagram) thể hiện ranh giới và các tương tác ngoại vi}
+    \label{fig:c3_system_context}
+\end{figure}
+
 % ----------------------------------------------------------------------
 \section{Các Nguyên lý Kiến trúc Cốt lõi (Architectural Principles)}
 \label{s:c3_principles}
@@ -130,6 +137,13 @@ Hệ thống được đóng gói để triển khai độc lập và nhất qu�
     \item \textbf{SQL Server Container}: Chạy image chính thức \texttt{mcr.microsoft.com/mssql/server:2022-CU24-ubuntu-22.04}, kết nối qua cổng TCP 1433 với ổ đĩa gắn ngoài (\textit{Persistent Volume}) đảm bảo an toàn dữ liệu khi khởi động lại container.
     \item \textbf{Dịch vụ Đám mây Ngoại vi}: Cloud Object Storage (lưu trữ tệp ảnh nhị phân) và AI Analysis Engine (cung cấp API thẩm định).
 \end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth,keepaspectratio]{figures/fig_system_architecture.png}
+    \caption{Sơ đồ Kiến trúc Hệ thống Tổng thể (System Architecture Diagram) phân tầng và luồng xử lý AI}
+    \label{fig:c3_system_architecture}
+\end{figure}
 
 % ----------------------------------------------------------------------
 \section{Thiết kế Phân hệ Tích hợp AI (AI Module Integration Design)}

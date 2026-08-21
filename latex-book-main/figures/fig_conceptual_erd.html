@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Times New Roman', 'Arial', sans-serif;
+    padding: 20px;
+  }
+  .diagram-container {
+    border: 2px solid #000000;
+    background-color: #ffffff;
+    padding: 16px;
+    box-shadow: none;
+    width: 1520px;
+    height: 1060px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .caption {
+    margin-top: 14px;
+    font-size: 20px;
+    font-style: italic;
+    font-family: 'Times New Roman', serif;
+    color: #000000;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+  <div class="diagram-container">
+    <svg width="1480" height="1020" viewBox="0 0 1480 1020" xmlns="http://www.w3.org/2000/svg" style="font-family: 'Segoe UI', Arial, sans-serif;">
+    
+    <!-- TOP ROW: HANG_MUC, CUOC_THI, DANG_KY, NGUOI_DUNG, VAI_TRO -->
+    <!-- 1. HANG_MUC -->
+    <g transform="translate(80, 75)">
+      <rect x="0" y="0" width="135" height="95" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <line x1="0" y1="28" x2="135" y2="28" stroke="#000000" stroke-width="1.2"/>
+      <text x="67" y="20" text-anchor="middle" font-size="12" font-weight="bold">HANG_MUC</text>
+      <text x="10" y="46" font-size="11" font-weight="bold">PK category_id</text>
+      <text x="10" y="65" font-size="11">name</text>
+      <text x="10" y="85" font-size="11">description</text>
+    </g>
+    <!-- Attribute Ovals for HANG_MUC -->
+    <ellipse cx="40" cy="50" rx="34" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="40" y="54" text-anchor="middle" font-size="10">category_id</text>
+    <line x1="68" y1="58" x2="80" y2="85" stroke="#000000" stroke-width="1"/>
+
+    <ellipse cx="40" cy="115" rx="28" ry="14" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+    <text x="40" y="119" text-anchor="middle" font-size="10">name</text>
+    <line x1="68" y1="115" x2="80" y2="120" stroke="#000000" stroke-width="1"/>
+
+    <!-- Relationship: Thuộc (HANG_MUC - CUOC_THI) -->
+    <polygon points="265,105 305,122 265,140 225,122" fill="#ffffff" stroke="#000000" stroke-width="1.3"/>
+    <text x="265" y="126" text-anchor="middle" font-size="11" font-weight="600">Thuộc</text>
+    <line x1="215" y1="122" x2="225" y2="122" stroke="#000000" stroke-width="1.2"/>
+    <text x="218" y="115" font-size="11">N</text>
+    <text x="216" y="137" font-size="10">(1,1)</text>
+    <line x1="305" y1="122" x2="345" y2="122" stroke="#000000" stroke-width="1.2"/>
+    <text x="330" y="115" font-size="11">1</text>
+    <text x="315" y="137" font-size="10">(1,N)</text>
+
+    <!-- 2. CUOC_THI -->
+    <g transform="translate(345, 75)">
+      <rect x="0" y="0" width="145" height="110" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <line x1="0" y1="28" x2="145" y2="28" stroke="#000000" stroke-width="1.2"/>
+      <text x="72" y="20" text-anchor="middle" font-size="12" font-weight="bold">CUOC_THI</text>
+      <text x="10" y="46" font-size="11" font-weight="bold">PK contest_id</text>
+      <text x="10" y="65" font-size="11">title</text>
+      <text x="10" y="85" font-size="11">start_date</text>
+      <text x="10" y="103" font-size="11">status</text>
+    </g>
+
+    <!-- Relationship: Nhận (CUOC_THI - DANG_KY) -->
+    <polygon points="545,112 585,130 545,148 505,130" fill="#ffffff" stroke="#000000" stroke-width="1.3"/>
+    <text x="545" y="134" text-anchor="middle" font-size="11" font-weight="600">Nhận</text>
+    <line x1="490" y1="130" x2="505" y2="130" stroke="#000000" stroke-width="1.2"/>
+    <text x="492" y="123" font-size="11">1</text>
+    <text x="490" y="145" font-size="10">(0,N)</text>
+    <line x1="585" y1="130" x2="625" y2="130" stroke="#000000" stroke-width="1.2"/>
+    <text x="610" y="123" font-size="11">N</text>
+    <text x="595" y="145" font-size="10">(1,1)</text>
+
+    <!-- 3. DANG_KY -->
+    <g transform="translate(625, 75)">
+      <rect x="0" y="0" width="150" height="110" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <line x1="0" y1="28" x2="150" y2="28" stroke="#000000" stroke-width="1.2"/>
+      <text x="75" y="20" text-anchor="middle" font-size="12" font-weight="bold">DANG_KY</text>
+      <text x="10" y="46" font-size="11" font-weight="bold">PK registration_id</text>
+      <text x="10" y="65" font-size="11">registered_at</text>
+      <text x="10" y="85" font-size="11">reg_status</text>
+      <text x="10" y="103" font-size="11">contest_id (FK)</text>
+    </g>
+
+    <!-- Relationship: Lập (NGUOI_DUNG - DANG_KY) -->
+    <polygon points="830,112 870,130 830,148 790,130" fill="#ffffff" stroke="#000000" stroke-width="1.3"/>
+    <text x="830" y="134" text-anchor="middle" font-size="11" font-weight="600">Lập</text>
+    <line x1="775" y1="130" x2="790" y2="130" stroke="#000000" stroke-width="1.2"/>
+    <text x="778" y="123" font-size="11">N</text>
+    <text x="776" y="145" font-size="10">(1,1)</text>
+    <line x1="870" y1="130" x2="910" y2="130" stroke="#000000" stroke-width="1.2"/>
+    <text x="895" y="123" font-size="11">1</text>
+    <text x="880" y="145" font-size="10">(0,N)</text>
+
+    <!-- 4. NGUOI_DUNG -->
+    <g transform="translate(910, 75)">
+      <rect x="0" y="0" width="150" height="115" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <line x1="0" y1="28" x2="150" y2="28" stroke="#000000" stroke-width="1.2"/>
+      <text x="75" y="20" text-anchor="middle" font-size="12" font-weight="bold">NGUOI_DUNG</text>
+      <text x="10" y="46" font-size="11" font-weight="bold">PK user_id</text>
+      <text x="10" y="65" font-size="11">username</text>
+      <text x="10" y="85" font-size="11">email</text>
+      <text x="10" y="105" font-size="11">full_name</text>
+    </g>
+
+    <!-- Relationship: Có (NGUOI_DUNG - VAI_TRO via USER_ROLE) -->
+    <polygon points="1120,112 1160,130 1120,148 1080,130" fill="#ffffff" stroke="#000000" stroke-width="1.3"/>
+    <text x="1120" y="134" text-anchor="middle" font-size="11" font-weight="600">Có</text>
+    <line x1="1060" y1="130" x2="1080" y2="130" stroke="#000000" stroke-width="1.2"/>
+    <text x="1065" y="123" font-size="11">M</text>
+    <line x1="1160" y1="130" x2="1200" y2="130" stroke="#000000" stroke-width="1.2"/>
+    <text x="1185" y="123" font-size="11">N</text>
+
+    <!-- 5. VAI_TRO -->
+    <g transform="translate(1200, 75)">
+      <rect x="0" y="0" width="135" height="95" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <line x1="0" y1="28" x2="135" y2="28" stroke="#000000" stroke-width="1.2"/>
+      <text x="67" y="20" text-anchor="middle" font-size="12" font-weight="bold">VAI_TRO</text>
+      <text x="10" y="46" font-size="11" font-weight="bold">PK role_id</text>
+      <text x="10" y="65" font-size="11">role_code</text>
+      <text x="10" y="85" font-size="11">role_name</text>
+    </g>
+
+    <!-- Associative Entity: USER_ROLE -->
+    <line x1="1120" y1="148" x2="1120" y2="195" stroke="#000000" stroke-width="1.2" stroke-dasharray="4,3"/>
+    <g transform="translate(1045, 195)">
+      <rect x="0" y="0" width="150" height="60" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+      <line x1="0" y1="22" x2="150" y2="22" stroke="#000000" stroke-width="1"/>
+      <text x="75" y="16" text-anchor="middle" font-size="10.5" font-weight="bold">USER_ROLE</text>
+      <text x="10" y="38" font-size="10" font-weight="bold">PK (user_id, role_id)</text>
+      <text x="10" y="52" font-size="10">assigned_at</text>
+    </g>
+
+    <!-- Specialization of User: PARTICIPANT_PROFILE -->
+    <polygon points="985,190 970,220 1000,220" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <text x="1005" y="210" font-size="9" font-style="italic">&#123;disjoint, optional&#125;</text>
+    <text x="1005" y="222" font-size="9" font-style="italic">(Chuyên biệt hóa)</text>
+    <line x1="985" y1="220" x2="985" y2="245" stroke="#000000" stroke-width="1.2"/>
+    <line x1="985" y1="245" x2="920" y2="245" stroke="#000000" stroke-width="1.2"/>
+    <line x1="920" y1="245" x2="920" y2="265" stroke="#000000" stroke-width="1.2"/>
+
+    <g transform="translate(840, 265)">
+      <rect x="0" y="0" width="160" height="85" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+      <line x1="0" y1="24" x2="160" y2="24" stroke="#000000" stroke-width="1"/>
+      <text x="80" y="17" text-anchor="middle" font-size="11" font-weight="bold">HO_SO_THI_SINH</text>
+      <text x="10" y="42" font-size="10.5" font-weight="bold">PK, FK user_id</text>
+      <text x="10" y="58" font-size="10">portfolio_url</text>
+      <text x="10" y="74" font-size="10">experience_level</text>
+    </g>
+
+
+    <!-- MIDDLE SECTION: CUON_PHIM, KHUNG_HINH, BAI_THI, THAM_DINH -->
+    <!-- 6. CUON_PHIM -->
+    <g transform="translate(80, 420)">
+      <rect x="0" y="0" width="145" height="110" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <line x1="0" y1="28" x2="145" y2="28" stroke="#000000" stroke-width="1.2"/>
+      <text x="72" y="20" text-anchor="middle" font-size="12" font-weight="bold">CUON_PHIM</text>
+      <text x="10" y="46" font-size="11" font-weight="bold">PK roll_id</text>
+      <text x="10" y="65" font-size="11">user_id (FK)</text>
+      <text x="10" y="85" font-size="11">film_stock_id (FK)</text>
+      <text x="10" y="103" font-size="11">iso_used / lab_id</text>
+    </g>
+
+    <!-- User to FilmRoll Link -->
+    <path d="M 910 165 L 810 165 L 810 380 L 150 380 L 150 420" fill="none" stroke="#000000" stroke-width="1.2"/>
+    <polygon points="490,365 525,380 490,395 455,380" fill="#ffffff" stroke="#000000" stroke-width="1.3"/>
+    <text x="490" y="384" text-anchor="middle" font-size="11" font-weight="600">Sở hữu</text>
+    <text x="815" y="180" font-size="11">1 (1,N)</text>
+    <text x="155" y="410" font-size="11">N (1,1)</text>
+
+    <!-- Identifying Relationship: Chứa (CUON_PHIM - KHUNG_HINH) -->
+    <polygon points="280,457 320,475 280,493 240,475" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+    <polygon points="280,461 313,475 280,489 247,475" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+    <text x="280" y="479" text-anchor="middle" font-size="11" font-weight="600">Chứa</text>
+    <line x1="225" y1="475" x2="240" y2="475" stroke="#000000" stroke-width="1.2"/>
+    <text x="228" y="468" font-size="11">1</text>
+    <text x="226" y="490" font-size="10">(1,N)</text>
+    <line x1="320" y1="475" x2="360" y2="475" stroke="#000000" stroke-width="1.2"/>
+    <text x="345" y="468" font-size="11">N</text>
+    <text x="330" y="490" font-size="10">(1,1)</text>
+
+    <!-- 7. KHUNG_HINH (Weak Entity) -->
+    <g transform="translate(360, 420)">
+      <rect x="0" y="0" width="145" height="105" fill="#ffffff" stroke="#000000" stroke-width="1.5" stroke-dasharray="4,2"/>
+      <rect x="3" y="3" width="139" height="99" fill="none" stroke="#000000" stroke-width="1"/>
+      <line x1="0" y1="28" x2="145" y2="28" stroke="#000000" stroke-width="1.2"/>
+      <text x="72" y="20" text-anchor="middle" font-size="12" font-weight="bold">KHUNG_HINH</text>
+      <text x="10" y="46" font-size="11" font-weight="bold">PK frame_id</text>
+      <text x="10" y="65" font-size="11">roll_id (FK)</text>
+      <text x="10" y="85" font-size="11">frame_number</text>
+      <text x="10" y="100" font-size="11">scan_image_uri</text>
+    </g>
+
+    <!-- Relationship: Dự thi (KHUNG_HINH - BAI_THI) -->
+    <polygon points="555,457 595,475 555,493 515,475" fill="#ffffff" stroke="#000000" stroke-width="1.3"/>
+    <text x="555" y="479" text-anchor="middle" font-size="11" font-weight="600">Dự thi</text>
+    <line x1="505" y1="475" x2="515" y2="475" stroke="#000000" stroke-width="1.2"/>
+    <text x="508" y="468" font-size="11">1</text>
+    <text x="506" y="490" font-size="10">(0,1)</text>
+    <line x1="595" y1="475" x2="635" y2="475" stroke="#000000" stroke-width="1.2"/>
+    <text x="620" y="468" font-size="11">1</text>
+    <text x="605" y="490" font-size="10">(1,1)</text>
+
+    <!-- 8. BAI_THI -->
+    <g transform="translate(635, 415)">
+      <rect x="0" y="0" width="165" height="120" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <line x1="0" y1="28" x2="165" y2="28" stroke="#000000" stroke-width="1.2"/>
+      <text x="82" y="20" text-anchor="middle" font-size="12" font-weight="bold">BAI_THI</text>
+      <text x="10" y="46" font-size="11" font-weight="bold">PK submission_id</text>
+      <text x="10" y="65" font-size="11">registration_id (FK)</text>
+      <text x="10" y="85" font-size="11">frame_id (FK, UQ)</text>
+      <text x="10" y="105" font-size="11">category_id (FK)</text>
+      <text x="10" y="120" font-size="10" fill="#666666">submission_status</text>
+    </g>
+
+    <!-- Link: Registration - Submission -->
+    <line x1="700" y1="185" x2="700" y2="415" stroke="#000000" stroke-width="1.2"/>
+    <polygon points="700,285 730,300 700,315 670,300" fill="#ffffff" stroke="#000000" stroke-width="1.3"/>
+    <text x="700" y="304" text-anchor="middle" font-size="11" font-weight="600">Nộp</text>
+    <text x="705" y="205" font-size="11">1 (1,N)</text>
+    <text x="705" y="405" font-size="11">N (1,1)</text>
+
+    <!-- Relationship: Thẩm định (BAI_THI - THAM_DINH_BAI) -->
+    <polygon points="855,457 895,475 855,493 815,475" fill="#ffffff" stroke="#000000" stroke-width="1.3"/>
+    <text x="855" y="479" text-anchor="middle" font-size="11" font-weight="600">Thẩm định</text>
+    <line x1="800" y1="475" x2="815" y2="475" stroke="#000000" stroke-width="1.2"/>
+    <text x="802" y="468" font-size="11">1</text>
+    <text x="800" y="490" font-size="10">(1,1)</text>
+    <line x1="895" y1="475" x2="930" y2="475" stroke="#000000" stroke-width="1.2"/>
+    <text x="915" y="468" font-size="11">1</text>
+    <text x="900" y="490" font-size="10">(1,1)</text>
+
+    <!-- 9. THAM_DINH_BAI -->
+    <g transform="translate(930, 420)">
+      <rect x="0" y="0" width="165" height="110" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <line x1="0" y1="28" x2="165" y2="28" stroke="#000000" stroke-width="1.2"/>
+      <text x="82" y="20" text-anchor="middle" font-size="12" font-weight="bold">THAM_DINH_BAI</text>
+      <text x="10" y="46" font-size="11" font-weight="bold">PK case_id</text>
+      <text x="10" y="65" font-size="11">submission_id (FK)</text>
+      <text x="10" y="85" font-size="11">verified_by (FK)</text>
+      <text x="10" y="103" font-size="11">decision (Status)</text>
+    </g>
+
+    <!-- Relationship: Tư vấn AI (BAI_THI - PHAN_TICH_AI) -->
+    <path d="M 720 535 L 720 590 L 920 590" fill="none" stroke="#000000" stroke-width="1.2"/>
+    <polygon points="850,575 885,590 850,605 815,590" fill="#ffffff" stroke="#000000" stroke-width="1.3"/>
+    <text x="850" y="594" text-anchor="middle" font-size="10.5" font-weight="600">Tư vấn AI</text>
+    <line x1="885" y1="590" x2="920" y2="590" stroke="#000000" stroke-width="1.2"/>
+
+    <!-- 10. PHAN_TICH_AI -->
+    <g transform="translate(920, 560)">
+      <rect x="0" y="0" width="185" height="100" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
+      <line x1="0" y1="24" x2="185" y2="24" stroke="#000000" stroke-width="1"/>
+      <text x="92" y="17" text-anchor="middle" font-size="11" font-weight="bold">PHAN_TICH_AI (Advisory)</text>
+      <text x="10" y="42" font-size="10.5" font-weight="bold">PK ai_result_id</text>
+      <text x="10" y="60" font-size="10.5">submission_id (FK)</text>
+      <text x="10" y="78" font-size="10.5">similarity_score / is_flagged</text>
+      <text x="10" y="94" font-size="10">synthetic_confidence</text>
+    </g>
+
+
+    <!-- BOTTOM SECTION: CHAM_THI, DIEM_CHI_TIET, GIAI_THUONG, DI_SAN -->
+    <!-- 11. VONG_CHAM -->
+    <g transform="translate(80, 680)">
+      <rect x="0" y="0" width="145" height="105" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <line x1="0" y1="28" x2="145" y2="28" stroke="#000000" stroke-width="1.2"/>
+      <text x="72" y="20" text-anchor="middle" font-size="12" font-weight="bold">VONG_CHAM</text>
+      <text x="10" y="46" font-size="11" font-weight="bold">PK round_id</text>
+      <text x="10" y="65" font-size="11">contest_id (FK)</text>
+      <text x="10" y="85" font-size="11">round_name</text>
+      <text x="10" y="100" font-size="11">round_order</text>
+    </g>
+
+    <!-- Relationship: Đánh giá (VONG_CHAM - BAI_THI via PHIEU_DANH_GIA) -->
+    <line x1="225" y1="730" x2="350" y2="730" stroke="#000000" stroke-width="1.2"/>
+    <polygon points="285,715 320,730 285,745 250,730" fill="#ffffff" stroke="#000000" stroke-width="1.3"/>
+    <text x="285" y="734" text-anchor="middle" font-size="11" font-weight="600">Đánh giá</text>
+
+    <!-- 12. PHIEU_DANH_GIA -->
+    <g transform="translate(350, 680)">
+      <rect x="0" y="0" width="165" height="110" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <line x1="0" y1="28" x2="165" y2="28" stroke="#000000" stroke-width="1.2"/>
+      <text x="82" y="20" text-anchor="middle" font-size="12" font-weight="bold">PHIEU_DANH_GIA</text>
+      <text x="10" y="46" font-size="11" font-weight="bold">PK evaluation_id</text>
+      <text x="10" y="65" font-size="11">submission_id (FK)</text>
+      <text x="10" y="85" font-size="11">judge_user_id (FK)</text>
+      <text x="10" y="103" font-size="11">round_id (FK)</text>
+    </g>
+
+    <!-- Link: Submission - Evaluation -->
+    <path d="M 680 535 L 680 650 L 430 650 L 430 680" fill="none" stroke="#000000" stroke-width="1.2"/>
+    <text x="685" y="560" font-size="11">1 (1,N)</text>
+    <text x="435" y="675" font-size="11">N (1,1)</text>
+
+    <!-- Associative / Detail: DIEM_TIEU_CHI -->
+    <polygon points="565,715 600,730 565,745 530,730" fill="#ffffff" stroke="#000000" stroke-width="1.3"/>
+    <text x="565" y="734" text-anchor="middle" font-size="10.5" font-weight="600">Chi tiết</text>
+    <line x1="515" y1="730" x2="530" y2="730" stroke="#000000" stroke-width="1.2"/>
+    <line x1="600" y1="730" x2="635" y2="730" stroke="#000000" stroke-width="1.2"/>
+
+    <g transform="translate(635, 680)">
+      <rect x="0" y="0" width="165" height="95" fill="#ffffff" stroke="#000000" stroke-width="1.4" stroke-dasharray="4,2"/>
+      <rect x="3" y="3" width="159" height="89" fill="none" stroke="#000000" stroke-width="1"/>
+      <line x1="0" y1="24" x2="165" y2="24" stroke="#000000" stroke-width="1"/>
+      <text x="82" y="17" text-anchor="middle" font-size="11" font-weight="bold">DIEM_TIEU_CHI</text>
+      <text x="10" y="42" font-size="10.5" font-weight="bold">PK (eval_id, criterion_id)</text>
+      <text x="10" y="60" font-size="10.5">score [0 - 100]</text>
+      <text x="10" y="78" font-size="10.5">criterion_id (FK)</text>
+    </g>
+
+    <!-- 13. KET_QUA_CHUNG_CUOC -->
+    <path d="M 800 500 L 1150 500 L 1150 680" fill="none" stroke="#000000" stroke-width="1.2"/>
+    <polygon points="1150,565 1185,580 1150,595 1115,580" fill="#ffffff" stroke="#000000" stroke-width="1.3"/>
+    <text x="1150" y="584" text-anchor="middle" font-size="11" font-weight="600">Xếp hạng</text>
+
+    <g transform="translate(1060, 680)">
+      <rect x="0" y="0" width="180" height="105" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <line x1="0" y1="28" x2="180" y2="28" stroke="#000000" stroke-width="1.2"/>
+      <text x="90" y="20" text-anchor="middle" font-size="12" font-weight="bold">KET_QUA_CHUNG_CUOC</text>
+      <text x="10" y="46" font-size="11" font-weight="bold">PK result_id</text>
+      <text x="10" y="65" font-size="11">submission_id (FK)</text>
+      <text x="10" y="85" font-size="11">final_score (DECIMAL)</text>
+      <text x="10" y="100" font-size="11">rank_position</text>
+    </g>
+
+    <!-- Archive Item Link & Entity -->
+    <line x1="1150" y1="785" x2="1150" y2="865" stroke="#000000" stroke-width="1.2"/>
+    <polygon points="1150,810 1180,825 1150,840 1120,825" fill="#ffffff" stroke="#000000" stroke-width="1.3"/>
+    <text x="1150" y="829" text-anchor="middle" font-size="10.5" font-weight="600">Snapshot</text>
+
+    <g transform="translate(1045, 865)">
+      <rect x="0" y="0" width="210" height="95" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+      <line x1="0" y1="24" x2="210" y2="24" stroke="#000000" stroke-width="1"/>
+      <text x="105" y="17" text-anchor="middle" font-size="11" font-weight="bold">DI_SAN_SO (Archive Snapshot)</text>
+      <text x="10" y="42" font-size="10.5" font-weight="bold">PK archive_item_id</text>
+      <text x="10" y="60" font-size="10.5">submission_id (FK)</text>
+      <text x="10" y="78" font-size="10.5">snapshot_title / metadata_json</text>
+      <text x="10" y="92" font-size="9.5" font-style="italic" fill="#cc0000">Immutable / Restricted Delete</text>
+    </g>
+
+    <!-- SYSTEM CATALOGS (Left Bottom Box) -->
+    <g transform="translate(80, 845)">
+      <rect x="0" y="0" width="435" height="115" rx="4" fill="#fafafa" stroke="#888888" stroke-width="1.2" stroke-dasharray="3,3"/>
+      <text x="15" y="20" font-size="11" font-weight="bold" fill="#003366">DANH MỤC THAM CHIẾU (SYSTEM CATALOGS):</text>
+      <text x="15" y="42" font-size="10.5">• <tspan font-weight="bold">DONG_PHIM (FilmStock)</tspan>: film_stock_id, brand, name, iso, format</text>
+      <text x="15" y="62" font-size="10.5">• <tspan font-weight="bold">MAY_ANH (Camera)</tspan>: camera_id, brand, model, camera_type</text>
+      <text x="15" y="82" font-size="10.5">• <tspan font-weight="bold">ONG_KINH (Lens)</tspan>: lens_id, brand, focal_length, max_aperture</text>
+      <text x="15" y="102" font-size="10.5">• <tspan font-weight="bold">PHONG_LAB (Lab)</tspan>: lab_id, name, address, contact_info</text>
+    </g>
+
+    <!-- AUDIT LOG (Center Bottom Box) -->
+    <g transform="translate(545, 845)">
+      <rect x="0" y="0" width="475" height="115" rx="4" fill="#fafafa" stroke="#888888" stroke-width="1.2" stroke-dasharray="3,3"/>
+      <text x="15" y="20" font-size="11" font-weight="bold" fill="#003366">NHẬT KÝ KIỂM TOÁN (AUDIT LOGGING):</text>
+      <text x="15" y="42" font-size="10.5">• <tspan font-weight="bold">NHAT_KY_KIEM_TOAN (AuditLog)</tspan>: log_id, event_type, table_name, record_id</text>
+      <text x="15" y="62" font-size="10.5">• <tspan font-weight="bold">actor_user_id</tspan>: Khóa ngoại liên kết với UserAccount (Người thực hiện)</text>
+      <text x="15" y="82" font-size="10.5">• <tspan font-weight="bold">old_values / new_values</tspan>: Dữ liệu JSON trước và sau biến động</text>
+      <text x="15" y="102" font-size="10" font-style="italic" fill="#555555">Append-only audit trail ghi vết tự động qua Triggers &amp; Stored Procedures</text>
+    </g>
+  </svg>
+  </div>
+  <div class="caption">Hình 5. Sơ đồ ERD Ý niệm (Conceptual ERD) theo mô hình Chen mở rộng</div>
+</body>
+</html>
