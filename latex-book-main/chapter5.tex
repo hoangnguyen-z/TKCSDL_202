@@ -1,0 +1,168 @@
+% Chapter 5: Thiết kế CSDL Cấp độ 3: Mô hình Vật lý và Lập trình CSDL
+
+Chương này trình bày chi tiết cấp độ thiết kế vật lý (\textit{Physical Database Design}) và hiện thực hóa lập trình cơ sở dữ liệu trên hệ quản trị Microsoft SQL Server. Toàn bộ lược đồ vật lý được cấu trúc hóa theo các schema nghiệp vụ, thiết lập hệ thống ràng buộc toàn vẹn nghiêm ngặt, chiến lược đánh chỉ mục (\textit{Indexing}) tối ưu theo các mẫu truy vấn thực tế, cùng hệ thống Views, Stored Procedures và Triggers bảo đảm an toàn giao dịch.
+
+% ----------------------------------------------------------------------
+\section{Lựa chọn Hệ Quản trị và Quy ước Đặt tên Vật lý}
+\label{s:c5_dbms_naming}
+
+\subsection{Căn cứ Lựa chọn Microsoft SQL Server}
+Hệ quản trị cơ sở dữ liệu Microsoft SQL Server (bản 2022+ chạy trên Linux Container) được lựa chọn chính thức dựa trên các căn cứ kỹ thuật:
+\begin{enumerate}
+    \item \textbf{Cơ chế thực thi ràng buộc toàn vẹn mạnh mẽ}: Hỗ trợ đầy đủ các ràng buộc phức tạp (\texttt{CHECK}, \texttt{UNIQUE}, \texttt{FOREIGN KEY}) với độ tin cậy giao dịch ACID tuyệt đối.
+    \item \textbf{Khả năng mở rộng và lập trình T-SQL phong phú}: Ngôn ngữ T-SQL hỗ trợ mạnh mẽ việc đóng gói logic nghiệp vụ vào Stored Procedures và Triggers.
+    \item \textbf{Tương thích hoàn hảo với công cụ quản trị}: Khả năng kết nối, giám sát và kiểm thử trực quan thông qua SQL Server Management Studio (SSMS 22).
+\end{enumerate}
+
+\subsection{Quy ước Đặt tên Đối tượng Vật lý (Naming Conventions)}
+Để đảm bảo tính chuyên nghiệp và đồng bộ, toàn bộ đối tượng CSDL tuân thủ quy tắc đặt tên tại Bảng~\ref{tab:c5_naming}:
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{0.25\linewidth}p{0.35\linewidth}p{0.35\linewidth}}
+\toprule
+\textbf{Loại đối tượng} & \textbf{Quy ước đặt tên} & \textbf{Ví dụ minh họa} \\
+\midrule
+\textbf{Schema} & Chữ thường, danh từ số ít theo module & \texttt{iam}, \texttt{contest}, \texttt{submission} \\
+\textbf{Bảng (Table)} & PascalCase, danh từ & \texttt{UserAccount}, \texttt{FilmFrame}, \texttt{Submission} \\
+\textbf{Cột (Column)} & snake\_case, rõ nghĩa & \texttt{user\_id}, \texttt{contest\_code}, \texttt{submitted\_at} \\
+\textbf{Khóa chính (PK)} & \texttt{PK\_<Schema>\_<Table>} & \texttt{PK\_submission\_Submission} \\
+\textbf{Khóa ngoại (FK)} & \texttt{FK\_<Schema>\_<Table>\_<Ref>} & \texttt{FK\_submission\_Submission\_Contest} \\
+\textbf{Duy nhất (UNIQUE)} & \texttt{UQ\_<Schema>\_<Table>\_<Cols>} & \texttt{UQ\_submission\_Submission\_contest\_frame} \\
+\textbf{Miền giá trị (CHECK)} & \texttt{CK\_<Schema>\_<Table>\_<Rule>} & \texttt{CK\_judging\_Evaluation\_total\_score} \\
+\textbf{Giá trị mặc định (DF)} & \texttt{DF\_<Schema>\_<Table>\_<Col>} & \texttt{DF\_iam\_UserAccount\_created\_at} \\
+\textbf{Chỉ mục (Index)} & \texttt{IX\_<Schema>\_<Table>\_<Cols>} & \texttt{IX\_submission\_Submission\_contest\_status} \\
+\textbf{View} & Schema \texttt{reporting}, tiền tố \texttt{vw\_} & \texttt{reporting.vw\_submission\_overview} \\
+\textbf{Stored Procedure} & Schema module, tiền tố \texttt{usp\_} & \texttt{submission.usp\_create\_submission} \\
+\textbf{Trigger} & \texttt{TR\_<Schema>\_<Table>\_<Event>} & \texttt{TR\_judging\_EvaluationScore\_AIU} \\
+\bottomrule
+\end{tabular}
+\caption{Quy ước đặt tên đối tượng cơ sở dữ liệu vật lý}
+\label{tab:c5_naming}
+\end{table}
+
+% ----------------------------------------------------------------------
+\section{Kiến trúc Phân vùng Schema và Lược đồ Bảng}
+\label{s:c5_schemas}
+
+Cơ sở dữ liệu được phân chia thành 12 Schema chuyên biệt nhằm phân định ranh giới bảo mật và quản trị:
+\begin{itemize}
+    \item \texttt{iam}: \texttt{UserAccount}, \texttt{Role}, \texttt{UserRole}.
+    \item \texttt{participant}: \texttt{ParticipantProfile}, \texttt{Registration}.
+    \item \texttt{reference}: \texttt{FilmStock}, \texttt{Camera}, \texttt{Lens}, \texttt{Lab}.
+    \item \texttt{contest}: \texttt{Contest}, \texttt{ContestCategory}, \texttt{JudgingRound}, \texttt{ScoringCriterion}, \texttt{AwardDefinition}.
+    \item \texttt{film}: \texttt{FilmRoll}, \texttt{FilmFrame}.
+    \item \texttt{submission}: \texttt{Submission}.
+    \item \texttt{verification}: \texttt{VerificationCase}, \texttt{AIAnalysisResult}.
+    \item \texttt{judging}: \texttt{JudgeAssignment}, \texttt{Evaluation}, \texttt{EvaluationScore}.
+    \item \texttt{result}: \texttt{Result}, \texttt{AwardAssignment}.
+    \item \texttt{archive}: \texttt{ArchiveItem}.
+    \item \texttt{audit}: \texttt{AuditLog}.
+    \item \texttt{reporting}: Chứa các khung nhìn báo cáo (\textit{Views}).
+\end{itemize}
+
+% ----------------------------------------------------------------------
+\section{Chiến lược Kiểu Dữ liệu Vật lý (Physical Datatype Strategy)}
+\label{s:c5_datatypes}
+
+Hệ thống tránh việc sử dụng tùy tiện kiểu \texttt{VARCHAR(255)} cho mọi cột, thay vào đó áp dụng chiến lược lựa chọn kiểu dữ liệu tối ưu cho bộ nhớ và tính chính xác:
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{0.25\linewidth}p{0.3\linewidth}p{0.4\linewidth}}
+\toprule
+\textbf{Mục đích sử dụng} & \textbf{Kiểu dữ liệu SQL Server} & \textbf{Giải thích kỹ thuật} \\
+\midrule
+Khóa chính nhân tạo & \texttt{INT IDENTITY(1,1)} & Tiết kiệm bộ nhớ (4 bytes), tăng tốc độ nối bảng (JOIN). \\
+Mã nghiệp vụ ngắn & \texttt{NVARCHAR(30)} -- \texttt{NVARCHAR(50)} & Đủ chứa mã định danh, kiểm soát độ dài. \\
+Tiêu đề / Họ tên & \texttt{NVARCHAR(100)} -- \texttt{NVARCHAR(200)} & Hỗ trợ Unicode đa ngôn ngữ (tiếng Việt có dấu). \\
+Văn bản dài / Ghi chú & \texttt{NVARCHAR(1000)} / \texttt{NVARCHAR(MAX)} & Lưu trữ lời tựa nghệ thuật và nhận xét chuyên môn. \\
+Mã trạng thái & \texttt{NVARCHAR(30)} & Dễ đọc hiểu khi truy vấn, kiểm soát qua CHECK constraint. \\
+Đường dẫn URI ảnh & \texttt{NVARCHAR(500)} & Đủ dung lượng lưu trữ URL Object Storage và mã băm. \\
+Điểm số / Trọng số & \texttt{DECIMAL(5,2)} / \texttt{DECIMAL(6,2)} & Độ chính xác số học tuyệt đối, tránh sai số số thực. \\
+Độ tin cậy AI & \texttt{DECIMAL(5,4)} & Lưu trữ chính xác giá trị xác suất từ 0.0000 đến 1.0000. \\
+Thời gian giao dịch & \texttt{DATETIME2(0)} & Tiết kiệm dung lượng (6 bytes), độ chính xác đến giây. \\
+Bản chụp Snapshot & \texttt{NVARCHAR(MAX)} & Lưu trữ cấu trúc JSON bản chụp lịch sử di sản số. \\
+\bottomrule
+\end{tabular}
+\caption{Chiến lược ánh xạ kiểu dữ liệu trên Microsoft SQL Server}
+\label{tab:c5_datatypes}
+\end{table}
+
+% ----------------------------------------------------------------------
+\section{Thiết kế Ràng buộc Toàn vẹn và Chính sách Khóa Ngoại}
+\label{s:c5_constraints}
+
+\paragraph{Chính sách Khóa ngoại và Hành vi Xóa (Referential Action Policy)}
+Trong hệ thống quản lý cuộc thi và lưu trữ di sản nghệ thuật, việc bảo toàn dữ liệu lịch sử là yêu cầu sống còn. Do đó, hệ thống áp dụng nguyên tắc:
+\begin{itemize}
+    \item \textbf{Tuyệt đối không sử dụng \texttt{ON DELETE CASCADE}} đối với các bảng giao dịch trọng yếu (\texttt{Submission}, \texttt{Evaluation}, \texttt{Result}, \texttt{ArchiveItem}). Mọi liên kết khóa ngoại đều thiết lập \texttt{ON DELETE NO ACTION} (mặc định của SQL Server) để ngăn chặn việc vô tình xóa dây chuyền phá hủy dữ liệu lịch sử cuộc thi.
+    \item Mọi hoạt động chấm dứt hoặc đóng cuộc thi đều thực hiện thông qua \textbf{chuyển đổi trạng thái nghiệp vụ (\textit{Soft Status Transition})}, không xóa vật lý bản ghi.
+\end{itemize}
+
+\paragraph{Ràng buộc Miền giá trị (Check Constraints)}
+Hệ thống cài đặt các ràng buộc kiểm tra giá trị toán học và logic thời gian:
+\begin{itemize}
+    \item \texttt{CK\_contest\_Contest\_dates}: \texttt{registration\_open\_at <= registration\_close\_at AND submission\_open\_at <= submission\_close\_at}.
+    \item \texttt{CK\_contest\_ScoringCriterion\_weight}: \texttt{weight\_percent > 0 AND weight\_percent <= 100}.
+    \item \texttt{CK\_contest\_ScoringCriterion\_score\_range}: \texttt{score\_min\_value <= score\_max_value}.
+    \item \texttt{CK\_verification\_AIAnalysisResult\_confidence}: \texttt{confidence\_score >= 0 AND confidence\_score <= 1}.
+    \item \texttt{CK\_judging\_Evaluation\_total\_score}: \texttt{total\_score >= 0}.
+\end{itemize}
+
+% ----------------------------------------------------------------------
+\section{Chiến lược Đánh Chỉ mục Hiệu năng (Indexing Strategy)}
+\label{s:c5_indexes}
+
+Các chỉ mục phi cụm (\textit{Non-clustered Indexes}) được thiết kế có chọn lọc, gắn liền với các mẫu truy vấn (\textit{Query Access Patterns}) tần suất cao trong thực tế:
+
+\begin{table}[htbp]
+\centering
+\scriptsize
+\begin{tabular}{p{0.32\linewidth}p{0.25\linewidth}p{0.2\linewidth}p{0.18\linewidth}}
+\toprule
+\textbf{Tên Index} & \textbf{Cột khóa (Key Columns)} & \textbf{Cột bao phủ (INCLUDE)} & \textbf{Mục đích truy vấn tối ưu} \\
+\midrule
+\texttt{IX\_submission\_Submission\_contest\_status} & \texttt{contest\_id}, \texttt{submission\_status} & \texttt{category\_id}, \texttt{submitted\_at} & Ban tổ chức lọc danh sách bài thi theo cuộc thi và trạng thái. \\
+\texttt{IX\_submission\_Submission\_participant} & \texttt{registration\_id}, \texttt{submitted\_at} & \texttt{contest\_id}, \texttt{submission\_status} & Thí sinh tra cứu lịch sử nộp bài cá nhân. \\
+\texttt{IX\_judging\_JudgeAssignment\_queue} & \texttt{judge\_user\_id}, \texttt{assignment\_status} & \texttt{round\_id}, \texttt{assigned\_at} & Giám khảo lấy hàng đợi bài thi cần chấm. \\
+\texttt{IX\_judging\_Evaluation\_round\_sub} & \texttt{round\_id}, \texttt{submission\_id} & \texttt{total\_score}, \texttt{status} & Tính tổng điểm và xếp hạng bài thi theo vòng. \\
+\texttt{IX\_result\_Result\_rank} & \texttt{category\_id}, \texttt{final\_rank} & \texttt{submission\_id}, \texttt{final\_score} & Công bố bảng xếp hạng kết quả theo thứ hạng. \\
+\texttt{IX\_archive\_ArchiveItem\_search} & \texttt{archive\_status}, \texttt{archived\_at} & \texttt{result\_id}, \texttt{submission\_id} & Tìm kiếm và triển lãm tác phẩm trong kho di sản số. \\
+\bottomrule
+\end{tabular}
+\caption{Chiến lược chỉ mục tối ưu hóa hiệu năng truy vấn}
+\label{tab:c5_indexes}
+\end{table}
+
+% ----------------------------------------------------------------------
+\section{Lập trình Cơ sở Dữ liệu: Views, Stored Procedures và Triggers}
+\label{s:c5_programmability}
+
+Hệ thống đóng gói toàn bộ các luồng nghiệp vụ phức tạp vào các đối tượng lập trình trong CSDL:
+
+\begin{enumerate}
+    \item \textbf{Hệ thống Khung nhìn Báo cáo (Views)}:
+    \begin{itemize}
+        \item \texttt{reporting.vw\_submission\_overview}: Tổng hợp bài thi kèm thông tin thí sinh, cuộn phim, thông số máy ảnh và trạng thái xác minh.
+        \item \texttt{reporting.vw\_verification\_queue}: Hàng đợi các bài thi đang chờ Ban tổ chức duyệt kèm các cờ cảnh báo từ AI.
+        \item \texttt{reporting.vw\_judge\_work_queue}: Hàng đợi công việc của từng giám khảo theo vòng chấm.
+        \item \texttt{reporting.vw\_result\_summary}: Bảng tổng kết kết quả cuộc thi và giải thưởng đã gán.
+        \item \texttt{reporting.vw\_archive\_catalog}: Danh mục tra cứu kho lưu trữ số phục vụ triển lãm.
+    \end{itemize}
+    \item \textbf{Thủ tục Lưu trữ Nghiệp vụ (Stored Procedures)}:
+    \begin{itemize}
+        \item \texttt{submission.usp\_create\_submission}: Kiểm tra toàn diện điều kiện nộp bài (thời hạn, quyền sở hữu khung hình, tính duy nhất trong cuộc thi) trong một giao dịch (\texttt{BEGIN TRANSACTION}).
+        \item \texttt{verification.usp\_record\_verification\_decision}: Ghi nhận quyết định thẩm định của Ban tổ chức và đồng bộ trạng thái bài thi.
+        \item \texttt{judging.usp\_submit\_evaluation}: Tiếp nhận và khóa phiếu chấm của giám khảo.
+        \item \texttt{result.usp\_finalize\_results\_for_round}: Tự động tổng hợp điểm, xếp thứ hạng không trùng lặp và khóa kết quả chung cuộc.
+    \end{itemize}
+    \item \textbf{Trigger Kiểm toán và Tính toán Tự động (Triggers)}:
+    \begin{itemize}
+        \item \texttt{TR\_judging\_EvaluationScore\_AIU\_RecalcEvaluation}: Tự động tính toán lại \texttt{total\_score} trong bảng \texttt{Evaluation} mỗi khi có điểm tiêu chí được thêm hoặc cập nhật.
+        \item \texttt{TR\_submission\_Submission\_AU\_AuditStatus}: Tự động ghi nhật ký vào \texttt{audit.AuditLog} mỗi khi bài dự thi chuyển đổi trạng thái.
+        \item \texttt{TR\_result\_Result\_AU\_AuditStatus}: Tự động lưu vết kiểm toán khi kết quả cuộc thi được khóa hoặc phát hành.
+    \end{itemize}
+\end{enumerate}

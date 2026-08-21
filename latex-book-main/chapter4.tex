@@ -1,0 +1,185 @@
+% Chapter 4: Thiết kế CSDL Cấp độ 1 & 2: Mô hình Ý niệm và Logic
+
+Thiết kế cơ sở dữ liệu là trục trung tâm của đồ án. Để đạt được chất lượng học thuật và thực tiễn kỹ thuật ở mức xuất sắc nhất, quy trình thiết kế được phân tách rạch ròi thành 3 cấp độ trừu tượng: \textbf{Mô hình Ý niệm (Conceptual Design)} $\rightarrow$ \textbf{Mô hình Logic (Logical Design)} $\rightarrow$ \textbf{Mô hình Vật lý (Physical Design)}. Chương này trình bày chi tiết hai cấp độ đầu tiên: từ các khái niệm nghiệp vụ thuần túy đến mô hình quan hệ được chuẩn hóa chặt chẽ theo dạng chuẩn 3 (3NF).
+
+% ----------------------------------------------------------------------
+\section{Phương pháp luận và Phân định 3 Cấp độ Trừu tượng}
+\label{s:c4_methodology}
+
+Một trong những sai lầm phổ biến nhất trong thiết kế cơ sở dữ liệu là ``vẽ 3 sơ đồ ERD gần giống nhau'', làm mất đi bản chất của từng giai đoạn. Dự án phân định rạch ròi ranh giới trừu tượng như sau:
+
+\begin{enumerate}
+    \item \textbf{Cấp độ 1 -- Thiết kế Ý niệm (Conceptual Model)}: Trả lời câu hỏi \textit{``Thế giới thực có những đối tượng nghiệp vụ nào và mối quan hệ giữa chúng là gì?''}. Mô hình hoàn toàn độc lập với mọi hệ quản trị CSDL, không chứa kiểu dữ liệu kỹ thuật, chỉ tập trung vào bản số (\textit{cardinality}), tính tùy chọn (\textit{optionality}) và xuất xứ dữ liệu (\textit{provenance}).
+    \item \textbf{Cấp độ 2 -- Thiết kế Logic (Logical Model)}: Trả lời câu hỏi \textit{``Dữ liệu được tổ chức thành các bảng quan hệ như thế nào?''}. Giai đoạn này chuyển đổi thực thể thành các quan hệ (\textit{relations}), giải quyết triệt để quan hệ Nhiều-Nhiều ($N:M$), xác định khóa chính (PK), khóa ngoại (FK), khóa thay thế (Alternate Keys), thực hiện chuẩn hóa đến dạng chuẩn 3 (3NF) và xây dựng từ điển dữ liệu logic.
+    \item \textbf{Cấp độ 3 -- Thiết kế Vật lý (Physical Model)}: Trả lời câu hỏi \textit{``Cấu trúc dữ liệu được cài đặt cụ thể trên DBMS mục tiêu như thế nào?''}. Lựa chọn kiểu dữ liệu chính xác trên Microsoft SQL Server, thiết lập ràng buộc (CHECK, UNIQUE, FK actions), chiến lược đánh chỉ mục (Index) và lập trình CSDL (Views, Stored Procedures, Triggers).
+\end{enumerate}
+
+% ----------------------------------------------------------------------
+\section{Thiết kế Cấp độ 1: Danh mục Thực thể Ý niệm (Entity Inventory)}
+\label{s:c4_conceptual_entities}
+
+Mô hình ý niệm bao phủ trọn vẹn chuỗi giá trị từ tài khoản người dùng đến lưu trữ di sản số:
+$$\text{User/Role} \rightarrow \text{Participant} \rightarrow \text{Registration} \rightarrow \text{Film Roll} \rightarrow \text{Film Frame} \rightarrow \text{Submission} \rightarrow \text{Verification} \rightarrow \text{Judging} \rightarrow \text{Result} \rightarrow \text{Archive}$$
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{0.25\linewidth}p{0.7\linewidth}}
+\toprule
+\textbf{Thực thể Ý niệm} & \textbf{Ý nghĩa nghiệp vụ trong thế giới thực} \\
+\midrule
+\textbf{UserAccount} & Danh tính người dùng truy cập vào nền tảng. \\
+\textbf{Role} & Vai trò trách nhiệm trong hệ thống (Admin, Organizer, Judge, Participant). \\
+\textbf{UserRole} & Sự phân công một hoặc nhiều vai trò cho một tài khoản người dùng. \\
+\textbf{ParticipantProfile} & Hồ sơ chi tiết của thí sinh tham gia cuộc thi. \\
+\textbf{Contest} & Sự kiện cuộc thi nhiếp ảnh phim với thể lệ và khung thời gian. \\
+\textbf{ContestCategory} & Hạng mục chuyên môn trong cuộc thi (Chân dung, Phong cảnh, Thể nghiệm). \\
+\textbf{Registration} & Đơn đăng ký tham gia cuộc thi cụ thể của một thí sinh. \\
+\textbf{FilmStock / Lab} & Danh mục tham chiếu dòng phim và phòng lab tráng phim. \\
+\textbf{Camera / Lens} & Danh mục tham chiếu thiết bị thân máy ảnh và ống kính quang học. \\
+\textbf{FilmRoll} & Cuộn phim vật lý thuộc sở hữu của thí sinh. \\
+\textbf{FilmFrame} & Khung hình phim đơn lẻ trên cuộn phim được số hóa. \\
+\textbf{Submission} & Tác phẩm dự thi liên kết khung hình với hạng mục cuộc thi. \\
+\textbf{VerificationCase} & Hồ sơ thẩm định tính hợp lệ của bài dự thi do Ban tổ chức thực hiện. \\
+\textbf{AIAnalysisResult} & Bản ghi kết quả phân tích độ tương đồng hoặc phát hiện ảnh AI. \\
+\textbf{JudgingRound} & Vòng chấm thi cụ thể trong một hạng mục (Sơ khảo, Chung khảo). \\
+\textbf{JudgeAssignment} & Phân công một giám khảo cụ thể tham gia chấm một vòng thi. \\
+\textbf{ScoringCriterion} & Tiêu chí chấm điểm có thang điểm và trọng số trong một vòng. \\
+\textbf{Evaluation} & Phiếu đánh giá của một giám khảo đối với một bài thi trong vòng. \\
+\textbf{EvaluationScore} & Điểm chi tiết cho từng tiêu chí trong một phiếu đánh giá. \\
+\textbf{Result} & Bản ghi kết quả xếp hạng chính thức của bài thi theo hạng mục. \\
+\textbf{AwardDefinition} & Định nghĩa cơ cấu giải thưởng (Nhất, Nhì, Ba, Khuyến khích). \\
+\textbf{AwardAssignment} & Gán giải thưởng cụ thể cho bài thi có kết quả chung cuộc. \\
+\textbf{ArchiveItem} & Bản chụp bất biến lưu trữ di sản tác phẩm đoạt giải lâu dài. \\
+\textbf{AuditLog} & Nhật ký kiểm toán lưu vết các thao tác thay đổi dữ liệu quan trọng. \\
+\bottomrule
+\end{tabular}
+\caption{Danh mục 24 thực thể ý niệm cốt lõi}
+\label{tab:c4_entity_inventory}
+\end{table}
+
+% ----------------------------------------------------------------------
+\section{Bản số (Cardinality) và Ràng buộc Quan hệ Ý niệm}
+\label{s:c4_cardinalities}
+
+Các mối quan hệ ý niệm giữa các thực thể được xác lập dựa trên các quy tắc nghiệp vụ nghiêm ngặt:
+
+\begin{itemize}
+    \item \textbf{Phân hệ Danh tính \& Thí sinh}:
+    \begin{itemize}
+        \item $\text{UserAccount } (1,1) \longleftrightarrow (0,N) \text{ UserRole } (1,1) \longleftrightarrow (1,N) \text{ Role}$: Một tài khoản có thể có nhiều vai trò; giải quyết quan hệ Nhiều-Nhiều.
+        \item $\text{UserAccount } (1,1) \longleftrightarrow (0,1) \text{ ParticipantProfile}$: Quan hệ một-một tùy chọn.
+    \end{itemize}
+    \item \textbf{Phân hệ Xuất xứ Phim Vật lý}:
+    \begin{itemize}
+        \item $\text{ParticipantProfile } (1,1) \longleftrightarrow (0,N) \text{ FilmRoll}$: Một thí sinh sở hữu nhiều cuộn phim.
+        \item $\text{FilmRoll } (1,1) \longleftrightarrow (1,N) \text{ FilmFrame}$: Một cuộn phim chứa nhiều khung hình; một khung hình bắt buộc phải thuộc về đúng một cuộn phim.
+    \end{itemize}
+    \item \textbf{Phân hệ Nộp bài \& Thẩm định}:
+    \begin{itemize}
+        \item $\text{Registration } (1,1) \longleftrightarrow (0,N) \text{ Submission}$: Một đơn đăng ký có thể nộp nhiều bài thi vào các hạng mục cho phép.
+        \item $\text{FilmFrame } (1,1) \longleftrightarrow (0,N) \text{ Submission}$: Một khung hình có thể nộp vào các cuộc thi khác nhau, nhưng quy tắc nghiệp vụ BR-P-006 giới hạn không quá 1 lần trong cùng một cuộc thi.
+        \item $\text{Submission } (1,1) \longleftrightarrow (1,1) \text{ VerificationCase}$: Mỗi bài thi có đúng một hồ sơ thẩm định chính thức.
+        \item $\text{Submission } (1,1) \longleftrightarrow (0,N) \text{ AIAnalysisResult}$: Một bài thi có thể có nhiều kết quả phân tích từ các mô hình AI khác nhau.
+    \end{itemize}
+    \item \textbf{Phân hệ Chấm thi \& Tổng kết}:
+    \begin{itemize}
+        \item $\text{ContestCategory } (1,1) \longleftrightarrow (1,N) \text{ JudgingRound}$: Mỗi hạng mục có ít nhất một vòng chấm thi.
+        \item $\text{JudgingRound } (1,1) \longleftrightarrow (1,N) \text{ ScoringCriterion}$: Mỗi vòng có một hoặc nhiều tiêu chí chấm điểm riêng biệt.
+        \item $\text{JudgingRound } (1,1) \longleftrightarrow (0,N) \text{ JudgeAssignment } (1,1) \longleftrightarrow (1,N) \text{ UserAccount (Judge)}$: Phân công giám khảo vào vòng thi.
+        \item $\text{Evaluation } (1,1) \longleftrightarrow (1,N) \text{ EvaluationScore } (1,1) \longleftrightarrow (1,N) \text{ ScoringCriterion}$: Phiếu chấm chứa điểm chi tiết theo tiêu chí.
+        \item $\text{Result } (1,1) \longleftrightarrow (0,N) \text{ AwardAssignment } (1,1) \longleftrightarrow (1,1) \text{ AwardDefinition}$: Gán giải thưởng cho kết quả chung cuộc.
+        \item $\text{Result } (1,1) \longleftrightarrow (0,1) \text{ ArchiveItem}$: Chỉ bài thi có kết quả chung cuộc mới được chuyển vào kho lưu trữ số.
+    \end{itemize}
+\end{itemize}
+
+% ----------------------------------------------------------------------
+\section{Thiết kế Cấp độ 2: Mô hình Quan hệ Logic và Giải quyết Quan hệ $N:M$}
+\label{s:c4_logical_model}
+
+Khi chuyển đổi từ mô hình ý niệm sang mô hình quan hệ logic, các quan hệ Nhiều-Nhiều ($N:M$) được giải quyết triệt để thông qua các quan hệ kết hợp (\textit{Associative Relations}):
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{0.3\linewidth}p{0.25\linewidth}p{0.38\linewidth}}
+\toprule
+\textbf{Quan hệ Ý niệm $N:M$} & \textbf{Quan hệ Kết hợp Logic} & \textbf{Thuộc tính mở rộng / Khóa thay thế} \\
+\midrule
+UserAccount $\leftrightarrow$ Role & \texttt{UserRole} & \texttt{user\_id}, \texttt{role\_id}, \texttt{assigned\_at}, \texttt{status} \\
+JudgingRound $\leftrightarrow$ Judge & \texttt{JudgeAssignment} & \texttt{round\_id}, \texttt{judge\_user\_id}, \texttt{assigned\_at} \\
+Evaluation $\leftrightarrow$ ScoringCriterion & \texttt{EvaluationScore} & \texttt{evaluation\_id}, \texttt{criterion\_id}, \texttt{score\_value}, \texttt{comment} \\
+Result $\leftrightarrow$ AwardDefinition & \texttt{AwardAssignment} & \texttt{result\_id}, \texttt{award\_definition\_id}, \texttt{assigned\_at} \\
+\bottomrule
+\end{tabular}
+\caption{Giải quyết các quan hệ Nhiều-Nhiều trong mô hình logic}
+\label{tab:c4_nm_resolution}
+\end{table}
+
+\paragraph{Danh mục Khóa Dự tuyển và Khóa Thay thế (Candidate \& Alternate Keys)}
+Mỗi quan hệ logic sử dụng khóa thay thế nhân tạo (\textit{Surrogate Primary Key}, ví dụ: \texttt{submission\_id}) để tối ưu hiệu năng liên kết bảng, đồng thời bắt buộc thiết lập các khóa thay thế tự nhiên (\textit{Natural Alternate Keys}) để bảo vệ tính duy nhất nghiệp vụ:
+\begin{itemize}
+    \item \texttt{UserAccount}: \texttt{email} (UNIQUE), \texttt{username} (UNIQUE).
+    \item \texttt{Contest}: \texttt{contest\_code} (UNIQUE).
+    \item \texttt{ContestCategory}: \texttt{(contest\_id, category\_code)} (UNIQUE Composite).
+    \item \texttt{FilmRoll}: \texttt{(participant\_id, roll\_code)} (UNIQUE Composite).
+    \item \texttt{FilmFrame}: \texttt{(roll\_id, frame\_number)} (UNIQUE Composite).
+    \item \texttt{Registration}: \texttt{(contest\_id, participant\_id)} (UNIQUE Composite).
+    \item \texttt{Submission}: \texttt{(contest\_id, frame\_id)} (UNIQUE Composite -- BR-P-006).
+    \item \texttt{JudgeAssignment}: \texttt{(round\_id, judge\_user\_id)} (UNIQUE Composite).
+    \item \texttt{Evaluation}: \texttt{(round\_id, submission\_id, judge\_user\_id)} (UNIQUE Composite -- BR-O-009).
+    \item \texttt{EvaluationScore}: \texttt{(evaluation\_id, criterion\_id)} (UNIQUE Composite).
+    \item \texttt{Result}: \texttt{(category_id, submission_id)} (UNIQUE Composite).
+\end{itemize}
+
+% ----------------------------------------------------------------------
+\section{Chứng minh Chuẩn hóa Dữ liệu (Normalization Proof to 3NF)}
+\label{s:c4_normalization}
+
+Để chứng minh tính đúng đắn khoa học, các quan hệ trọng yếu trong hệ thống được phân tích phụ thuộc hàm (\textit{Functional Dependencies - FD}) và chứng minh đạt dạng chuẩn 3 (3NF):
+
+\subsection{Quan hệ FilmFrame (Khung hình phim)}
+\begin{itemize}
+    \item \textbf{Tập thuộc tính}: $\text{FilmFrame}(\underline{\text{frame\_id}}, \text{roll\_id}, \text{camera\_id}, \text{lens\_id}, \text{frame\_number}, \text{frame\_title}, \text{captured\_on}, \text{capture\_location}, \text{frame\_status}, \text{negative\_uri})$
+    \item \textbf{Phụ thuộc hàm cốt lõi}:
+    \begin{align*}
+        \text{FD1: } & \text{frame\_id} \longrightarrow \text{roll\_id}, \text{camera\_id}, \text{lens\_id}, \text{frame\_number}, \text{frame\_title}, \text{captured\_on}, \text{capture\_location}, \text{frame\_status}, \text{negative\_uri} \\
+        \text{FD2: } & (\text{roll\_id}, \text{frame\_number}) \longrightarrow \text{frame\_id}, \text{camera\_id}, \text{lens\_id}, \text{frame\_title}, \text{captured\_on}, \text{capture\_location}, \text{frame\_status}, \text{negative\_uri}
+    \end{align*}
+    \item \textbf{Chứng minh 1NF}: Mọi thuộc tính đều mang giá trị nguyên tố (\textit{atomic}), không có thuộc tính lặp hay đa trị.
+    \item \textbf{Chứng minh 2NF}: Khóa chính \texttt{frame\_id} gồm 1 thuộc tính đơn lẻ, do đó không tồn tại phụ thuộc hàm bộ phận vào một phần của khóa.
+    \item \textbf{Chứng minh 3NF}: Không tồn tại phụ thuộc bắc cầu giữa các thuộc tính không khóa. Thông tin về thân máy (\texttt{Camera}) và ống kính (\texttt{Lens}) đã được tách thành các quan hệ tham chiếu riêng, chỉ lưu trữ khóa ngoại tại bảng \texttt{FilmFrame}. $\Rightarrow$ \textbf{Đạt 3NF}.
+\end{itemize}
+
+\subsection{Quan hệ Submission (Bài dự thi)}
+\begin{itemize}
+    \item \textbf{Tập thuộc tính}: $\text{Submission}(\underline{\text{submission\_id}}, \text{registration\_id}, \text{contest\_id}, \text{category\_id}, \text{frame\_id}, \text{submission\_title}, \text{statement}, \text{image\_uri}, \text{submitted\_at}, \text{status})$
+    \item \textbf{Phụ thuộc hàm cốt lõi}:
+    \begin{align*}
+        \text{FD1: } & \text{submission\_id} \longrightarrow \text{registration\_id}, \text{contest\_id}, \text{category\_id}, \text{frame\_id}, \text{submission\_title}, \text{statement}, \text{image\_uri}, \text{submitted\_at}, \text{status} \\
+        \text{FD2: } & (\text{contest\_id}, \text{frame\_id}) \longrightarrow \text{submission\_id}, \text{registration\_id}, \text{category\_id}, \text{submission\_title}, \text{statement}, \text{image\_uri}, \text{submitted\_at}, \text{status}
+    \end{align*}
+    \item \textbf{Chứng minh 3NF}: Không lưu trữ lặp lại thông tin tên thí sinh hay tên cuộc thi trong bảng \texttt{Submission}. Mọi thông tin danh tính đều được truy xuất qua \texttt{registration\_id} và \texttt{frame\_id}. Không có phụ thuộc hàm giữa các thuộc tính không khóa. $\Rightarrow$ \textbf{Đạt 3NF}.
+\end{itemize}
+
+\subsection{Quan hệ EvaluationScore (Điểm tiêu chí đánh giá)}
+\begin{itemize}
+    \item \textbf{Tập thuộc tính}: $\text{EvaluationScore}(\underline{\text{evaluation\_score\_id}}, \text{evaluation\_id}, \text{criterion\_id}, \text{score\_value}, \text{score\_comment})$
+    \item \textbf{Phụ thuộc hàm cốt lõi}:
+    \begin{align*}
+        \text{FD1: } & \text{evaluation\_score\_id} \longrightarrow \text{evaluation\_id}, \text{criterion\_id}, \text{score\_value}, \text{score\_comment} \\
+        \text{FD2: } & (\text{evaluation\_id}, \text{criterion\_id}) \longrightarrow \text{evaluation\_score\_id}, \text{score\_value}, \text{score\_comment}
+    \end{align*}
+    \item \textbf{Chứng minh 3NF}: Tên tiêu chí, thang điểm min/max và trọng số được lưu tại \texttt{ScoringCriterion}, không bị lặp lại trong \texttt{EvaluationScore}. Bảng chỉ lưu giá trị điểm và nhận xét ứng với từng tiêu chí cụ thể. $\Rightarrow$ \textbf{Đạt 3NF}.
+\end{itemize}
+
+% ----------------------------------------------------------------------
+\section{Chiến lược Phi Chuẩn hóa có Kiểm soát cho Kho Lưu trữ Số}
+\label{s:c4_archive_denormalization}
+
+Quan hệ \texttt{ArchiveItem} là trường hợp ngoại lệ duy nhất được cố tình thiết kế theo hướng \textbf{Phi chuẩn hóa có kiểm soát (\textit{Controlled Denormalization})}:
+
+\begin{itemize}
+    \item Thay vì chỉ lưu trữ các khóa ngoại sống (\texttt{result\_id}, \texttt{submission\_id}) trỏ về các bảng giao dịch, \texttt{ArchiveItem} lưu trữ các bản chụp JSON bất biến: \texttt{contest\_snapshot}, \texttt{category\_snapshot}, \texttt{participant\_snapshot}, \texttt{technical\_snapshot}, \texttt{judging\_snapshot}.
+    \item \textbf{Căn cứ lý thuyết \& Thực tiễn}: Kho lưu trữ di sản số có mục đích bảo tồn nguyên trạng giá trị lịch sử tại thời điểm trao giải. Nếu trong tương lai tài khoản thí sinh đổi tên, hoặc cấu hình cuộc thi gốc bị điều chỉnh/ẩn đi, tác phẩm trong kho lưu trữ di sản vẫn giữ nguyên 100\% thông tin trung thực của thời điểm đoạt giải mà không bị sai lệch.
+\end{itemize}

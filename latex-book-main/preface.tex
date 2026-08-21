@@ -1,0 +1,35 @@
+% Preface - Lời nói đầu
+
+Trong kỷ nguyên số hóa bùng nổ, nhiếp ảnh phim (\textit{film photography} hay \textit{analog photography}) đang chứng kiến sự hồi sinh mạnh mẽ đầy ấn tượng. Ngày càng nhiều nhiếp ảnh gia chuyên nghiệp, những người đam mê nghệ thuật thị giác và các câu lạc bộ nhiếp ảnh tìm về với phim nhựa như một phương thức gìn giữ giá trị văn hóa, sự tỉ mỉ trong từng khuôn hình và chất cảm nghệ thuật độc bản mà các cảm biến kỹ thuật số hiện đại khó lòng thay thế.
+
+Song hành với xu hướng này, các cuộc thi nhiếp ảnh phim quy mô lớn nhỏ xuất hiện ngày một nhiều. Tuy nhiên, việc tổ chức và quản lý một cuộc thi nhiếp ảnh phim có độ phức tạp vượt trội so với các cuộc thi ảnh số truyền thống. Một tác phẩm ảnh phim không đơn thuần là một tệp hình ảnh kỹ thuật số, mà là kết quả của một chuỗi quy trình vật lý nghiêm ngặt: từ lựa chọn loại phim (\textit{film stock}), thân máy ảnh (\textit{camera body}), ống kính (\textit{lens}), độ nhạy sáng (\textit{ISO}), vị trí khung hình trên cuộn phim (\textit{frame number}), đến quy trình tráng phim tại phòng lab (\textit{developing lab}), thông số scan kỹ thuật số và kiểm tra bản phim gốc (\textit{negative/contact sheet}).
+
+Thực trạng hiện nay cho thấy đa số các cuộc thi ảnh phim vẫn đang được vận hành bằng các công cụ phân mảnh và thủ công như Google Forms, bảng tính Excel, email, Google Drive và mạng xã hội. Sự rời rạc này dẫn đến khối lượng công việc hành chính khổng lồ, nguy cơ sai sót cao, quy trình xác minh nguồn gốc tác phẩm thiếu minh bạch, công tác chấm thi đa vòng gặp nhiều bất cập và dữ liệu quý giá của các cuộc thi không được lưu trữ tập trung để tái sử dụng cho mục đích triển lãm hay giáo dục.
+
+Đồ án \textbf{``Thiết kế cơ sở dữ liệu cho Nền tảng tổ chức và quản lý cuộc thi nhiếp ảnh phim tích hợp trí tuệ nhân tạo (AI-powered Film Photography Contest Management Platform)''} được thực hiện nhằm giải quyết triệt để các bài toán nghiệp vụ nêu trên. Trọng tâm của đồ án là xây dựng một hệ thống cơ sở dữ liệu chuẩn mực, chặt chẽ, tối ưu từ mô hình ý niệm (\textit{Conceptual}), mô hình logic (\textit{Logical}) chuẩn hóa 3NF, đến mô hình vật lý (\textit{Physical}) trên hệ quản trị Microsoft SQL Server. Đồng thời, hệ thống tích hợp các cơ chế trí tuệ nhân tạo (AI) đóng vai trò hỗ trợ thẩm định tự động (phát hiện ảnh trùng lặp, phát hiện ảnh AI, tự động gắn thẻ) theo nguyên tắc \textit{Human-in-the-loop}.
+
+Báo cáo này được cấu trúc thành 6 chương chính và 3 phụ lục theo chuẩn phân rã công việc (WBS):
+\begin{itemize}
+    \item \textbf{Phần I -- Tổng quan và Phân tích Yêu cầu Nghiệp vụ}: 
+    \begin{itemize}
+        \item \textbf{Chương 1}: Trình bày bối cảnh, vấn đề nghiệp vụ, mục tiêu, phạm vi và bảng thuật ngữ chuẩn hóa.
+        \item \textbf{Chương 2}: Mô hình hóa quy trình nghiệp vụ (AS-IS, TO-BE), danh mục yêu cầu chức năng (FR), yêu cầu phi chức năng (NFR), quy tắc nghiệp vụ (BR) và đặc tả Use Case.
+    \end{itemize}
+    \item \textbf{Phần II -- Thiết kế Kiến trúc Hệ thống}:
+    \begin{itemize}
+        \item \textbf{Chương 3}: Thiết kế kiến trúc tổng thể, phân rã 11 phân hệ chức năng, kiến trúc logic, kiến trúc triển khai và thiết kế phân hệ tích hợp AI.
+    \end{itemize}
+    \item \textbf{Phần III -- Thiết kế Cơ sở Dữ liệu Toàn diện}:
+    \begin{itemize}
+        \item \textbf{Chương 4}: Thiết kế CSDL Cấp độ 1 \& 2 -- Mô hình Ý niệm (Conceptual ERD), Mô hình Logic (Logical ERD), chứng minh chuẩn hóa 3NF và từ điển dữ liệu logic.
+        \item \textbf{Chương 5}: Thiết kế CSDL Cấp độ 3 -- Mô hình Vật lý (Physical ERD), thiết kế ràng buộc toàn vẹn, chiến lược đánh chỉ mục hiệu năng, và lập trình CSDL (Views, Stored Procedures, Triggers).
+    \end{itemize}
+    \item \textbf{Phần IV -- Kiểm chứng, Đảm bảo Chất lượng và Đóng băng Dự án}:
+    \begin{itemize}
+        \item \textbf{Chương 6}: Bộ ma trận kiểm chứng chất lượng (RTM, CRUD Matrix, Rule-to-Enforcement Matrix) và kiểm chứng 7 kịch bản nghiệp vụ thực tế (Scenario Walkthrough).
+        \item \textbf{Chương 7}: Nhật ký quyết định thiết kế (Design Decision Log) và báo cáo đóng băng dự án (Project Freeze).
+    \end{itemize}
+    \item \textbf{Phụ lục}: Cung cấp toàn bộ kịch bản kiểm thử T-SQL tự động, bảng tra cứu yêu cầu chức năng và toàn văn mã nguồn DDL cơ sở dữ liệu.
+\end{itemize}
+
+Nhóm tác giả hy vọng công trình này sẽ là một tài liệu tham khảo hoàn chỉnh, minh chứng cho phương pháp luận phân tích và thiết kế hệ thống cơ sở dữ liệu chuyên sâu, đáp ứng xuất sắc các tiêu chuẩn học thuật và thực tiễn kỹ thuật phần mềm.

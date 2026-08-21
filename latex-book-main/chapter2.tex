@@ -1,0 +1,205 @@
+% Chapter 2: Quy trình Nghiệp vụ và Đặc tả Yêu cầu
+
+Chương này trình bày chi tiết kết quả phân tích quy trình nghiệp vụ và đặc tả toàn diện các yêu cầu hệ thống. Việc mô hình hóa tường minh từ quy trình hiện tại (\textit{AS-IS}) sang quy trình mục tiêu (\textit{TO-BE}), kết hợp với danh mục yêu cầu chức năng (\textit{FR}), yêu cầu phi chức năng (\textit{NFR}), quy tắc nghiệp vụ (\textit{Business Rules}) và đặc tả các trường hợp sử dụng (\textit{Use Case Specifications}) là cơ sở pháp lý và kỹ thuật vững chắc để định hình kiến trúc hệ thống và cơ sở dữ liệu ở các phần tiếp theo.
+
+% ----------------------------------------------------------------------
+\section{Mô hình hóa Quy trình Hiện tại (AS-IS) và Điểm nghẽn}
+\label{s:c2_asis}
+
+Trong thực tế tổ chức các cuộc thi nhiếp ảnh phim truyền thống, quy trình vận hành được thực hiện thủ công qua nhiều công cụ trung gian rời rạc:
+\begin{enumerate}
+    \item \textbf{Tiếp nhận đăng ký}: Ban tổ chức mở biểu mẫu trực tuyến (Google Forms). Thí sinh điền thông tin và đính kèm đường dẫn lưu trữ đám mây (Google Drive/Dropbox).
+    \item \textbf{Thu thập bài thi \& siêu dữ liệu}: Dữ liệu đăng ký đổ về bảng tính Excel. Ban tổ chức phải tải ảnh về máy tính cục bộ, kiểm tra từng đường dẫn và đối soát thông tin máy ảnh, cuộn phim, phòng lab tráng phim.
+    \item \textbf{Thẩm định sơ bộ}: Ban tổ chức kiểm tra thủ công bằng mắt thường để phát hiện các bài thi thiếu thông số hoặc có dấu hiệu can thiệp kỹ thuật số quá mức.
+    \item \textbf{Phân phối chấm thi}: Tạo các bản sao bảng tính Excel chứa danh sách ảnh và gửi email riêng cho từng giám khảo.
+    \item \textbf{Tổng hợp điểm \& Công bố}: Giám khảo gửi lại file Excel điểm. Ban tổ chức sử dụng các hàm tính toán thủ công trên Excel để xếp hạng, giải quyết các trường hợp bằng điểm và soạn thảo bài viết công bố giải thưởng lên mạng xã hội.
+\end{enumerate}
+
+\paragraph{Hạn chế của mô hình AS-IS} Quy trình này bộc lộ những rủi ro chí mạng: (1) Khả năng mất mát dữ liệu cao do phân tán trên nhiều drive cá nhân; (2) Không thể kiểm tra sự trùng lặp của khung hình giữa các cuộc thi; (3) Dễ xảy ra sai sót khi giám khảo nhập điểm trên file Excel độc lập; (4) Thiếu cơ chế kiểm toán vết thay đổi (\textit{Audit Trail}) để bảo vệ tính khách quan của cuộc thi.
+
+% ----------------------------------------------------------------------
+\section{Mô hình hóa Quy trình Mục tiêu (TO-BE) và 8 Luồng Nghiệp vụ Cốt lõi}
+\label{s:c2_tobe}
+
+Hệ thống mục tiêu (\textit{TO-BE Platform}) hợp nhất toàn bộ vòng đời cuộc thi vào một nền tảng quản trị tập trung, được chuẩn hóa thành 8 luồng nghiệp vụ cốt lõi (\textit{Core Business Flows}):
+
+\begin{enumerate}
+    \item \textbf{F01 -- Lập kế hoạch \& Cấu hình Cuộc thi (Contest Planning \& Configuration)}: Ban tổ chức thiết lập thông tin cuộc thi, các hạng mục (\textit{categories}), các vòng chấm (\textit{judging rounds}), tiêu chí và trọng số chấm điểm (\textit{criteria \& weights}), cơ cấu giải thưởng và lịch trình.
+    \item \textbf{F02 -- Đăng ký Tham gia (Participant Registration)}: Thí sinh đăng ký tham gia cuộc thi trong thời hạn mở đăng ký. Hệ thống tự động kiểm tra điều kiện tiên quyết và ghi nhận trạng thái (\texttt{Pending} $\rightarrow$ \texttt{Approved}/\texttt{Rejected}).
+    \item \textbf{F03 -- Quản lý Tài sản Phim (Film Roll \& Frame Management)}: Thí sinh tạo hồ sơ cuộn phim (chọn loại film stock, ISO, phòng lab, máy ảnh, ống kính) và định nghĩa các khung hình (\textit{frames}) đánh số thứ tự từ cuộn phim.
+    \item \textbf{F04 -- Nộp Bài Dự thi (Film Submission)}: Thí sinh chọn khung hình hợp lệ nộp vào hạng mục cuộc thi kèm theo tệp ảnh scan chất lượng cao và lời tựa nghệ thuật trước thời hạn quy định.
+    \item \textbf{F05 -- Xác minh Bài thi \& Hỗ trợ AI (Submission Verification)}: Hệ thống kiểm tra tính đầy đủ của thông số kỹ thuật, đồng thời kích hoạt module AI phân tích độ tương đồng ảnh (\textit{Similarity}) và nhận diện ảnh AI (\textit{AI-generated}). Ban tổ chức dựa trên kết quả và cảnh báo để ra quyết định phê duyệt (\texttt{Verified}), từ chối (\texttt{Rejected}) hoặc yêu cầu giải trình (\texttt{NeedsClarification}).
+    \item \textbf{F06 -- Phân công Giám khảo \& Chấm thi (Judge Assignment \& Evaluation)}: Ban tổ chức phân công giám khảo vào từng vòng chấm. Giám khảo truy cập danh sách bài thi được phân công, chấm điểm chi tiết theo từng tiêu chí, ghi nhận xét chuyên môn và nộp phiếu chấm.
+    \item \textbf{F07 -- Tổng hợp Điểm, Xếp hạng \& Trao giải (Ranking \& Result Finalization)}: Hệ thống tự động tính toán tổng điểm có trọng số, lập danh sách xếp hạng theo hạng mục. Ban tổ chức duyệt kết quả, gán giải thưởng và công bố chính thức.
+    \item \textbf{F08 -- Lưu trữ Di sản Số (Digital Archive)}: Các tác phẩm đoạt giải được hệ thống tự động chụp bản sao lịch sử (\textit{snapshot}) đầy đủ siêu dữ liệu kỹ thuật và kết quả đánh giá để bảo tồn vĩnh viễn trong kho lưu trữ số phục vụ triển lãm và nghiên cứu.
+\end{enumerate}
+
+% ----------------------------------------------------------------------
+\section{Danh mục Yêu cầu Chức năng (Functional Requirements)}
+\label{s:c2_fr}
+
+Hệ thống được thiết kế với 31 yêu cầu chức năng (\textit{FR}) chuẩn hóa, bao phủ trọn vẹn 11 phân hệ:
+
+\begin{table}[htbp]
+\centering
+\scriptsize
+\begin{tabular}{p{0.12\linewidth}p{0.82\linewidth}}
+\toprule
+\textbf{Mã FR} & \textbf{Đặc tả chi tiết yêu cầu chức năng} \\
+\midrule
+\textbf{FR-001} & Hệ thống cho phép Ban tổ chức tạo mới, chỉnh sửa, phát hành, mở đăng ký, đóng nộp bài và khóa kết quả cuộc thi. \\
+\textbf{FR-002} & Hệ thống cho phép Ban tổ chức thiết lập các hạng mục thi (\textit{Categories}) độc lập trong từng cuộc thi. \\
+\textbf{FR-003} & Hệ thống cho phép Ban tổ chức thiết lập một hoặc nhiều vòng chấm thi (\textit{Judging Rounds}) cho mỗi hạng mục. \\
+\textbf{FR-004} & Hệ thống cho phép Ban tổ chức định nghĩa các tiêu chí chấm điểm (\textit{Scoring Criteria}) có thang điểm và trọng số riêng cho từng vòng chấm. \\
+\textbf{FR-005} & Hệ thống cho phép Ban tổ chức thiết lập cơ cấu giải thưởng (\textit{Awards}) cho từng hạng mục thi. \\
+\textbf{FR-006} & Hệ thống cho phép Thí sinh tạo và cập nhật hồ sơ cá nhân (\textit{Participant Profile}). \\
+\textbf{FR-007} & Hệ thống cho phép Thí sinh đăng ký tham gia các cuộc thi đang trong thời gian mở đăng ký. \\
+\textbf{FR-008} & Hệ thống phải ngăn chặn việc Thí sinh gửi nhiều bản đăng ký trùng lặp cho cùng một cuộc thi. \\
+\textbf{FR-009} & Hệ thống cho phép Ban tổ chức duyệt (\textit{Approve}), từ chối (\textit{Reject}) hoặc hủy đơn đăng ký của thí sinh. \\
+\textbf{FR-010} & Hệ thống cho phép Thí sinh tạo cuộn phim (\textit{Film Roll}) và khai báo thông số kỹ thuật (film stock, ISO, lab tráng). \\
+\textbf{FR-011} & Hệ thống cho phép Thí sinh tạo các khung hình (\textit{Film Frames}) trực thuộc cuộn phim của mình. \\
+\textbf{FR-012} & Hệ thống phải ngăn chặn việc trùng lặp số thứ tự khung hình (\textit{Frame Number}) trong cùng một cuộn phim. \\
+\textbf{FR-013} & Hệ thống cho phép Thí sinh liên kết một khung hình phim hợp lệ để nộp vào hạng mục cuộc thi. \\
+\textbf{FR-014} & Hệ thống phải tự động từ chối các bài thi nộp ngoài khung thời gian quy định của cuộc thi. \\
+\textbf{FR-015} & Hệ thống phải ngăn chặn việc một khung hình phim bị nộp trùng lặp nhiều lần trong cùng một cuộc thi. \\
+\textbf{FR-016} & Hệ thống lưu trữ tệp ảnh scan, lời tựa nghệ thuật và thông số kỹ thuật chi tiết của bài dự thi. \\
+\textbf{FR-017} & Hệ thống cung cấp quy trình thẩm định tính hợp lệ và đầy đủ của siêu dữ liệu bài thi trước khi đưa vào chấm. \\
+\textbf{FR-018} & Hệ thống ghi nhận kết quả phân tích AI (độ tương đồng, xác suất ảnh AI) độc lập với quyết định thẩm định của con người. \\
+\textbf{FR-019} & Hệ thống cho phép Ban tổ chức phê duyệt, từ chối hoặc yêu cầu thí sinh giải trình về bài dự thi. \\
+\textbf{FR-020} & Hệ thống cho phép Ban tổ chức phân công Giám khảo vào các vòng chấm thi cụ thể. \\
+\textbf{FR-021} & Hệ thống phải ngăn chặn một Giám khảo chấm điểm nhiều lần cho cùng một bài thi trong cùng một vòng chấm. \\
+\textbf{FR-022} & Hệ thống cho phép Giám khảo nhập điểm chi tiết theo từng tiêu chí và ghi nhận xét chuyên môn. \\
+\textbf{FR-023} & Hệ thống tự động tính toán tổng điểm phiếu chấm dựa trên điểm thành phần và trọng số tiêu chí. \\
+\textbf{FR-024} & Hệ thống hỗ trợ quy trình chấm thi đa vòng (vòng trước tuyển chọn bài thi vào vòng sau). \\
+\textbf{FR-025} & Hệ thống hỗ trợ tổng hợp điểm, xếp hạng tự động và cho phép Ban tổ chức khóa kết quả cuối cùng. \\
+\textbf{FR-026} & Hệ thống cho phép Ban tổ chức gán các giải thưởng chính thức cho các bài thi đạt thứ hạng cao. \\
+\textbf{FR-027} & Hệ thống hỗ trợ công bố bảng kết quả chính thức của cuộc thi ra công chúng. \\
+\textbf{FR-028} & Hệ thống tự động tạo bản chụp lưu trữ di sản số (\textit{Digital Archive Snapshot}) cho các tác phẩm đoạt giải. \\
+\textbf{FR-029} & Hệ thống duy trì nhật ký kiểm toán (\textit{Audit Log}) cho mọi thao tác thay đổi trạng thái nghiệp vụ quan trọng. \\
+\textbf{FR-030} & Hệ thống thực thi phân quyền truy cập theo vai trò (\textit{RBAC}) cho Admin, Organizer, Judge và Participant. \\
+\textbf{FR-031} & Hệ thống cung cấp các giao diện báo cáo, tra cứu hàng đợi xác minh, tiến độ chấm thi và tìm kiếm kho lưu trữ. \\
+\bottomrule
+\end{tabular}
+\caption{Danh mục 31 Yêu cầu Chức năng chuẩn hóa}
+\label{tab:c2_fr}
+\end{table}
+
+% ----------------------------------------------------------------------
+\section{Danh mục Yêu cầu Phi chức năng (Non-Functional Requirements)}
+\label{s:c2_nfr}
+
+\begin{itemize}
+    \item \textbf{NFR-001 (Chuẩn hệ quản trị)}: Hệ thống sử dụng Microsoft SQL Server (2022+) làm hệ quản trị cơ sở dữ liệu quan hệ chính thức.
+    \item \textbf{NFR-002 (Tính đóng gói \& Triển khai)}: Cơ sở dữ liệu và môi trường thực thi được đóng gói triển khai nhất quán qua Docker và Docker Compose.
+    \item \textbf{NFR-003 (Khả năng quản trị)}: CSDL hỗ trợ kết nối và thực thi quản trị trực tiếp thông qua công cụ SQL Server Management Studio (SSMS 22).
+    \item \textbf{NFR-004 (Toàn vẹn Dữ liệu)}: Ràng buộc toàn vẹn dữ liệu (\textit{Data Integrity}) phải được thực thi ở mức tối đa bằng khóa chính (PK), khóa ngoại (FK), ràng buộc duy nhất (UNIQUE) và ràng buộc miền giá trị (CHECK).
+    \item \textbf{NFR-005 (An toàn \& Phân quyền)}: Phân định rạch ròi quyền hạn giữa các vai trò người dùng, ngăn chặn truy cập trái phép vào các bài thi hoặc bảng điểm chưa công bố.
+    \item \textbf{NFR-006 (Khả năng Kiểm toán)}: Mọi giao dịch quan trọng (duyệt bài, nộp điểm, khóa kết quả) phải lưu vết thời gian (\texttt{created\_at}, \texttt{updated\_at}) và người thực hiện (\texttt{actor\_user\_id}).
+    \item \textbf{NFR-007 (Xử lý Đồng thời)}: Hệ thống hỗ trợ nhiều cuộc thi diễn ra đồng thời và hàng chục giám khảo chấm điểm đồng thời mà không xảy ra xung đột khóa chết (\textit{deadlock}).
+    \item \textbf{NFR-008 (Nguyên tắc AI Minh bạch)}: Dữ liệu AI sinh ra phải lưu kèm mã định danh mô hình, phiên bản, độ tin cậy và hoàn toàn tách biệt khỏi quyết định nghiệp vụ của con người.
+    \item \textbf{NFR-009 (Chuẩn hóa \& Dễ bảo trì)}: CSDL đạt chuẩn hóa 3NF ở mô hình logic, có từ điển dữ liệu chi tiết và ma trận truy vết yêu cầu rõ ràng.
+    \item \textbf{NFR-010 (Lưu trữ Hình ảnh Hiệu quả)}: CSDL chỉ lưu trữ chuỗi đường dẫn URI/URL và mã băm SHA-256 của tệp ảnh, không lưu trực tiếp dữ liệu nhị phân ảnh lớn trong bảng giao dịch.
+\end{itemize}
+
+% ----------------------------------------------------------------------
+\section{Danh mục Quy tắc Nghiệp vụ (Business Rules Catalog)}
+\label{s:c2_br}
+
+Để đảm bảo tính nghiêm ngặt của hệ thống, 29 quy tắc nghiệp vụ được định nghĩa và phân loại rõ ràng theo nguồn gốc: \textbf{Quy tắc Bắt buộc từ Đề bài (BR-O)} và \textbf{Quy tắc Đề xuất từ Thiết kế (BR-P)}:
+
+\begin{table}[htbp]
+\centering
+\scriptsize
+\begin{tabular}{p{0.14\linewidth}p{0.1\linewidth}p{0.48\linewidth}p{0.2\linewidth}}
+\toprule
+\textbf{Mã BR} & \textbf{Loại} & \textbf{Nội dung quy tắc nghiệp vụ} & \textbf{Nơi thực thi dự kiến} \\
+\midrule
+\textbf{BR-O-001} & Bắt buộc & Cuộc thi chỉ được phép phát hành khi có ít nhất 1 hạng mục và mỗi hạng mục có ít nhất 1 vòng chấm thi. & Stored Procedure / Logic \\
+\textbf{BR-O-002} & Bắt buộc & Tiêu chí chấm điểm gắn liền với vòng chấm cụ thể, có thang điểm tối thiểu, tối đa và trọng số rõ ràng. & CSDL (CHECK, FK) \\
+\textbf{BR-O-003} & Bắt buộc & Thao tác đăng ký và nộp bài phải tuân thủ nghiêm ngặt khung thời gian mở của cuộc thi. & CSDL (Logic / Stored Proc) \\
+\textbf{BR-O-004} & Bắt buộc & Một khung hình phim (Film Frame) phải thuộc về duy nhất một cuộn phim (Film Roll). & CSDL (FK NOT NULL) \\
+\textbf{BR-O-005} & Bắt buộc & Một bài dự thi liên kết duy nhất 1 đơn đăng ký hợp lệ, 1 khung hình, 1 cuộc thi và 1 hạng mục. & CSDL (FK, UNIQUE) \\
+\textbf{BR-O-006} & Bắt buộc & Kết quả AI chỉ mang tính chất tư vấn, không được tự động phê duyệt hoặc loại trừ bài thi. & Tầng ứng dụng / Workflow \\
+\textbf{BR-O-007} & Bắt buộc & Kết quả thẩm định bài thi chỉ nhận một trong các trạng thái: Verified, Rejected hoặc NeedsClarification. & CSDL (CHECK Constraint) \\
+\textbf{BR-O-008} & Bắt buộc & Việc phân công giám khảo phải gắn liền với một vòng chấm thi cụ thể trong hạng mục. & CSDL (FK, UNIQUE) \\
+\textbf{BR-O-009} & Bắt buộc & Một phiếu chấm ghi nhận đánh giá của đúng 1 giám khảo cho đúng 1 bài thi trong 1 vòng chấm. & CSDL (UNIQUE Composite) \\
+\textbf{BR-O-010} & Bắt buộc & Kết quả chung cuộc chỉ được khóa khi tất cả bài thi ở vòng chung kết đã nhận đủ phiếu chấm. & Stored Procedure / Logic \\
+\textbf{BR-O-011} & Bắt buộc & Bản ghi lưu trữ di sản số chỉ được khởi tạo từ các bài thi đã có kết quả chung cuộc chính thức. & Stored Procedure / Logic \\
+\midrule
+\textbf{BR-P-001} & Đề xuất & Một người dùng có thể sở hữu nhiều vai trò trong hệ thống (User $\leftrightarrow$ Role N:M). & CSDL (Associative Table) \\
+\textbf{BR-P-002} & Đề xuất & Một thí sinh chỉ có tối đa 1 bản đăng ký tham gia có hiệu lực cho mỗi cuộc thi. & CSDL (UNIQUE Composite) \\
+\textbf{BR-P-004} & Đề xuất & Dữ liệu Film Stock, Máy ảnh, Ống kính, Phòng lab được quản lý danh mục tham chiếu dùng chung. & CSDL (Master Reference Tables) \\
+\textbf{BR-P-005} & Đề xuất & Số thứ tự khung hình (Frame Number) là duy nhất trong phạm vi cuộn phim đó. & CSDL (UNIQUE Roll + Frame) \\
+\textbf{BR-P-006} & Đề xuất & Một khung hình có thể dùng cho các cuộc thi khác nhau nhưng không được nộp quá 1 lần trong 1 cuộc thi. & CSDL (UNIQUE Frame + Contest) \\
+\textbf{BR-P-008} & Đề xuất & Tiêu chí chấm điểm được phân bản theo vòng chấm thay vì dùng chung toàn cục. & CSDL Design Decision \\
+\textbf{BR-P-012} & Đề xuất & Một giám khảo có thể chấm nhiều vòng khác nhau nhưng không được phân công trùng lặp trong 1 vòng. & CSDL (UNIQUE Judge + Round) \\
+\textbf{BR-P-017} & Đề xuất & Kho lưu trữ di sản số lưu dữ liệu dạng bản chụp (Snapshot) thay vì chỉ giữ khóa ngoại sống. & CSDL Design Decision \\
+\textbf{BR-P-018} & Đề xuất & Cấm xóa vật lý (Hard Delete) đối với cuộc thi, bài thi, bảng điểm; sử dụng xóa mềm/khóa trạng thái. & CSDL (FK ON DELETE RESTRICT) \\
+\bottomrule
+\end{tabular}
+\caption{Bảng quy tắc nghiệp vụ cốt lõi và vị trí thực thi}
+\label{tab:c2_br}
+\end{table}
+
+% ----------------------------------------------------------------------
+\section{Đặc tả các Trường hợp Sử dụng Trọng yếu (Use Case Specifications)}
+\label{s:c2_usecases}
+
+Dưới đây là đặc tả chi tiết 4 trường hợp sử dụng trung tâm trong hệ thống:
+
+\subsection{UC-01: Cấu hình và Phát hành Cuộc thi (Configure Contest)}
+\begin{itemize}
+    \item \textbf{Tác nhân chính}: Ban tổ chức (Organizer).
+    \item \textbf{Điều kiện tiên quyết}: Tài khoản Ban tổ chức đang hoạt động hợp lệ.
+    \item \textbf{Luồng sự kiện chính}:
+    \begin{enumerate}
+        \item Ban tổ chức tạo mới cuộc thi ở trạng thái Nháp (\texttt{Draft}), thiết lập tiêu đề, thể lệ và lịch trình.
+        \item Tạo các hạng mục thi (\textit{Categories}) trong cuộc thi.
+        \item Khởi tạo các vòng chấm thi (\textit{Judging Rounds}) cho từng hạng mục.
+        \item Thiết lập danh sách tiêu chí chấm điểm và trọng số cho từng vòng.
+        \item Thiết lập cơ cấu giải thưởng.
+        \item Ban tổ chức yêu cầu phát hành cuộc thi (\texttt{Publish}). Hệ thống kiểm tra điều kiện toàn vẹn (BR-O-001) và chuyển trạng thái sang \texttt{Published}.
+    \end{enumerate}
+    \item \textbf{Luồng ngoại lệ}: Nếu cuộc thi thiếu hạng mục hoặc vòng chấm, hệ thống từ chối phát hành và hiển thị thông báo lỗi.
+\end{itemize}
+
+\subsection{UC-04: Nộp Bài Dự thi Ảnh Phim (Submit Film Entry)}
+\begin{itemize}
+    \item \textbf{Tác nhân chính}: Thí sinh (Participant).
+    \item \textbf{Điều kiện tiên quyết}: Thí sinh đã có đơn đăng ký được duyệt (\texttt{Approved}); thời gian nộp bài đang mở; khung hình phim đang ở trạng thái sẵn sàng (\texttt{Ready}).
+    \item \textbf{Luồng sự kiện chính}:
+    \begin{enumerate}
+        \item Thí sinh chọn cuộc thi, hạng mục và chọn khung hình phim (\textit{Film Frame}) từ cuộn phim của mình.
+        \item Tải lên tệp ảnh scan độ phân giải cao và nhập lời tựa nghệ thuật (\textit{Statement}).
+        \item Hệ thống kiểm tra thời hạn (BR-O-003) và kiểm tra tính duy nhất của khung hình trong cuộc thi (BR-P-006).
+        \item Hệ thống lưu bài thi ở trạng thái Chờ xác minh (\texttt{PendingVerification}) và ghi nhật ký kiểm toán.
+    \end{enumerate}
+    \item \textbf{Luồng ngoại lệ}: Nếu khung hình đã được nộp trong cuộc thi này trước đó, hệ thống chặn thao tác và thông báo vi phạm quy tắc.
+\end{itemize}
+
+\subsection{UC-05: Thẩm định Bài thi và Xử lý Cảnh báo AI (Verify Submission)}
+\begin{itemize}
+    \item \textbf{Tác nhân chính}: Ban tổ chức (Organizer).
+    \item \textbf{Điều kiện tiên quyết}: Bài thi đang ở trạng thái \texttt{PendingVerification}.
+    \item \textbf{Luồng sự kiện chính}:
+    \begin{enumerate}
+        \item Ban tổ chức mở chi tiết bài thi và kiểm tra độ đầy đủ của thông số cuộn phim.
+        \item Hệ thống hiển thị kết quả phân tích tự động từ AI (độ tương đồng hình ảnh, điểm số nghi vấn ảnh do AI tạo ra).
+        \item Ban tổ chức xem xét cảnh báo và đưa ra quyết định: Duyệt hợp lệ (\texttt{Verified}), Từ chối (\texttt{Rejected}) hoặc Yêu cầu giải trình thêm (\texttt{NeedsClarification}).
+        \item Hệ thống cập nhật trạng thái bài thi và lưu quyết định thẩm định kèm lý do.
+    \end{enumerate}
+\end{itemize}
+
+\subsection{UC-06: Chấm điểm Bài thi (Evaluate Submission)}
+\begin{itemize}
+    \item \textbf{Tác nhân chính}: Giám khảo (Judge).
+    \item \textbf{Điều kiện tiên quyết}: Giám khảo đã được phân công vào vòng chấm thi; bài thi đã được duyệt \texttt{Verified}; vòng chấm đang trong thời gian hoạt động.
+    \item \textbf{Luồng sự kiện chính}:
+    \begin{enumerate}
+        \item Giám khảo mở danh sách bài thi được phân công trong vòng.
+        \item Xem chi tiết hình ảnh và thông số kỹ thuật chụp của tác phẩm.
+        \item Chấm điểm từng tiêu chí theo thang điểm quy định và ghi nhận xét.
+        \item Nộp phiếu chấm (\texttt{Submit Evaluation}). Hệ thống kiểm tra tính hợp lệ của điểm số và tính toán tổng điểm có trọng số.
+    \end{enumerate}
+    \item \textbf{Luồng ngoại lệ}: Giám khảo không thể tạo phiếu chấm thứ hai cho cùng một bài thi trong cùng một vòng chấm (BR-O-009).
+\end{itemize}

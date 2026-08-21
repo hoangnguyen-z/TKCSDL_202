@@ -1,0 +1,88 @@
+% Appendix A: Kịch bản Kiểm thử T-SQL Tự động
+
+Phụ lục này trình bày chi tiết các kịch bản kiểm thử T-SQL tiêu biểu được trích xuất từ bộ kiểm thử tự động trong thư mục \texttt{tests/}, minh chứng cho khả năng thực thi và bắt lỗi toàn vẹn của cơ sở dữ liệu trên Microsoft SQL Server.
+
+% ----------------------------------------------------------------------
+\section{Kịch bản TST-REG-001: Chặn Đăng ký Trùng lặp}
+\label{a:tst_reg_001}
+
+Kịch bản kiểm thử xác minh rằng một thí sinh không thể gửi hai đơn đăng ký vào cùng một cuộc thi (\texttt{BR-P-002}):
+
+\begin{verbatim}
+-- TST-REG-001: Test Duplicate Registration Constraint
+BEGIN TRY
+    -- 1. Thí sinh 1 đăng ký vào Cuộc thi 1 (Thành công)
+    INSERT INTO participant.Registration (
+        contest_id, participant_id, registration_status, eligibility_status
+    ) VALUES (1, 1, 'APPROVED', 'ELIGIBLE');
+    PRINT 'Đăng ký lần đầu: THÀNH CÔNG';
+
+    -- 2. Thí sinh 1 cố tình đăng ký lần 2 vào Cuộc thi 1 (Phải bắt lỗi)
+    INSERT INTO participant.Registration (
+        contest_id, participant_id, registration_status, eligibility_status
+    ) VALUES (1, 1, 'PENDING', 'PENDING');
+    
+    PRINT 'LỖI: Ràng buộc UQ không hoạt động!';
+END TRY
+BEGIN CATCH
+    PRINT 'TEST PASS: Hệ thống đã chặn thành công đăng ký trùng lặp.';
+    PRINT 'Thông báo lỗi: ' + ERROR_MESSAGE();
+END CATCH;
+\end{verbatim}
+
+% ----------------------------------------------------------------------
+\section{Kịch bản TST-SUB-002: Chặn Nộp Bài Quá Hạn và Trùng Khung Hình}
+\label{a:tst_sub_002}
+
+Kịch bản kiểm thử thủ tục nộp bài \texttt{usp\_create\_submission} khi vi phạm khung thời gian hoặc nộp trùng khung hình (\texttt{BR-O-003, BR-P-006}):
+
+\begin{verbatim}
+-- TST-SUB-002: Test Submission Window & Frame Uniqueness
+DECLARE @new_sub_id INT;
+
+-- Trường hợp vi phạm: Nộp khung hình đã được nộp trong cuộc thi
+BEGIN TRY
+    EXEC submission.usp_create_submission
+        @contest_id = 1,
+        @category_id = 1,
+        @registration_id = 1,
+        @frame_id = 1, -- Frame số 1 đã nộp trước đó
+        @submission_title = N'Bình minh trên biển',
+        @scanned_image_uri = N'https://storage.cloud/submissions/sub_dup.jpg',
+        @actor_user_id = 1,
+        @submission_id = @new_sub_id OUTPUT;
+        
+    PRINT 'LỖI: Thủ tục không chặn khung hình trùng lặp!';
+END TRY
+BEGIN CATCH
+    PRINT 'TEST PASS: Đã chặn thành công khung hình nộp trùng trong cuộc thi.';
+    PRINT 'Lý do chặn: ' + ERROR_MESSAGE();
+END CATCH;
+\end{verbatim}
+
+% ----------------------------------------------------------------------
+\section{Kịch bản TST-JDG-001: Chặn Giám Khảo Chấm Điểm Hai Lần}
+\label{a:tst_jdg_001}
+
+Kịch bản kiểm tra ràng buộc duy nhất \texttt{UQ\_judging\_Evaluation\_round\_sub\_judge} (\texttt{BR-O-009}):
+
+\begin{verbatim}
+-- TST-JDG-001: Test Duplicate Judge Evaluation
+BEGIN TRY
+    -- Lần 1: Giám khảo 3 chấm bài thi 1 trong Vòng 1 (Thành công)
+    INSERT INTO judging.Evaluation (
+        round_id, submission_id, judge_user_id, evaluation_status, total_score
+    ) VALUES (1, 1, 3, 'SUBMITTED', 85.50);
+
+    -- Lần 2: Giám khảo 3 cố tình tạo thêm phiếu chấm cho bài thi 1 trong Vòng 1
+    INSERT INTO judging.Evaluation (
+        round_id, submission_id, judge_user_id, evaluation_status, total_score
+    ) VALUES (1, 1, 3, 'SUBMITTED', 90.00);
+
+    PRINT 'LỖI: Ràng buộc UQ không chặn phiếu chấm trùng!';
+END TRY
+BEGIN CATCH
+    PRINT 'TEST PASS: Đã chặn thành công phiếu chấm trùng lặp của Giám khảo.';
+    PRINT 'Lỗi bắt được: ' + ERROR_MESSAGE();
+END CATCH;
+\end{verbatim}

@@ -1,0 +1,157 @@
+% Chapter 3: Kiến trúc Tổng thể, Phân rã Module và Thiết kế AI
+
+Chương này trình bày toàn diện kiến trúc hệ thống của nền tảng quản lý cuộc thi nhiếp ảnh phim tích hợp trí tuệ nhân tạo. Kiến trúc được xây dựng dựa trên nguyên lý hướng module (\textit{Modular Architecture}), phân định rạch ròi ranh giới dữ liệu (\textit{Data Ownership}) và tuân thủ chặt chẽ mô hình quản trị AI có con người kiểm duyệt (\textit{Human-in-the-loop}). Đây là cầu nối chiến lược chuyển hóa các yêu cầu nghiệp vụ thành cấu trúc cơ sở dữ liệu quan hệ tối ưu.
+
+% ----------------------------------------------------------------------
+\section{Ranh giới và Sơ đồ Ngữ cảnh Hệ thống (System Boundary \& Context)}
+\label{s:c3_context}
+
+Hệ thống được thiết lập với ranh giới rõ ràng giữa các phân hệ nội bộ và các dịch vụ bên ngoài:
+
+\begin{itemize}
+    \item \textbf{Phạm vi bên trong hệ thống}:
+    \begin{itemize}
+        \item Quản trị tài khoản, danh tính và phân quyền vai trò (\textit{Identity \& Access}).
+        \item Cấu hình cuộc thi, hạng mục, lịch trình, vòng chấm và tiêu chí.
+        \item Quản lý đơn đăng ký tham gia và xét duyệt điều kiện của thí sinh.
+        \item Quản lý xuất xứ và siêu dữ liệu cuộn phim, khung hình phim.
+        \item Tiếp nhận bài thi, quản lý vòng đời bài dự thi.
+        \item Quy trình thẩm định bài thi và tiếp nhận cảnh báo từ AI.
+        \item Phân công giám khảo, quản lý tiến độ chấm thi và thu nhận phiếu điểm.
+        \item Tổng hợp điểm có trọng số, xếp hạng, gán giải thưởng và công bố kết quả.
+        \item Lưu trữ snapshot bất biến cho các tác phẩm đạt giải (\textit{Digital Archive}).
+        \item Ghi nhận nhật ký kiểm toán và cung cấp các góc nhìn báo cáo.
+    \end{itemize}
+    \item \textbf{Giao diện với các hệ thống bên ngoài}:
+    \begin{itemize}
+        \item \textbf{Dịch vụ Lưu trữ Đối tượng (Object Storage)}: Tiếp nhận và lưu trữ các tệp ảnh scan độ phân giải cao; trả về URI tham chiếu cho CSDL.
+        \item \textbf{Dịch vụ Trí tuệ Nhân tạo (AI Analysis Service)}: Tiếp nhận ảnh bài thi, thực hiện tính toán độ tương đồng và phát hiện ảnh AI; trả về bản ghi phân tích kèm độ tin cậy.
+        \item \textbf{Khách hàng Quản trị (SSMS 22)}: Kết nối trực tiếp vào SQL Server phục vụ công tác quản trị, bảo trì và kiểm thử.
+    \end{itemize}
+\end{itemize}
+
+% ----------------------------------------------------------------------
+\section{Các Nguyên lý Kiến trúc Cốt lõi (Architectural Principles)}
+\label{s:c3_principles}
+
+Kiến trúc hệ thống tuân thủ nghiêm ngặt 8 nguyên lý chỉ đạo:
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{0.22\linewidth}p{0.38\linewidth}p{0.34\linewidth}}
+\toprule
+\textbf{Nguyên lý} & \textbf{Nội dung nguyên lý} & \textbf{Tác động đến thiết kế CSDL} \\
+\midrule
+\textbf{AP-01: Tính Module hóa} \newline (\textit{Modularity}) & 
+Mỗi năng lực nghiệp vụ được đóng gói trong một module độc lập có ranh giới rõ ràng. & 
+Phân chia schema bảng theo phân hệ, xác định rõ bảng nào thuộc quyền sở hữu của module nào. \\
+\midrule
+\textbf{AP-02: Tính Truy vết} \newline (\textit{Traceability}) & 
+Mọi thực thể, bảng, cột và ràng buộc kỹ thuật đều phải ánh xạ ngược về một yêu cầu hoặc quy tắc nghiệp vụ. & 
+Xây dựng ma trận RTM đạt độ phủ 100\%, không có đối tượng CSDL thừa hoặc thiếu căn cứ. \\
+\midrule
+\textbf{AP-03: Con người Quyết định} \newline (\textit{Human Governance}) & 
+AI chỉ đóng vai trò tư vấn, con người (Ban tổ chức) chịu trách nhiệm phê duyệt và ra quyết định cuối cùng. & 
+Tách biệt bảng ghi kết quả AI (\texttt{ai\_analysis\_results}) khỏi bảng quyết định thẩm định (\texttt{verification\_cases}). \\
+\midrule
+\textbf{AP-04: Toàn vẹn Dữ liệu} \newline (\textit{Data Integrity First}) & 
+Dữ liệu xuất xứ, chấm thi và giải thưởng phải được bảo vệ tối đa bằng các ràng buộc quan hệ. & 
+Thiết lập hệ thống khóa chính, khóa ngoại, UNIQUE, CHECK và thủ tục lưu trữ kiểm soát giao dịch. \\
+\midrule
+\textbf{AP-05: Rõ ràng Vòng đời} \newline (\textit{Explicit Lifecycle}) & 
+Mọi trạng thái nghiệp vụ phải được định nghĩa rõ ràng, minh bạch và có thể kiểm toán. & 
+Các bảng giao dịch đều có cột trạng thái (\texttt{status}) kiểm soát bằng CHECK constraint và lưu vết thời gian. \\
+\midrule
+\textbf{AP-06: Bảo tồn Di sản} \newline (\textit{Historical Preservation}) & 
+Dữ liệu tác phẩm đoạt giải phải được bảo toàn nguyên vẹn dù cấu hình cuộc thi gốc có thay đổi trong tương lai. & 
+Thiết kế kho lưu trữ số dưới dạng bản chụp lịch sử (\textit{Snapshot}) độc lập và cấm xóa vật lý (\textit{Restricted Delete}). \\
+\midrule
+\textbf{AP-07: Khả năng Vận hành} \newline (\textit{Operability}) & 
+Hệ thống dễ dàng đóng gói, triển khai và kiểm thử lặp lại trên môi trường học thuật và doanh nghiệp. & 
+Đóng gói SQL Server bằng Docker Compose, quản trị trực tiếp qua SSMS 22 và có bộ script kiểm thử tự động. \\
+\midrule
+\textbf{AP-08: An toàn theo Thiết kế} \newline (\textit{Security by Design}) & 
+Mọi thao tác dữ liệu phải được phân quyền theo vai trò (RBAC) và lưu vết người thực hiện. & 
+Tích hợp bảng User-Role, cột \texttt{actor\_user\_id} và bảng \texttt{audit\_logs}. \\
+\bottomrule
+\end{tabular}
+\caption{Các nguyên lý kiến trúc cốt lõi}
+\label{tab:c3_principles}
+\end{table}
+
+% ----------------------------------------------------------------------
+\section{Phân rã Module Hệ thống và Quyền Sở hữu Dữ liệu}
+\label{s:c3_modules}
+
+Toàn bộ hệ thống được phân rã thành 11 phân hệ chức năng (\textit{Modules}) với quyền sở hữu dữ liệu (\textit{Data Ownership}) độc quyền:
+
+\begin{table}[htbp]
+\centering
+\scriptsize
+\begin{tabular}{p{0.18\linewidth}p{0.32\linewidth}p{0.25\linewidth}p{0.18\linewidth}}
+\toprule
+\textbf{Phân hệ Module} & \textbf{Trách nhiệm nghiệp vụ} & \textbf{Dữ liệu sở hữu (Write)} & \textbf{Dữ liệu tham chiếu (Read)} \\
+\midrule
+\textbf{1. Identity \& Access} & Quản lý danh tính, tài khoản, vai trò và phân quyền. & \texttt{users}, \texttt{roles}, \texttt{user\_roles} & \texttt{audit\_logs} \\
+\textbf{2. Contest Management} & Cấu hình cuộc thi, hạng mục, vòng chấm, tiêu chí và giải thưởng. & \texttt{contests}, \texttt{categories}, \texttt{rounds}, \texttt{criteria}, \texttt{awards} & \texttt{users} \\
+\textbf{3. Registration} & Tiếp nhận đăng ký tham gia và xét duyệt điều kiện thí sinh. & \texttt{registrations} & \texttt{contests}, \texttt{participant\_profiles} \\
+\textbf{4. Film Asset Management} & Quản lý nguồn gốc vật lý: cuộn phim, khung hình, thông số lab. & \texttt{film\_rolls}, \texttt{film\_frames} & \texttt{film\_stocks}, \texttt{cameras}, \texttt{lenses} \\
+\textbf{5. Submission Management} & Tiếp nhận bài thi, liên kết khung hình với hạng mục thi. & \texttt{submissions} & \texttt{registrations}, \texttt{film\_frames} \\
+\textbf{6. Verification} & Thẩm định tính hợp lệ bài thi, xem xét cờ cảnh báo AI. & \texttt{verification\_cases} & \texttt{submissions}, \texttt{ai\_analysis\_results} \\
+\textbf{7. Judging} & Phân công giám khảo, tiếp nhận phiếu chấm và điểm tiêu chí. & \texttt{judge\_assignments}, \texttt{evaluations}, \texttt{evaluation\_scores} & \texttt{submissions}, \texttt{criteria}, \texttt{users} \\
+\textbf{8. Result \& Award} & Tổng hợp điểm, xếp hạng chung cuộc, gán giải thưởng và công bố. & \texttt{results}, \texttt{award\_assignments} & \texttt{evaluations}, \texttt{awards} \\
+\textbf{9. Digital Archive} & Lưu trữ snapshot bất biến của các tác phẩm đoạt giải. & \texttt{archive\_items} & \texttt{results}, \texttt{submissions}, \texttt{film\_frames} \\
+\textbf{10. AI \& Analytics} & Lưu trữ kết quả phân tích AI (trùng lặp, phát hiện AI, gắn thẻ). & \texttt{ai\_analysis\_results} & \texttt{submissions} \\
+\textbf{11. Audit \& Reporting} & Ghi nhật ký kiểm toán và cung cấp góc nhìn báo cáo hiệu năng. & \texttt{audit\_logs}, \texttt{reporting\_views} & Toàn bộ các bảng trong CSDL \\
+\bottomrule
+\end{tabular}
+\caption{Phân rã 11 phân hệ module và ma trận sở hữu dữ liệu}
+\label{tab:c3_modules}
+\end{table}
+
+% ----------------------------------------------------------------------
+\section{Kiến trúc Logic Đa tầng và Kiến trúc Triển khai}
+\label{s:c3_logical_deployment}
+
+\subsection{Kiến trúc Logic Đa tầng (Layered Logical Architecture)}
+Hệ thống được tổ chức theo mô hình kiến trúc phân tầng chuẩn mực:
+\begin{enumerate}
+    \item \textbf{Tầng Khách hàng (Client Tier)}: Ứng dụng Web / Mobile phục vụ 4 nhóm tác nhân (Thí sinh, Ban tổ chức, Giám khảo, Quản trị viên).
+    \item \textbf{Tầng Ứng dụng \& Nghiệp vụ (Application / Business Tier)}: Đóng gói các dịch vụ nghiệp vụ độc lập (\textit{Contest Service, Submission Service, Judging Service, AI Integration Adapter}).
+    \item \textbf{Tầng Truy cập Dữ liệu (Data Access Tier)}: Thực thi các giao dịch có kiểm soát, điều phối thủ tục lưu trữ (\textit{Stored Procedures}) và xử lý ánh xạ đối tượng.
+    \item \textbf{Tầng Cơ sở Dữ liệu (Data Tier)}: Hệ quản trị Microsoft SQL Server đóng vai trò là nguồn chân lý dữ liệu duy nhất (\textit{System of Record}).
+\end{enumerate}
+
+\subsection{Kiến trúc Triển khai Mục tiêu (Target Deployment View)}
+Hệ thống được đóng gói để triển khai độc lập và nhất quán trên nền tảng container:
+\begin{itemize}
+    \item \textbf{Máy chủ Host}: Chạy Docker Engine và công cụ quản trị SQL Server Management Studio (SSMS 22).
+    \item \textbf{SQL Server Container}: Chạy image chính thức \texttt{mcr.microsoft.com/mssql/server:2022-CU24-ubuntu-22.04}, kết nối qua cổng TCP 1433 với ổ đĩa gắn ngoài (\textit{Persistent Volume}) đảm bảo an toàn dữ liệu khi khởi động lại container.
+    \item \textbf{Dịch vụ Đám mây Ngoại vi}: Cloud Object Storage (lưu trữ tệp ảnh nhị phân) và AI Analysis Engine (cung cấp API thẩm định).
+\end{itemize}
+
+% ----------------------------------------------------------------------
+\section{Thiết kế Phân hệ Tích hợp AI (AI Module Integration Design)}
+\label{s:c3_ai_design}
+
+Phân hệ AI được thiết kế giải quyết 3 bài toán đặc thù của cuộc thi nhiếp ảnh phim:
+
+\begin{enumerate}
+    \item \textbf{Phát hiện ảnh trùng lặp (Image Similarity Detection)}: Sử dụng mạng nơ-ron tích chập (CNN / Perceptual Hashing) trích xuất đặc trưng hình ảnh và so sánh độ tương đồng góc cosine (\textit{cosine similarity}) với toàn bộ kho ảnh dự thi nhằm phát hiện các bài thi nộp trùng hoặc vi phạm bản quyền.
+    \item \textbf{Phát hiện ảnh tạo bởi AI (AI-generated Image Detection)}: Phân tích các bất thường trong cấu trúc hạt phim (\textit{grain artifact}), quang sai ống kính (\textit{chromatic aberration}) và dải tần số không gian để phát hiện ảnh giả mạo do các mô hình tạo sinh (Midjourney, DALL-E, Stable Diffusion) tạo ra.
+    \item \textbf{Tự động gắn thẻ \& Phân loại (Auto-Tagging)}: Nhận diện nội dung bối cảnh, chủ đề để hỗ trợ phân loại sơ bộ và phục vụ công tác tra cứu kho lưu trữ.
+\end{enumerate}
+
+\paragraph{Mô hình Quản trị Dữ liệu AI (AI Data Model \& Governance)}
+Dữ liệu phân tích AI được lưu trữ trong bảng chuẩn hóa \texttt{ai\_analysis\_results} với cấu trúc:
+\begin{itemize}
+    \item \texttt{submission\_id}: Mã bài thi được phân tích.
+    \item \texttt{analysis\_type}: Loại phân tích (\texttt{SIMILARITY\_CHECK}, \texttt{AI\_GENERATED\_CHECK}, \texttt{AUTO\_TAGGING}).
+    \item \texttt{outcome\_code}: Kết quả đánh giá sơ bộ (\texttt{FLAGGED\_SUSPICIOUS}, \texttt{CLEAR}, \texttt{INCONCLUSIVE}).
+    \item \texttt{confidence\_score}: Độ tin cậy tính toán (từ $0.0000$ đến $1.0000$).
+    \item \texttt{model\_name\_version}: Tên và phiên bản mô hình AI sử dụng.
+    \item \texttt{related\_submission\_id}: Mã bài thi bị nghi ngờ trùng lặp (nếu có).
+    \item \texttt{evidence\_payload}: Chuỗi JSON chứa thông số kỹ thuật chi tiết làm bằng chứng cho Ban tổ chức.
+\end{itemize}
+Quy tắc bất biến: \textit{Kết quả AI không bao giờ được phép trực tiếp thay đổi trạng thái bài thi thành Verified hay Rejected nếu không có chữ ký xác nhận của Ban tổ chức trong bảng \texttt{verification\_cases}}.

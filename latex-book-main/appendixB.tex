@@ -1,0 +1,51 @@
+% Appendix B: Bảng Tra cứu Yêu cầu Chức năng & Quy tắc Nghiệp vụ
+
+Phụ lục này cung cấp danh mục tra cứu nhanh toàn văn 31 Yêu cầu Chức năng (\textit{FR}) và 29 Quy tắc Nghiệp vụ (\textit{BR}) phục vụ công tác đối soát và phản biện đồ án.
+
+% ----------------------------------------------------------------------
+\section{Bảng Tra cứu 31 Yêu cầu Chức năng (FR)}
+\label{a:fr_catalog}
+
+\begin{table}[htbp]
+\centering
+\scriptsize
+\begin{tabular}{p{0.15\linewidth}p{0.2\linewidth}p{0.6\linewidth}}
+\toprule
+\textbf{Mã FR} & \textbf{Phân hệ} & \textbf{Tóm tắt nội dung yêu cầu chức năng} \\
+\midrule
+\textbf{FR-001} & Contest Management & Quản trị vòng đời cuộc thi (tạo, sửa, phát hành, mở, đóng, khóa kết quả). \\
+\textbf{FR-002} & Contest Management & Thiết lập các hạng mục thi (Categories) độc lập trong cuộc thi. \\
+\textbf{FR-003} & Contest Management & Thiết lập một hoặc nhiều vòng chấm thi (Judging Rounds) cho từng hạng mục. \\
+\textbf{FR-004} & Contest Management & Định nghĩa tiêu chí chấm điểm (Criteria) có thang điểm và trọng số theo vòng. \\
+\textbf{FR-005} & Contest Management & Thiết lập cơ cấu giải thưởng (Awards) theo từng hạng mục thi. \\
+\textbf{FR-006} & Registration & Quản lý hồ sơ cá nhân thí sinh (Participant Profile). \\
+\textbf{FR-007} & Registration & Tiếp nhận đơn đăng ký tham gia cuộc thi của thí sinh trong thời hạn. \\
+\textbf{FR-008} & Registration & Chặn đăng ký trùng lặp của một thí sinh trong cùng một cuộc thi. \\
+\textbf{FR-009} & Registration & Ban tổ chức xét duyệt hoặc từ chối đơn đăng ký tham gia. \\
+\textbf{FR-010} & Film Asset & Quản lý cuộn phim vật lý và thông số hóa nghiệm (Film Stock, Lab). \\
+\textbf{FR-011} & Film Asset & Quản lý khung hình phim (Film Frames) và thông số chụp (Camera, Lens). \\
+\textbf{FR-012} & Film Asset & Chặn trùng lặp số thứ tự khung hình trong cùng một cuộn phim. \\
+\textbf{FR-013} & Submission & Liên kết khung hình phim hợp lệ để nộp vào hạng mục cuộc thi. \\
+\textbf{FR-014} & Submission & Tự động từ chối các bài thi nộp ngoài khung thời gian quy định. \\
+\textbf{FR-015} & Submission & Chặn một khung hình bị nộp trùng lặp nhiều lần trong cùng một cuộc thi. \\
+\textbf{FR-016} & Submission & Lưu trữ tệp ảnh scan, lời tựa nghệ thuật và siêu dữ liệu bài thi. \\
+\textbf{FR-017} & Verification & Thẩm định tính đầy đủ và hợp lệ của siêu dữ liệu bài dự thi. \\
+\textbf{FR-018} & Verification / AI & Lưu trữ kết quả phân tích AI (độ tương đồng, phát hiện ảnh AI) độc lập. \\
+\textbf{FR-019} & Verification & Ban tổ chức phê duyệt, từ chối hoặc yêu cầu giải trình bài thi. \\
+\textbf{FR-020} & Judging & Phân công giám khảo vào các vòng chấm thi cụ thể. \\
+\textbf{FR-021} & Judging & Chặn giám khảo chấm điểm nhiều lần cho cùng một bài thi trong cùng một vòng. \\
+\textbf{FR-022} & Judging & Giám khảo nhập điểm theo tiêu chí và ghi nhận xét chuyên môn. \\
+\textbf{FR-023} & Judging & Tự động tính toán tổng điểm phiếu chấm có trọng số. \\
+\textbf{FR-024} & Judging & Hỗ trợ quy trình chấm thi đa vòng (Sơ khảo $\rightarrow$ Chung khảo). \\
+\textbf{FR-025} & Result & Tổng hợp điểm, xếp hạng tự động và khóa kết quả chung cuộc. \\
+\textbf{FR-026} & Result & Ban tổ chức gán giải thưởng chính thức cho các bài thi đạt thứ hạng cao. \\
+\textbf{FR-027} & Result & Công bố bảng kết quả chính thức của cuộc thi. \\
+\textbf{FR-028} & Digital Archive & Tạo bản chụp lưu trữ di sản số (Snapshot) cho các tác phẩm đoạt giải. \\
+\textbf{FR-029} & Audit & Duy trì nhật ký kiểm toán (Audit Log) cho các giao dịch thay đổi trạng thái. \\
+\textbf{FR-030} & Identity & Thực thi phân quyền truy cập theo vai trò (RBAC). \\
+\textbf{FR-031} & Reporting & Cung cấp các khung nhìn tra cứu hàng đợi duyệt bài, chấm thi và lưu trữ. \\
+\bottomrule
+\end{tabular}
+\caption{Bảng tra cứu danh mục 31 Yêu cầu Chức năng}
+\label{tab:a_fr_catalog}
+\end{table}

@@ -1,0 +1,96 @@
+% Chapter 7: Nhật ký Quyết định Thiết kế, Phản biện và Đóng băng Dự án
+
+Chương này tổng kết toàn bộ nhật ký các quyết định thiết kế quan trọng (\textit{Design Decision Log}), giải đáp 15 câu hỏi phản biện chuyên sâu khi bảo vệ đồ án, và báo cáo trạng thái đóng băng dự án (\textit{Project Freeze}) cùng định hướng phát triển trong tương lai.
+
+% ----------------------------------------------------------------------
+\section{Nhật ký Quyết định Thiết kế (Design Decision Log)}
+\label{s:c7_decision_log}
+
+Mọi quyết định kiến trúc và mô hình hóa CSDL đều được cân nhắc kỹ lưỡng giữa các phương án thay thế:
+
+\begin{table}[htbp]
+\centering
+\scriptsize
+\begin{tabular}{p{0.1\linewidth}p{0.22\linewidth}p{0.25\linewidth}p{0.35\linewidth}}
+\toprule
+\textbf{Mã DD} & \textbf{Vấn đề thiết kế} & \textbf{Phương án lựa chọn} & \textbf{Căn cứ \& Tác động kỹ thuật} \\
+\midrule
+\textbf{DD-001} & Mô hình Người dùng \& Vai trò & Quan hệ $N:M$ thông qua bảng kết hợp \texttt{UserRole} & Một người dùng thực tế có thể vừa là Thí sinh vừa là Giám khảo ở các cuộc thi khác nhau. \\
+\textbf{DD-002} & Biểu diễn Thí sinh & Tách bảng \texttt{ParticipantProfile} quan hệ 1:1 với \texttt{UserAccount} & Thí sinh có các thuộc tính đặc thù (portfolio, quốc gia, tiểu sử) mà các vai trò khác không cần. \\
+\textbf{DD-003} & Tái sử dụng Khung hình phim & Cho phép nộp khung hình vào nhiều cuộc thi khác nhau, nhưng cấm nộp trùng trong cùng 1 cuộc thi & Tôn trọng giá trị sáng tạo lâu dài của nhiếp ảnh gia, đồng thời bảo đảm tính công bằng trong cuộc thi. \\
+\textbf{DD-004} & Cấp độ gắn Tiêu chí chấm & Tiêu chí gắn trực tiếp vào Vòng chấm (\texttt{JudgingRound}) & Mỗi vòng (Sơ khảo, Chung khảo) có bộ tiêu chí và trọng số hoàn toàn khác nhau. \\
+\textbf{DD-005} & Mô hình hóa Kho di sản số & Lưu trữ bản chụp lịch sử (\textit{Snapshot JSON}) trong \texttt{ArchiveItem} & Bảo tồn nguyên vẹn thông tin tác phẩm đoạt giải dù tài khoản hoặc cấu hình cuộc thi gốc bị sửa đổi. \\
+\textbf{DD-006} & Khóa Kết quả cuộc thi & Lưu trữ bản ghi kết quả cố định trong bảng \texttt{Result} thay vì tính động & Cần bản ghi kết quả chính thức có thời gian khóa và chữ ký số để trao giải và kiểm toán. \\
+\textbf{DD-007} & Lưu trữ Tệp ảnh & Lưu đường dẫn URI và mã băm SHA-256 trong CSDL, ảnh lưu trên Object Storage & Tránh phình to dung lượng CSDL, tăng tốc độ truy vấn và sao lưu phục hồi. \\
+\textbf{DD-008} & Chính sách Xóa dữ liệu & Cấm xóa vật lý (\texttt{NO ACTION}), sử dụng chuyển trạng thái nghiệp vụ & Bảo vệ toàn vẹn lịch sử chấm thi, tranh chấp và kiểm toán. \\
+\bottomrule
+\end{tabular}
+\caption{Nhật ký quyết định thiết kế cốt lõi (Design Decision Log)}
+\label{tab:c7_decision_log}
+\end{table}
+
+% ----------------------------------------------------------------------
+\section{Giải đáp 15 Câu hỏi Phản biện Thiết kế Chuyên sâu}
+\label{s:c7_defense_qa}
+
+Dưới đây là câu trả lời chuẩn mực cho 15 câu hỏi thiết kế then chốt mà Hội đồng phản biện quan tâm:
+
+\begin{enumerate}
+    \item \textbf{Thí sinh là thực thể riêng hay chỉ là User + Role?}
+    $\rightarrow$ \textit{Trả lời}: Được thiết kế là một thực thể con (\texttt{ParticipantProfile}) có quan hệ 1:1 với \texttt{UserAccount}. Điều này giúp tách biệt thông tin tài khoản xác thực khỏi hồ sơ nghệ thuật cá nhân của thí sinh.
+    
+    \item \textbf{Một người dùng có thể đồng thời có nhiều vai trò không?}
+    $\rightarrow$ \textit{Trả lời}: Có. Hệ thống sử dụng bảng kết hợp \texttt{UserRole} để một người dùng có thể là Thí sinh cuộc thi này nhưng làm Giám khảo cuộc thi khác.
+    
+    \item \textbf{Số thứ tự khung hình (Frame Number) là duy nhất trong phạm vi nào?}
+    $\rightarrow$ \textit{Trả lời}: Duy nhất trong phạm vi từng cuộn phim (\texttt{roll\_id, frame\_number}), phù hợp với bản chất vật lý của cuộn phim (ví dụ: khung 1 đến 36).
+    
+    \item \textbf{Một khung hình có được dùng cho nhiều cuộc thi không?}
+    $\rightarrow$ \textit{Trả lời}: Được phép nộp cho các cuộc thi khác nhau ở các thời điểm khác nhau, nhưng bị chặn không được nộp quá 1 lần trong cùng một cuộc thi (\texttt{UQ (contest\_id, frame\_id)}).
+    
+    \item \textbf{Film Stock / Máy ảnh / Ống kính là Master Data hay Free-text?}
+    $\rightarrow$ \textit{Trả lời}: Được chuẩn hóa thành các bảng danh mục tham chiếu (\textit{Master Reference Data}) để đảm bảo tính nhất quán dữ liệu, đồng thời cho phép lưu ghi chú tùy biến của thí sinh.
+    
+    \item \textbf{Tiêu chí chấm điểm (Criteria) thuộc về Contest, Category hay Judging Round?}
+    $\rightarrow$ \textit{Trả lời}: Thuộc về \texttt{JudgingRound}. Thiết kế này cho phép mỗi vòng chấm thi có bộ tiêu chí và trọng số riêng biệt (ví dụ: vòng 1 chấm kỹ thuật, vòng 2 chấm cảm xúc nghệ thuật).
+    
+    \item \textbf{Phân công giám khảo (Judge Assignment) được gắn ở cấp độ nào?}
+    $\rightarrow$ \textit{Trả lời}: Gắn theo \texttt{JudgingRound} (\texttt{round\_id, judge\_user\_id}), đảm bảo giám khảo chỉ nhìn thấy và chấm các bài thi thuộc vòng được phân công.
+    
+    \item \textbf{Điểm tổng hợp được lưu cố định hay tính động?}
+    $\rightarrow$ \textit{Trả lời}: Trong quá trình chấm thi, điểm được cập nhật tự động bằng Trigger. Khi cuộc thi kết thúc, điểm chung cuộc được lưu cố định (\textit{persisted}) vào bảng \texttt{Result} qua thủ tục \texttt{usp\_finalize\_results\_for\_round}.
+    
+    \item \textbf{Kết quả AI được lưu trữ và kiểm soát như thế nào?}
+    $\rightarrow$ \textit{Trả lời}: Lưu trữ độc lập trong bảng \texttt{ai\_analysis\_results} kèm mã mô hình, phiên bản, độ tin cậy ($0.0000 - 1.0000$) và dữ liệu bằng chứng JSON.
+    
+    \item \textbf{AI có quyền tự động loại bài thi không?}
+    $\rightarrow$ \textit{Trả lời}: Tuyệt đối không. AI chỉ cắm cờ cảnh báo (\textit{Flag}). Ban tổ chức là người chịu trách nhiệm phê duyệt cuối cùng trong \texttt{verification\_cases}.
+    
+    \item \textbf{Kho lưu trữ số (Digital Archive) lưu Reference hay Snapshot?}
+    $\rightarrow$ \textit{Trả lời}: Lưu \textbf{Snapshot JSON}. Đảm bảo lịch sử tác phẩm đoạt giải không bị thay đổi dù sau này thí sinh đổi tên hay cấu hình cuộc thi gốc bị điều chỉnh.
+    
+    \item \textbf{Xóa User / Contest / Submission có được CASCADE không?}
+    $\rightarrow$ \textit{Trả lời}: Tuyệt đối cấm CASCADE. Toàn bộ thiết lập \texttt{ON DELETE NO ACTION} để bảo vệ toàn vẹn lịch sử.
+    
+    \item \textbf{Quy tắc nào enforce bằng CSDL, quy tắc nào ở tầng ứng dụng?}
+    $\rightarrow$ \textit{Trả lời}: Tính toàn vẹn cấu trúc và duy nhất enforce bằng PK/FK/UNIQUE/CHECK. Các quy tắc nghiệp vụ động theo thời gian được kiểm soát bằng Stored Procedures.
+    
+    \item \textbf{Chiến lược Indexing thực tế là gì?}
+    $\rightarrow$ \textit{Trả lời}: Đánh Non-clustered Index có cột INCLUDE phục vụ trực tiếp các truy vấn hàng đợi lọc bài thi, chấm thi và tra cứu kho lưu trữ.
+    
+    \item \textbf{Chứng minh các quan hệ chính đạt 3NF như thế nào?}
+    $\rightarrow$ \textit{Trả lời}: Đã phân tích phụ thuộc hàm tường minh cho các quan hệ \texttt{FilmFrame}, \texttt{Submission}, \texttt{EvaluationScore}, \texttt{Result} ở Chương 4, chứng minh không có phụ thuộc bộ phận và phụ thuộc bắc cầu.
+\end{enumerate}
+
+% ----------------------------------------------------------------------
+\section{Tổng kết và Hướng Phát triển Mở rộng}
+\label{s:c7_conclusion_future}
+
+Đồ án đã hoàn thành trọn vẹn mục tiêu nghiên cứu và thiết kế hệ thống cơ sở dữ liệu chuyên sâu:
+\begin{itemize}
+    \item \textbf{Tính đầy đủ}: Bao phủ 100\% vòng đời cuộc thi nhiếp ảnh phim với 11 phân hệ và 24 thực thể quan hệ.
+    \item \textbf{Tính toàn vẹn \& Tin cậy}: Thiết kế CSDL đạt chuẩn hóa 3NF, bảo vệ bằng hệ thống ràng buộc chặt chẽ và bộ thủ tục xử lý giao dịch.
+    \item \textbf{Tính thực thi}: Cơ sở dữ liệu đã được triển khai và kiểm thử tự động 10/10 test cases thành công trên Dockerized Microsoft SQL Server.
+\end{itemize}
+
+Trong tương lai, hệ thống có thể mở rộng tích hợp xác thực chứng chỉ số Blockchain (NFT/Provenance Verification) cho bản phim âm bản gốc và xây dựng không gian triển lãm thực tế ảo (VR/3D Virtual Gallery) khai thác trực tiếp từ kho di sản số \texttt{Digital Archive}.

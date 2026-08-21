@@ -1,0 +1,105 @@
+% Chapter 6: Ma trận Kiểm chứng và Kịch bản Walkthrough Nghiệp vụ
+
+Chương này cung cấp bộ công cụ kiểm chứng chất lượng và tính nhất quán toàn diện của đồ án. Bằng cách thiết lập Ma trận Truy vết Yêu cầu (\textit{Requirement Traceability Matrix - RTM}), Ma trận Quyền hạn Thao tác Dữ liệu (\textit{CRUD Matrix}), Ma trận Thực thi Quy tắc Nghiệp vụ (\textit{Rule-to-Enforcement Matrix}) và diễn giải 7 kịch bản nghiệp vụ thực tế (\textit{Scenario Walkthrough}), đồ án chứng minh rằng 100\% các yêu cầu và quy tắc nghiệp vụ đều được hiện thực hóa và bảo vệ toàn vẹn trong cơ sở dữ liệu.
+
+% ----------------------------------------------------------------------
+\section{Ma trận Truy vết Yêu cầu Toàn diện (Requirement Traceability Matrix)}
+\label{s:c6_rtm}
+
+Ma trận RTM (Bảng~\ref{tab:c6_rtm}) liên kết xuyên suốt từ Yêu cầu chức năng / Quy tắc nghiệp vụ $\rightarrow$ Luồng nghiệp vụ $\rightarrow$ Phân hệ kiến trúc $\rightarrow$ Thực thể ý niệm $\rightarrow$ Bảng vật lý và Ràng buộc kiểm thử:
+
+\begin{table}[htbp]
+\centering
+\scriptsize
+\begin{tabular}{p{0.14\linewidth}p{0.1\linewidth}p{0.16\linewidth}p{0.18\linewidth}p{0.18\linewidth}p{0.14\linewidth}}
+\toprule
+\textbf{Yêu cầu / BR} & \textbf{Luồng / UC} & \textbf{Phân hệ Module} & \textbf{Thực thể Logic} & \textbf{Bảng vật lý / Đối tượng} & \textbf{Kiểm thử / Ràng buộc} \\
+\midrule
+FR-007, FR-008, BR-P-002 & F02 / UC-02 & Registration & \texttt{Registration} & \texttt{participant.Registration} & \texttt{UQ (contest, participant)}, \texttt{TST-REG-001} \\
+FR-010, FR-011, BR-P-005 & F03 / UC-03 & Film Asset & \texttt{FilmRoll}, \texttt{FilmFrame} & \texttt{film.FilmRoll}, \texttt{film.FilmFrame} & \texttt{UQ (roll, frame\_number)}, \texttt{TST-FRAME-001} \\
+FR-013, FR-015, BR-P-006 & F04 / UC-04 & Submission & \texttt{Submission} & \texttt{submission.Submission}, \texttt{usp\_create\_submission} & \texttt{UQ (contest, frame\_id)}, \texttt{TST-SUB-001, 002} \\
+FR-017, FR-018, BR-O-006 & F05 / UC-05 & Verification & \texttt{VerificationCase}, \texttt{AIAnalysisResult} & \texttt{verification.VerificationCase}, \texttt{AIAnalysisResult} & \texttt{CK status}, \texttt{TST-VER-001} \\
+FR-020, FR-021, BR-O-009 & F06 / UC-06 & Judging & \texttt{JudgeAssignment}, \texttt{Evaluation} & \texttt{judging.JudgeAssignment}, \texttt{Evaluation} & \texttt{UQ (round, sub, judge)}, \texttt{TST-JDG-001, 002} \\
+FR-025, FR-026, BR-O-010 & F07 / UC-07 & Result \& Award & \texttt{Result}, \texttt{AwardAssignment} & \texttt{result.Result}, \texttt{usp\_finalize\_results} & \texttt{UQ rank}, \texttt{TST-RES-001} \\
+FR-028, BR-O-011, BR-P-017 & F08 / UC-08 & Digital Archive & \texttt{ArchiveItem} & \texttt{archive.ArchiveItem} & \texttt{Snapshot integrity}, \texttt{TST-ARC-001} \\
+FR-029 & All & Audit & \texttt{AuditLog} & \texttt{audit.AuditLog} & \texttt{Triggers}, \texttt{TST-AUD-001} \\
+FR-030, BR-P-001 & All & Identity & \texttt{UserAccount}, \texttt{UserRole} & \texttt{iam.UserAccount}, \texttt{iam.UserRole} & \texttt{UQ email, username} \\
+\bottomrule
+\end{tabular}
+\caption{Ma trận truy vết yêu cầu toàn diện (RTM)}
+\label{tab:c6_rtm}
+\end{table}
+
+% ----------------------------------------------------------------------
+\section{Ma trận Quyền hạn Thao tác Dữ liệu (CRUD Matrix)}
+\label{s:c6_crud}
+
+Ma trận CRUD (Bảng~\ref{tab:c6_crud}) phân định quyền Tạo mới (C), Đọc (R), Cập nhật (U), Xóa (D) của từng phân hệ đối với các bảng CSDL:
+
+\begin{table}[htbp]
+\centering
+\scriptsize
+\begin{tabular}{p{0.25\linewidth}p{0.22\linewidth}p{0.25\linewidth}p{0.18\linewidth}}
+\toprule
+\textbf{Phân hệ Module} & \textbf{Quyền Tạo mới (Create)} & \textbf{Quyền Đọc (Read)} & \textbf{Quyền Cập nhật (Update)} \\
+\midrule
+\textbf{Identity \& Access} & \texttt{UserAccount}, \texttt{UserRole} & \texttt{UserAccount}, \texttt{Role}, \texttt{UserRole} & \texttt{UserAccount}, \texttt{UserRole} \\
+\textbf{Contest Management} & \texttt{Contest}, \texttt{Category}, \texttt{Round}, \texttt{Criterion}, \texttt{Award} & Các bảng cấu hình cuộc thi & Các bảng cấu hình cuộc thi \\
+\textbf{Registration} & \texttt{Registration} & \texttt{Contest}, \texttt{ParticipantProfile} & \texttt{Registration} \\
+\textbf{Film Asset Management} & \texttt{FilmRoll}, \texttt{FilmFrame} & Danh mục máy ảnh, ống kính, lab & \texttt{FilmRoll}, \texttt{FilmFrame} \\
+\textbf{Submission Management} & \texttt{Submission} & \texttt{Registration}, \texttt{FilmFrame} & \texttt{Submission} (trạng thái) \\
+\textbf{Verification} & \texttt{VerificationCase}, \texttt{AIAnalysisResult} & \texttt{Submission}, \texttt{AIAnalysisResult} & \texttt{VerificationCase} \\
+\textbf{Judging} & \texttt{JudgeAssignment}, \texttt{Evaluation} & Bài thi, vòng chấm, tiêu chí & \texttt{JudgeAssignment}, \texttt{Evaluation} \\
+\textbf{Result \& Award} & \texttt{Result}, \texttt{AwardAssignment} & \texttt{Evaluation}, \texttt{AwardDefinition} & \texttt{Result} (trạng thái) \\
+\textbf{Digital Archive} & \texttt{ArchiveItem} & \texttt{Result}, \texttt{Submission}, \texttt{FilmFrame} & Không sửa đổi (Bất biến) \\
+\textbf{Audit \& Reporting} & \texttt{AuditLog} & Toàn bộ các bảng CSDL & Không cập nhật \\
+\bottomrule
+\end{tabular}
+\caption{Ma trận phân quyền thao tác dữ liệu (CRUD Matrix)}
+\label{tab:c6_crud}
+\end{table}
+
+% ----------------------------------------------------------------------
+\section{Kiểm chứng 7 Kịch bản Nghiệp vụ Thực tế (Scenario Walkthrough)}
+\label{s:c6_scenarios}
+
+Hệ thống thiết kế đã được kiểm chứng thành công qua 7 kịch bản nghiệp vụ phức tạp:
+
+\begin{enumerate}
+    \item \textbf{Kịch bản S1 -- Nộp bài Hợp lệ (Normal Submission)}: Thí sinh nộp khung hình số 12 của cuộn Kodak Portra 400 vào cuộc thi trước hạn chót. Thủ tục \texttt{usp\_create\_submission} kiểm tra hợp lệ và khởi tạo bản ghi \texttt{Submission} ở trạng thái \texttt{PendingVerification}.
+    \item \textbf{Kịch bản S2 -- Xử lý Cảnh báo AI Trùng lặp (Duplicate / AI Flag Review)}: Module AI phân tích ảnh và ghi nhận cờ \texttt{FLAGGED\_SUSPICIOUS} kèm độ tin cậy $0.9450$ vào bảng \texttt{AIAnalysisResult}. Ban tổ chức mở hàng đợi kiểm duyệt, đối soát thủ công và đưa ra quyết định từ chối (\texttt{Rejected}) qua thủ tục \texttt{usp\_record\_verification\_decision}.
+    \item \textbf{Kịch bản S3 -- Chặn Nộp bài Quá hạn hoặc Sai lệch Xuất xứ (Late/Invalid Submission)}: Thí sinh cố tình nộp bài khi thời gian nộp bài đã đóng (\texttt{submission\_close\_at}), hoặc nộp khung hình không thuộc quyền sở hữu của mình. Thủ tục \texttt{usp\_create\_submission} tự động bắt lỗi và hủy giao dịch (\texttt{ROLLBACK}).
+    \item \textbf{Kịch bản S4 -- Chấm thi Đa vòng Độc lập (Multi-round Judging)}: Bài thi vượt qua Vòng Sơ khảo được đưa vào Vòng Chung khảo. Điểm số của Vòng 1 và Vòng 2 được lưu trữ tại các bản ghi \texttt{Evaluation} riêng biệt theo từng \texttt{round\_id}, hoàn toàn không bị ghi đè.
+    \item \textbf{Kịch bản S5 -- Đảm bảo Tính Duy nhất của Phiếu Chấm (Judge Uniqueness)}: Một giám khảo cố tình nộp phiếu chấm thứ hai cho cùng một bài thi trong cùng một vòng. Ràng buộc \texttt{UQ\_judging\_Evaluation\_round\_sub\_judge} lập tức kích hoạt lỗi vi phạm khóa duy nhất.
+    \item \textbf{Kịch bản S6 -- Khóa Kết quả và Trao giải (Result Finalization)}: Sau khi kết thúc thời gian chấm thi, thủ tục \texttt{usp\_finalize\_results\_for\_round} tự động tính tổng điểm trung bình có trọng số, xếp hạng phân biệt từ 1 đến $N$, gán giải thưởng và khóa kết quả chuyển sang trạng thái \texttt{Published}.
+    \item \textbf{Kịch bản S7 -- Tự động Lưu trữ Di sản Số (Digital Archiving)}: Ngay sau khi công bố giải, tác phẩm đạt giải Nhất được chụp toàn bộ siêu dữ liệu (cuộn phim, thông số scan, nhận xét của giám khảo, điểm số) lưu vào bảng \texttt{ArchiveItem}, sẵn sàng phục vụ triển lãm trực tuyến lâu dài.
+\end{enumerate}
+
+% ----------------------------------------------------------------------
+\section{Kết quả Thực thi Bộ Kiểm thử T-SQL Tự động}
+\label{s:c6_test_results}
+
+Bộ 10 kịch bản kiểm thử T-SQL trong thư mục \texttt{tests/} đã được chạy kiểm chứng tự động 100\% trên môi trường Microsoft SQL Server thực tế (Bảng~\ref{tab:c6_tests}):
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{0.22\linewidth}p{0.48\linewidth}p{0.18\linewidth}}
+\toprule
+\textbf{Mã Kịch bản Test} & \textbf{Nội dung kiểm thử nghiệp vụ} & \textbf{Kết quả thực thi} \\
+\midrule
+\texttt{TST-REG-001} & Chặn đăng ký trùng lặp cho cùng một thí sinh trong cuộc thi & \textbf{PASS} (Bắt lỗi UQ) \\
+\texttt{TST-FRAME-001} & Chặn trùng lặp số frame trong cùng một cuộn phim & \textbf{PASS} (Bắt lỗi UQ) \\
+\texttt{TST-SUB-001} & Nộp bài dự thi hợp lệ thành công & \textbf{PASS} (Ghi nhận đúng) \\
+\texttt{TST-SUB-002} & Chặn nộp bài quá hạn chót hoặc nộp trùng khung hình & \textbf{PASS} (Bắt lỗi Procedure) \\
+\texttt{TST-VER-001} & Thẩm định bài thi có cảnh báo AI và cập nhật trạng thái & \textbf{PASS} (Đồng bộ đúng) \\
+\texttt{TST-JDG-001} & Chặn giám khảo chấm điểm lần 2 trong cùng một vòng & \textbf{PASS} (Bắt lỗi UQ) \\
+\texttt{TST-JDG-002} & Chấm thi đa vòng với tiêu chí và trọng số độc lập & \textbf{PASS} (Độc lập dữ liệu) \\
+\texttt{TST-RES-001} & Tổng hợp điểm, xếp hạng và khóa kết quả chung cuộc & \textbf{PASS} (Xếp hạng chính xác) \\
+\texttt{TST-ARC-001} & Tạo bản chụp di sản số cho tác phẩm đoạt giải & \textbf{PASS} (Snapshot chuẩn) \\
+\texttt{TST-AUD-001} & Kích hoạt trigger tự động ghi log khi đổi trạng thái bài thi & \textbf{PASS} (Ghi log thành công) \\
+\bottomrule
+\end{tabular}
+\caption{Kết quả thực thi bộ kiểm thử tự động T-SQL}
+\label{tab:c6_tests}
+\end{table}

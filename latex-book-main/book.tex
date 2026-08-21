@@ -1,0 +1,95 @@
+\documentclass[letterpaper,11pt,leqno]{book}
+\usepackage{book}
+\usepackage[utf8]{inputenc}
+\usepackage[vietnamese]{babel}
+\bibliographystyle{book}
+
+% Metadata PDF
+\hypersetup{pdftitle={Báo cáo Đồ án Thiết kế Cơ sở Dữ liệu: Nền tảng Quản lý Cuộc thi Nhiếp ảnh Phim Tích hợp AI}}
+
+% Đường dẫn BibTeX
+\newcommand{\bib}{book.bib}
+
+% Đường dẫn file hình ảnh
+\newcommand{\pdf}{figures.pdf}
+
+\begin{document}
+
+% Tiêu đề chính
+\title{Thiết kế cơ sở dữ liệu}
+
+% Tiêu đề phụ
+\subtitle{Nền tảng tổ chức và quản lý cuộc thi nhiếp ảnh phim tích hợp trí tuệ nhân tạo}
+
+% Tác giả
+\author{Nhóm Thực Hiện Đồ Án TKCSDL}
+
+% Ngày hoàn thành
+\date{Tháng 8 Năm 2026}
+
+\begin{titlepage}
+\maketitle
+\end{titlepage}
+
+\frontmatter
+
+\tableofcontents
+\listoftables
+
+\chapter{Lời nói đầu}
+\input{preface}
+
+\mainmatter
+
+\part{Tổng quan và Phân tích Yêu cầu Nghiệp vụ}\label{p:requirements}
+
+\chapter{Bối cảnh, Vấn đề và Mục tiêu Đề tài}\label{c:problem_objectives}
+\input{chapter1}
+
+\chapter{Quy trình Nghiệp vụ và Đặc tả Yêu cầu}\label{c:business_requirements}
+\input{chapter2}
+
+\part{Thiết kế Kiến trúc Hệ thống}\label{p:architecture}
+
+\chapter{Kiến trúc Tổng thể, Phân rã Module và Thiết kế AI}\label{c:architecture}
+\input{chapter3}
+
+\part{Thiết kế Cơ sở Dữ liệu Toàn diện}\label{p:database}
+
+\chapter{Thiết kế CSDL Cấp độ 1 \& 2: Mô hình Ý niệm và Logic}\label{c:conceptual_logical}
+\input{chapter4}
+
+\chapter{Thiết kế CSDL Cấp độ 3: Mô hình Vật lý và Lập trình CSDL}\label{c:physical_implementation}
+\input{chapter5}
+
+\part{Kiểm chứng, Đảm bảo Chất lượng và Đóng băng Dự án}\label{p:validation}
+
+\chapter{Ma trận Kiểm chứng và Kịch bản Walkthrough Nghiệp vụ}\label{c:validation_scenarios}
+\input{chapter6}
+
+\chapter{Nhật ký Quyết định Thiết kế và Đóng băng Dự án}\label{c:decision_freeze}
+\input{chapter7}
+
+\appendix
+
+\part{Phụ lục Kỹ thuật}\label{p:appendix}
+
+\chapter{Kịch bản Kiểm thử T-SQL Tự động}\label{a:test_scripts}
+\input{appendixA}
+
+\chapter{Bảng Tra cứu Yêu cầu Chức năng \& Quy tắc Nghiệp vụ}\label{a:catalog}
+\input{appendixB}
+
+\chapter{Toàn văn Mã nguồn DDL Cơ sở Dữ liệu}\label{a:sql_ddl}
+\input{appendixC}
+
+\backmatter
+
+\chapter{Lời cảm ơn}
+\input{acknowledgements}
+
+\bibliography{\bib}
+
+\printindex
+
+\end{document}

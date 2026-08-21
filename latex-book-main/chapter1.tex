@@ -1,0 +1,178 @@
+% Chapter 1: Bối cảnh, Vấn đề và Mục tiêu Đề tài
+
+Nhiếp ảnh phim (\textit{analog photography}) đã và đang có một sự hồi sinh mạnh mẽ trên toàn cầu cũng như tại Việt Nam. Không chỉ thu hút giới trẻ tìm kiếm trải nghiệm nghệ thuật hoài niệm, trào lưu này còn quy tụ đông đảo các nhiếp ảnh gia kỳ cựu, các phòng tráng phim độc lập (\textit{film labs}), các câu lạc bộ nhiếp ảnh và các tổ chức văn hóa nghệ thuật. Cùng với xu thế này, các cuộc thi nhiếp ảnh phim đóng vai trò hạt nhân nhằm gìn giữ di sản văn hóa thị giác, tôn vinh kỹ thuật thủ công truyền thống và tạo sân chơi sáng tạo cho cộng đồng.
+
+Tuy nhiên, việc tổ chức và quản trị các cuộc thi nhiếp ảnh phim đặt ra những thách thức đặc thù mà các nền tảng thi ảnh kỹ thuật số thông thường không thể đáp ứng. Một tác phẩm ảnh phim đòi hỏi phải quản lý song song giữa tệp ảnh đã số hóa (\textit{scanned image}) và hồ sơ kỹ thuật vật lý chi tiết (\textit{film provenance metadata}). Chương này tập trung làm rõ bối cảnh, các điểm nghẽn nghiệp vụ cốt lõi, mục tiêu giải pháp, phạm vi dự án và hệ thống thuật ngữ chuẩn hóa.
+
+% ----------------------------------------------------------------------
+\section{Bối cảnh Nhiếp ảnh Phim và Thực trạng Quản lý}
+\label{s:c1_context}
+
+Khác với nhiếp ảnh kỹ thuật số nơi thông số EXIF được tự động nhúng vào tệp ảnh ngay khi bấm máy, ảnh phim là kết quả của một chuỗi công đoạn vật lý rời rạc:
+\begin{enumerate}
+    \item \textbf{Lựa chọn vật liệu}: Người chụp lựa chọn cuộn phim với nhãn hiệu và dòng phim (\textit{film stock}, ví dụ: Kodak Portra 400, Fujifilm Superia 400, Ilford HP5 Plus), khổ phim (\textit{format}: 35mm, 120, Large Format) và thiết lập độ nhạy sáng (\textit{ISO}).
+    \item \textbf{Thực hiện chụp}: Thao tác chụp thông qua thân máy cơ (\textit{camera body}) và ống kính quang học (\textit{lens}), ghi nhận từng khung hình (\textit{frame}) cụ thể trên cuộn phim.
+    \item \textbf{Quy trình hóa nghiệm (Tráng phim)}: Cuộn phim được gửi đến phòng lab tráng phim (\textit{developing lab}) để xử lý qua các quy trình hóa học (C-41 cho phim màu âm bản, E-6 cho phim dương bản/slide, hoặc quy trình thủ công cho phim đen trắng B\&W).
+    \item \textbf{Số hóa (Scan)}: Phim sau khi tráng được scan bằng máy scan chuyên dụng (Noritsu, Frontier, v.v.) thành tệp ảnh kỹ thuật số.
+    \item \textbf{Xác thực bản gốc}: Trong nhiều trường hợp tranh chấp hoặc yêu cầu thẩm định chuyên sâu, ban tổ chức cần kiểm tra phim âm bản gốc (\textit{negative film}) hoặc bảng in tiếp xúc (\textit{contact sheet}).
+\end{enumerate}
+
+Hiện nay, phần lớn các đơn vị tổ chức cuộc thi nhiếp ảnh phim vẫn đang vận hành thông qua sự kết hợp của các công cụ thủ công và phân tán:
+\begin{itemize}
+    \item \textbf{Thông báo và Tiếp nhận}: Sử dụng biểu mẫu trực tuyến (Google Forms, Microsoft Forms) kết hợp mạng xã hội (Facebook, Instagram).
+    \item \textbf{Lưu trữ bài dự thi}: Sử dụng các dịch vụ lưu trữ đám mây phân mảnh (Google Drive, Dropbox, OneDrive) hoặc tiếp nhận qua Email.
+    \item \textbf{Quản lý và Thẩm định}: Dữ liệu thí sinh và thông số kỹ thuật được tổng hợp thủ công trên các bảng tính (Microsoft Excel, Google Sheets).
+    \item \textbf{Chấm thi và Đánh giá}: Gửi danh sách ảnh và bảng điểm rời rạc cho giám khảo qua file Excel, sau đó tổng hợp điểm thủ công.
+\end{itemize}
+
+% ----------------------------------------------------------------------
+\section{Phân tích các Điểm nghẽn Nghiệp vụ (Pain Points)}
+\label{s:c1_painpoints}
+
+Phương thức quản lý thủ công, phân tán bộc lộ 5 điểm nghẽn nghiêm trọng (\textit{pain points}):
+
+\begin{enumerate}
+    \item \textbf{Phân mảnh dữ liệu và áp lực hành chính}: Việc phân tán dữ liệu qua nhiều công cụ khiến ban tổ chức tốn hàng trăm giờ làm việc để tổng hợp, đối soát thông tin, dễ gây thất lạc bài thi và nhầm lẫn thông số.
+    \item \textbf{Khó khăn trong xác minh nguồn gốc tác phẩm (Provenance \& Traceability)}: Thiếu liên kết có cấu trúc giữa \textit{Tài khoản thí sinh $\rightarrow$ Cuộn phim $\rightarrow$ Khung hình (Frame) $\rightarrow$ Bài dự thi}. Ban tổ chức không có công cụ kiểm tra xem một bức ảnh có thực sự được chụp bằng phim hay chỉ là ảnh số áp bộ lọc màu (\textit{preset/filter}), hoặc có phải ảnh do AI sinh ra (\textit{AI-generated}) hay không.
+    \item \textbf{Quy trình chấm thi phức tạp, thiếu minh bạch}: Khi cuộc thi có nhiều hạng mục (\textit{categories}), nhiều vòng chấm (\textit{judging rounds}) với các tiêu chí đặc thù của ảnh phim (hạt phim \textit{grain}, dải tương phản \textit{tonal range}, màu sắc \textit{color rendering}), việc phân công giám khảo và tổng hợp điểm bằng Excel rất dễ xảy ra sai sót, thiên vị hoặc ghi đè kết quả.
+    \item \textbf{Thiếu kho lưu trữ di sản số tập trung (Digital Archive)}: Sau khi cuộc thi kết thúc, các tác phẩm đạt giải và toàn bộ siêu dữ liệu kỹ thuật quý giá thường bị phân tán, không được lưu trữ theo chuẩn cấu trúc để phục vụ cho các triển lãm, hoạt động giáo dục hay tra cứu lịch sử trong tương lai.
+    \item \textbf{Ứng dụng AI thiếu kiểm soát}: Nhiều hệ thống hiện đại ứng dụng AI như một ``hộp đen'' tự động loại trừ bài thi mà không có sự kiểm duyệt của con người, dẫn đến nguy cơ loại nhầm bài thi hợp lệ và gây tranh cãi.
+\end{enumerate}
+
+% ----------------------------------------------------------------------
+\section{Mục tiêu Đề tài và Tiêu chuẩn Thành công}
+\label{s:c1_objectives}
+
+\subsection{Mục tiêu Nghiệp vụ (Business Objectives)}
+\begin{itemize}
+    \item \textbf{BO-01 (Tập trung hóa)}: Xây dựng nền tảng số hóa toàn diện, thống nhất mọi nghiệp vụ quản lý cuộc thi nhiếp ảnh phim trên một hệ thống duy nhất.
+    \item \textbf{BO-02 (Chuẩn hóa Siêu dữ liệu)}: Thiết lập mô hình quản lý xuất xứ dữ liệu ảnh phim đa tầng, gắn chặt bài thi với cuộn phim, khung hình, thông số lab và scan.
+    \item \textbf{BO-03 (Chấm thi Minh bạch)}: Cung cấp môi trường chấm thi chuyên nghiệp, hỗ trợ đa vòng, đa tiêu chí với cơ chế kiểm soát phân công và bảo toàn lịch sử đánh giá.
+    \item \textbf{BO-04 (Lưu trữ Di sản)}: Xây dựng kho lưu trữ số (\textit{Digital Archive}) lưu trữ bền vững các tác phẩm đoạt giải dưới dạng bản chụp lịch sử (\textit{snapshot}) độc lập với các thay đổi cấu hình tương lai.
+    \item \textbf{BO-05 (Thẩm định AI có Kiểm soát)}: Tích hợp module AI hỗ trợ phát hiện ảnh trùng lặp và ảnh tạo bởi AI theo mô hình \textit{Human-in-the-loop}, nâng cao năng suất thẩm định cho Ban tổ chức.
+\end{itemize}
+
+\subsection{Tiêu chuẩn Thành công Kỹ thuật (Technical Success Criteria)}
+\begin{itemize}
+    \item \textbf{TC-01}: Cơ sở dữ liệu đạt chuẩn hóa 3NF ở mô hình logic, loại bỏ hoàn toàn dư thừa dữ liệu bất hợp lý và hiện tượng bất thường khi cập nhật.
+    \item \textbf{TC-02}: 100\% các quy tắc nghiệp vụ cốt lõi (\textit{Business Rules}) được phân định rõ nơi thực thi (ràng buộc CSDL, thủ tục lưu trữ hoặc tầng ứng dụng).
+    \item \textbf{TC-03}: Đảm bảo tính toàn vẹn tham chiếu và toàn vẹn giao dịch cho các nghiệp vụ trọng yếu (đăng ký, nộp bài, chấm điểm, khóa kết quả).
+    \item \textbf{TC-04}: Ma trận truy vết yêu cầu (RTM) đạt độ phủ 100\%, không có yêu cầu chức năng nào bị bỏ sót trong thiết kế CSDL.
+\end{itemize}
+
+% ----------------------------------------------------------------------
+\section{Phạm vi Dự án và Giả định Thiết kế}
+\label{s:c1_scope}
+
+Để đảm bảo tính tập trung và chiều sâu học thuật của một đồ án Thiết kế Cơ sở Dữ liệu chuyên sâu, phạm vi dự án được phân định rạch ròi:
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{0.22\linewidth}p{0.42\linewidth}p{0.3\linewidth}}
+\toprule
+\textbf{Phân loại} & \textbf{Nội dung công việc} & \textbf{Mục tiêu / Kết quả kỳ vọng} \\
+\midrule
+\textbf{Trong phạm vi} \newline (\textit{In-Scope}) & 
+$\bullet$ Phân tích yêu cầu nghiệp vụ (FR, NFR, BR, Use Cases) \newline
+$\bullet$ Thiết kế kiến trúc hệ thống (Context, Modules, AI Design) \newline
+$\bullet$ Thiết kế CSDL 3 cấp độ (Conceptual, Logical, Physical) \newline
+$\bullet$ Hiện thực hóa CSDL trên Microsoft SQL Server (DDL, Stored Procedures, Triggers, Views) \newline
+$\bullet$ Dữ liệu mẫu tham chiếu và kịch bản kiểm thử T-SQL \newline
+$\bullet$ Bộ ma trận kiểm chứng chất lượng (RTM, CRUD, Decision Log) &
+Bản thiết kế CSDL hoàn chỉnh, nhất quán, tối ưu hiệu năng và có khả năng bảo toàn toàn vẹn dữ liệu ở cấp độ doanh nghiệp. \\
+\midrule
+\textbf{Ngoài phạm vi} \newline (\textit{Out-of-Scope}) & 
+$\bullet$ Lập trình giao diện Web / Mobile \newline
+$\bullet$ Lập trình Backend API runtime \newline
+$\bullet$ Huấn luyện (Training) mô hình AI thực tế &
+Tập trung toàn bộ nguồn lực vào thiết kế kiến trúc và mô hình hóa dữ liệu chuyên sâu. \\
+\bottomrule
+\end{tabular}
+\caption{Phạm vi dự án Thiết kế Cơ sở Dữ liệu}
+\label{tab:c1_scope}
+\end{table}
+
+\paragraph{Giả định thiết kế cốt lõi}
+\begin{enumerate}
+    \item Hệ quản trị cơ sở dữ liệu mục tiêu chính thức là \textbf{Microsoft SQL Server (2022+)}.
+    \item Mọi kết quả xử lý từ trí tuệ nhân tạo (AI) đều mang tính chất tư vấn (\textit{advisory}), hệ thống không tự động loại bài thi nếu chưa có sự phê duyệt từ Ban tổ chức.
+    \item Tệp nhị phân của hình ảnh được lưu trữ tại dịch vụ lưu trữ đối tượng (\textit{Object Storage}), cơ sở dữ liệu chỉ lưu trữ đường dẫn (\textit{URI/Path}), mã băm kiểm tra toàn vẹn (\textit{SHA-256 hash}) và siêu dữ liệu kỹ thuật.
+\end{enumerate}
+
+% ----------------------------------------------------------------------
+\section{Bảng Chú giải Thuật ngữ Miền (Domain Glossary)}
+\label{s:c1_glossary}
+
+Nhằm đảm bảo sự nhất quán tuyệt đối về ngữ nghĩa trong toàn bộ tài liệu thiết kế, Bảng~\ref{tab:c1_glossary} định nghĩa các thuật ngữ chuẩn của miền nghiệp vụ nhiếp ảnh phim:
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{0.25\linewidth}p{0.7\linewidth}}
+\toprule
+\textbf{Thuật ngữ} & \textbf{Định nghĩa chuẩn hóa} \\
+\midrule
+\textbf{Contest} & Sự kiện cuộc thi nhiếp ảnh phim, có lịch trình, thể lệ, các hạng mục và vòng chấm riêng. \\
+\textbf{Contest Category} & Hạng mục dự thi trong cuộc thi (ví dụ: Chân dung, Phong cảnh, Đời thường, Thể nghiệm). \\
+\textbf{Participant} & Người dùng đăng ký tài khoản tham gia dự thi và quản lý dữ liệu ảnh phim cá nhân. \\
+\textbf{Organizer} & Thành viên Ban tổ chức chịu trách nhiệm cấu hình cuộc thi, xác minh bài thi, phân công giám khảo và công bố kết quả. \\
+\textbf{Judge} & Giám khảo được phân công đánh giá các bài dự thi hợp lệ theo các vòng và tiêu chí xác định. \\
+\textbf{Administrator} & Quản trị viên hệ thống chịu trách nhiệm quản lý tài khoản, phân quyền, dữ liệu danh mục và giám sát hệ thống. \\
+\textbf{Film Roll} & Cuộn phim vật lý của thí sinh, chứa một hoặc nhiều khung hình (frames). \\
+\textbf{Film Frame} & Khung hình đơn lẻ trên cuộn phim, là đơn vị gốc được số hóa để nộp vào cuộc thi. \\
+\textbf{Film Stock} & Dòng phim cụ thể (nhãn hiệu, tên dòng, ISO danh định, khổ phim, quy trình tráng). \\
+\textbf{Submission} & Tác phẩm dự thi của thí sinh, liên kết một khung hình (Film Frame) với một cuộc thi và hạng mục cụ thể. \\
+\textbf{Verification} & Quy trình kiểm tra tính hợp lệ, đầy đủ của thông số kỹ thuật và rà soát cảnh báo từ AI trước khi đưa vào chấm thi. \\
+\textbf{AI Analysis Result} & Bản ghi kết quả phân tích tự động từ AI (độ tương đồng, xác suất ảnh AI, nhãn tự động) kèm độ tin cậy. \\
+\textbf{Judging Round} & Giai đoạn chấm thi chính thức (ví dụ: Vòng Sơ khảo, Vòng Bán kết, Vòng Chung khảo). \\
+\textbf{Judge Assignment} & Bản ghi phân công một giám khảo cụ thể chấm thi tại một vòng chấm nhất định. \\
+\textbf{Scoring Criterion} & Tiêu chí chấm điểm cụ thể có trọng số trong một vòng chấm (ví dụ: Bố cục, Kỹ thuật, Cảm xúc). \\
+\textbf{Evaluation} & Phiếu đánh giá và cho điểm của một giám khảo đối với một bài thi trong một vòng chấm. \\
+\textbf{Digital Archive} & Kho lưu trữ số độc lập, bảo tồn nguyên vẹn siêu dữ liệu và hình ảnh của các tác phẩm đoạt giải. \\
+\bottomrule
+\end{tabular}
+\caption{Bảng chú giải thuật ngữ miền nghiệp vụ}
+\label{tab:c1_glossary}
+\end{table}
+
+% ----------------------------------------------------------------------
+\section{Phân tích Stakeholders và Ma trận Vai trò Hệ thống}
+\label{s:c1_stakeholders}
+
+Hệ thống phục vụ 4 nhóm tác nhân người dùng chính cùng các bên liên quan bên ngoài. Bảng~\ref{tab:c1_stakeholders} tổng hợp trách nhiệm và nhu cầu thông tin của từng tác nhân:
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{0.18\linewidth}p{0.28\linewidth}p{0.48\linewidth}}
+\toprule
+\textbf{Stakeholder} & \textbf{Trách nhiệm chính} & \textbf{Nhu cầu thông tin \& Tương tác hệ thống} \\
+\midrule
+\textbf{Participant} \newline (Thí sinh) & 
+Quản lý hồ sơ cá nhân; tạo cuộn phim và frame; đăng ký cuộc thi; nộp bài dự thi; theo dõi tiến độ. & 
+Xem thể lệ, hạn chót nộp bài, trạng thái xác minh bài thi, kết quả công bố và phản hồi từ giám khảo. \\
+\midrule
+\textbf{Organizer} \newline (Ban tổ chức) & 
+Cấu hình cuộc thi, hạng mục, tiêu chí; duyệt đăng ký; xác minh bài thi; xem xét cờ AI; phân công giám khảo; khóa và công bố kết quả; chuyển lưu trữ số. & 
+Bảng điều khiển quản lý cuộc thi, hàng đợi xác minh bài thi, tiến độ chấm của giám khảo, bảng tổng hợp điểm và xếp hạng. \\
+\midrule
+\textbf{Judge} \newline (Giám khảo) & 
+Đánh giá công tâm các bài thi được phân công; chấm điểm theo từng tiêu chí; ghi nhận xét chuyên môn; xác nhận hoàn thành vòng chấm. & 
+Danh sách bài thi được phân công trong vòng, định nghĩa tiêu chí và thang điểm, chi tiết ảnh và siêu dữ liệu kỹ thuật. \\
+\midrule
+\textbf{Administrator} \newline (Quản trị viên) & 
+Quản trị tài khoản và phân quyền người dùng; cấu hình tham số hệ thống; quản lý dữ liệu danh mục dùng chung; giám sát nhật ký kiểm toán (Audit Logs). & 
+Báo cáo tình trạng hệ thống, nhật ký truy cập và thay đổi trạng thái, danh mục thiết bị (máy ảnh, ống kính, film stock). \\
+\bottomrule
+\end{tabular}
+\caption{Phân tích Stakeholders và ma trận trách nhiệm}
+\label{tab:c1_stakeholders}
+\end{table}
+
+\paragraph{Mô hình Phân quyền Vai trò (RBAC Model)}
+Hệ thống áp dụng mô hình phân quyền dựa trên vai trò (\textit{Role-Based Access Control}):
+\begin{itemize}
+    \item Một tài khoản người dùng (\texttt{Users}) có thể nắm giữ một hoặc nhiều vai trò (\texttt{Roles}) đồng thời (ví dụ: một người dùng vừa là Thí sinh trong cuộc thi A, vừa là Giám khảo trong cuộc thi B).
+    \item Tuy nhiên, các hành vi nghiệp vụ cụ thể trong từng ngữ cảnh cuộc thi phải tuân thủ nghiêm ngặt nguyên tắc xung đột lợi ích: \textit{Một người dùng đã đăng ký dự thi trong một cuộc thi thì không thể được phân công làm Giám khảo hoặc Ban tổ chức của chính cuộc thi đó}.
+\end{itemize}
