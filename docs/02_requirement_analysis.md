@@ -494,6 +494,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Alternative / Exception:
   - Frame already submitted to same contest.
   - Submission deadline passed.
+  - Frame does not belong to the registered participant.
 - Output:
   - Submission awaiting verification.
 - Data Affected:
