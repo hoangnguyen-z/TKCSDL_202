@@ -537,6 +537,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Alternative / Exception:
   - Duplicate evaluation in same round is blocked.
   - Late round submission blocked.
+  - Submission outside the judge's assigned workload is blocked.
 - Output:
   - Evaluation with score breakdown.
 - Data Affected:
