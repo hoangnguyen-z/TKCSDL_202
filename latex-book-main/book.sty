@@ -1,17 +1,21 @@
 % ---- Select text fonts ----
 
-% Make PDF searchable and copyable
-\input{glyphtounicode}
-\pdfgentounicode=1
+\usepackage{iftex}
+\ifPDFTeX
+	% Make PDF searchable and copyable
+	\input{glyphtounicode}
+	\pdfgentounicode=1
 
-% Select font encoding 
-\usepackage[T1]{fontenc}
-
-% Select text font
-\usepackage{sourceserifpro}
-
-% Select monospaced font
-\usepackage{sourcecodepro}
+	% Select font encoding and text fonts
+	\usepackage[T1]{fontenc}
+	\usepackage{sourceserifpro}
+	\usepackage{sourcecodepro}
+\else
+	% Use the installed OpenType fonts with XeLaTeX/LuaLaTeX.
+	\usepackage{fontspec}
+	\setmainfont{Source Serif 4}
+	\setmonofont{Source Code Pro}
+\fi
 
 % ---- Select math fonts ----
 
@@ -44,8 +48,8 @@
 % Set spacing between lines
 \usepackage[onehalfspacing]{setspace}
 
-% Adjust spacing on lines
-\usepackage{microtype}
+% Adjust spacing on lines; font expansion is incompatible with some bundled fonts.
+\usepackage[expansion=false]{microtype}
 
 % Adjust spacing in text
 \AtBeginDocument{\frenchspacing}

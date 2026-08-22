@@ -112,11 +112,11 @@ Trong hệ thống quản lý cuộc thi và lưu trữ di sản nghệ thuật,
 \paragraph{Ràng buộc Miền giá trị (Check Constraints)}
 Hệ thống cài đặt các ràng buộc kiểm tra giá trị toán học và logic thời gian:
 \begin{itemize}
-    \item \texttt{CK\_contest\_Contest\_dates}: \texttt{registration\_open\_at <= registration\_close\_at AND submission\_open\_at <= submission\_close\_at}.
-    \item \texttt{CK\_contest\_ScoringCriterion\_weight}: \texttt{weight\_percent > 0 AND weight\_percent <= 100}.
-    \item \texttt{CK\_contest\_ScoringCriterion\_score\_range}: \texttt{score\_min\_value <= score\_max_value}.
-    \item \texttt{CK\_verification\_AIAnalysisResult\_confidence}: \texttt{confidence\_score >= 0 AND confidence\_score <= 1}.
-    \item \texttt{CK\_judging\_Evaluation\_total\_score}: \texttt{total\_score >= 0}.
+    \item \texttt{CK\_contest\_Contest\_dates}: \texttt{registration\_open\_at} $\leq$ \texttt{registration\_close\_at} và \texttt{submission\_open\_at} $\leq$ \texttt{submission\_close\_at}.
+    \item \texttt{CK\_contest\_ScoringCriterion\_weight}: \texttt{weight\_percent} $>$ 0 và \texttt{weight\_percent} $\leq$ 100.
+    \item \texttt{CK\_contest\_ScoringCriterion\_score\_range}: \texttt{score\_min\_value} $\leq$ \texttt{score\_max\_value}.
+    \item \texttt{CK\_verification\_AIAnalysisResult\_confidence}: \texttt{confidence\_score} $\geq$ 0 và \texttt{confidence\_score} $\leq$ 1.
+    \item \texttt{CK\_judging\_Evaluation\_total\_score}: \texttt{total\_score} $\geq$ 0.
 \end{itemize}
 
 % ----------------------------------------------------------------------
@@ -155,7 +155,7 @@ Hệ thống đóng gói toàn bộ các luồng nghiệp vụ phức tạp vào
     \begin{itemize}
         \item \texttt{reporting.vw\_submission\_overview}: Tổng hợp bài thi kèm thông tin thí sinh, cuộn phim, thông số máy ảnh và trạng thái xác minh.
         \item \texttt{reporting.vw\_verification\_queue}: Hàng đợi các bài thi đang chờ Ban tổ chức duyệt kèm các cờ cảnh báo từ AI.
-        \item \texttt{reporting.vw\_judge\_work_queue}: Hàng đợi công việc của từng giám khảo theo vòng chấm.
+        \item \texttt{reporting.vw\_judge\_work\_queue}: Hàng đợi công việc của từng giám khảo theo vòng chấm.
         \item \texttt{reporting.vw\_result\_summary}: Bảng tổng kết kết quả cuộc thi và giải thưởng đã gán.
         \item \texttt{reporting.vw\_archive\_catalog}: Danh mục tra cứu kho lưu trữ số phục vụ triển lãm.
     \end{itemize}
@@ -164,7 +164,7 @@ Hệ thống đóng gói toàn bộ các luồng nghiệp vụ phức tạp vào
         \item \texttt{submission.usp\_create\_submission}: Kiểm tra toàn diện điều kiện nộp bài (thời hạn, quyền sở hữu khung hình, tính duy nhất trong cuộc thi) trong một giao dịch (\texttt{BEGIN TRANSACTION}).
         \item \texttt{verification.usp\_record\_verification\_decision}: Ghi nhận quyết định thẩm định của Ban tổ chức và đồng bộ trạng thái bài thi.
         \item \texttt{judging.usp\_submit\_evaluation}: Tiếp nhận và khóa phiếu chấm của giám khảo.
-        \item \texttt{result.usp\_finalize\_results\_for_round}: Tự động tổng hợp điểm, xếp thứ hạng không trùng lặp và khóa kết quả chung cuộc.
+        \item \texttt{result.usp\_finalize\_results\_for\_round}: Tự động tổng hợp điểm, xếp thứ hạng không trùng lặp và khóa kết quả chung cuộc.
     \end{itemize}
     \item \textbf{Trigger Kiểm toán và Tính toán Tự động (Triggers)}:
     \begin{itemize}
