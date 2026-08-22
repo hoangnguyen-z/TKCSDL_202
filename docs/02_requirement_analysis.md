@@ -514,6 +514,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   3. Approve, reject, or request clarification.
 - Alternative / Exception:
   - Suspicious case remains under manual review.
+    - Missing or incomplete technical metadata results in a clarification request before verification can be completed.
 - Output:
   - Verification decision and updated submission status.
 - Data Affected:
