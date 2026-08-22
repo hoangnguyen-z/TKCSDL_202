@@ -135,11 +135,20 @@ Hệ thống được thiết kế với 31 yêu cầu chức năng (\textit{FR}
 \midrule
 \textbf{BR-P-001} & Đề xuất & Một người dùng có thể sở hữu nhiều vai trò trong hệ thống (User $\leftrightarrow$ Role N:M). & CSDL (Associative Table) \\
 \textbf{BR-P-002} & Đề xuất & Một thí sinh chỉ có tối đa 1 bản đăng ký tham gia có hiệu lực cho mỗi cuộc thi. & CSDL (UNIQUE Composite) \\
+\textbf{BR-P-003} & Đề xuất & Điều kiện tham gia được biểu diễn trong quy trình xét duyệt đăng ký, không tách thành thực thể riêng. & CSDL + Tầng ứng dụng \\
 \textbf{BR-P-004} & Đề xuất & Dữ liệu Film Stock, Máy ảnh, Ống kính, Phòng lab được quản lý danh mục tham chiếu dùng chung. & CSDL (Master Reference Tables) \\
 \textbf{BR-P-005} & Đề xuất & Số thứ tự khung hình (Frame Number) là duy nhất trong phạm vi cuộn phim đó. & CSDL (UNIQUE Roll + Frame) \\
 \textbf{BR-P-006} & Đề xuất & Một khung hình có thể dùng cho các cuộc thi khác nhau nhưng không được nộp quá 1 lần trong 1 cuộc thi. & CSDL (UNIQUE Frame + Contest) \\
+\textbf{BR-P-007} & Đề xuất & Hạng mục là riêng theo từng cuộc thi; mã hạng mục chỉ cần duy nhất trong phạm vi cuộc thi đó. & CSDL (UNIQUE Contest + Code) \\
 \textbf{BR-P-008} & Đề xuất & Tiêu chí chấm điểm được phân bản theo vòng chấm thay vì dùng chung toàn cục. & CSDL Design Decision \\
+\textbf{BR-P-009} & Đề xuất & Bài dự thi phải thuộc về đăng ký của chính thí sinh sở hữu khung hình được chọn. & SQL Logic \\
+\textbf{BR-P-010} & Đề xuất & Phân tích độ tương đồng có thể tham chiếu bài dự thi khác làm đối tượng so sánh khi cần. & CSDL \\
+\textbf{BR-P-011} & Đề xuất & Kết quả phát hiện ảnh AI, độ tương đồng và tự động gắn thẻ dùng chung một cấu trúc, phân biệt bằng loại phân tích. & CSDL Design Decision \\
 \textbf{BR-P-012} & Đề xuất & Một giám khảo có thể chấm nhiều vòng khác nhau nhưng không được phân công trùng lặp trong 1 vòng. & CSDL (UNIQUE Judge + Round) \\
+\textbf{BR-P-013} & Đề xuất & Mỗi phiếu chấm phải có ít nhất một điểm thành phần và tổng điểm không vượt tổng các thang điểm của tiêu chí. & CSDL + Trigger / SQL Logic \\
+\textbf{BR-P-014} & Đề xuất & Xử lý bằng điểm ưu tiên tổng điểm chung cuộc, sau đó dùng ghi chú hoặc chính sách phá hòa được Ban tổ chức phê duyệt. & Tầng ứng dụng / Human Decision \\
+\textbf{BR-P-015} & Đề xuất & Chỉ được gán giải cho kết quả đã khóa và cùng hạng mục với định nghĩa giải. & SQL Logic \\
+\textbf{BR-P-016} & Đề xuất & Kết quả đã khóa không thể thay đổi ở cấp dữ liệu nếu không có can thiệp của Admin và nhật ký kiểm toán. & Tầng ứng dụng + Audit \\
 \textbf{BR-P-017} & Đề xuất & Kho lưu trữ di sản số lưu dữ liệu dạng bản chụp (Snapshot) thay vì chỉ giữ khóa ngoại sống. & CSDL Design Decision \\
 \textbf{BR-P-018} & Đề xuất & Cấm xóa vật lý (Hard Delete) đối với cuộc thi, bài thi, bảng điểm; sử dụng xóa mềm/khóa trạng thái. & CSDL (FK ON DELETE RESTRICT) \\
 \bottomrule
