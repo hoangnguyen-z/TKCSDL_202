@@ -14,6 +14,14 @@ This repository contains the full analysis, architecture, database design, SQL S
 - Validation & Traceability
 - Project Freeze
 
+## Team Ownership
+
+| Thành viên | Vai trò | Phạm vi phụ trách |
+| --- | --- | --- |
+| Trung Châu | Requirement Lead | Requirement baseline, gap analysis, business glossary, stakeholders, AS-IS/TO-BE flows, FR, NFR, BR và use cases |
+
+Chi tiết phân công và liên kết các artifact được ghi tại [docs/09_team_assignment.md](docs/09_team_assignment.md).
+
 ## Official Technology Stack
 
 - DBMS: Microsoft SQL Server
