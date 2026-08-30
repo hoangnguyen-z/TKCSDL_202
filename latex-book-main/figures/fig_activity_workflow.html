@@ -85,14 +85,14 @@
     <text x="1110" y="128" text-anchor="middle" font-size="10.5" font-weight="bold">AI gắn cờ</text>
     <text x="1110" y="142" text-anchor="middle" font-size="10.5" font-weight="bold">cảnh báo?</text>
 
-    <!-- Branch: NO -->
-    <path d="M 1110 95 L 1110 75 L 700 75 L 700 210 L 735 210" fill="none" stroke="#000000" stroke-width="1.4" marker-end="url(#act-arrow)"/>
-    <text x="1030" y="70" font-size="11" font-weight="bold" fill="#008800">[Không / Điểm an toàn]</text>
+    <!-- Branch: NO (Đi thẳng đến phê duyệt) -->
+    <path d="M 1110 95 L 1110 68 L 810 68 L 810 175" fill="none" stroke="#000000" stroke-width="1.4" marker-end="url(#act-arrow)"/>
+    <text x="960" y="63" text-anchor="middle" font-size="11" font-weight="bold" fill="#008800">[Không / Điểm an toàn]</text>
 
-    <!-- Branch: YES -->
+    <!-- Branch: YES (Cần thẩm định thủ công) -->
     <line x1="1170" y1="130" x2="1230" y2="130" stroke="#000000" stroke-width="1.4"/>
     <path d="M 1230 130 L 1230 210 L 1135 210" fill="none" stroke="#000000" stroke-width="1.4" marker-end="url(#act-arrow)"/>
-    <text x="1180" y="122" font-size="11" font-weight="bold" fill="#cc0000">[Có cờ nghi vấn]</text>
+    <text x="1180" y="122" font-size="11" font-weight="bold" fill="#cc0000">[Có cảnh báo]</text>
 
     <!-- Step 5: Ban tổ chức đối chiếu -->
     <rect x="915" y="180" width="220" height="60" rx="6" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>
@@ -107,7 +107,7 @@
 
     <!-- Reject -->
     <line x1="810" y1="245" x2="810" y2="305" stroke="#000000" stroke-width="1.4" marker-end="url(#act-arrow)"/>
-    <text x="820" y="280" font-size="11" font-weight="bold" fill="#cc0000">[Từ chối]</text>
+    <text x="818" y="278" font-size="11" font-weight="bold" fill="#cc0000">[Từ chối]</text>
     <rect x="720" y="305" width="180" height="50" rx="6" fill="#fff0f0" stroke="#cc0000" stroke-width="1.4"/>
     <text x="810" y="327" text-anchor="middle" font-size="11" font-weight="bold" fill="#cc0000">Ghi nhận REJECTED</text>
     <text x="810" y="343" text-anchor="middle" font-size="10" fill="#555555">Gửi lý do cho thí sinh</text>
@@ -121,7 +121,7 @@
 
     <!-- Approve -->
     <line x1="755" y1="210" x2="540" y2="210" stroke="#000000" stroke-width="1.4" marker-end="url(#act-arrow)"/>
-    <text x="615" y="200" font-size="11" font-weight="bold" fill="#008800">[Hợp lệ / VERIFIED]</text>
+    <text x="647" y="202" text-anchor="middle" font-size="11" font-weight="bold" fill="#008800">[Hợp lệ / VERIFIED]</text>
 
     <rect x="340" y="180" width="200" height="60" rx="6" fill="#f0fff0" stroke="#008800" stroke-width="1.4"/>
     <text x="440" y="205" text-anchor="middle" font-size="11" font-weight="bold" fill="#008800">Cập nhật Status = VERIFIED</text>
@@ -176,11 +176,11 @@
     <text x="1120" y="568" text-anchor="middle" font-size="10.5" font-weight="bold">Là vòng</text>
     <text x="1120" y="582" text-anchor="middle" font-size="10.5" font-weight="bold">Chung khảo?</text>
 
-    <!-- Branch: NO -->
-    <path d="M 1120 535 L 1120 515 L 222 515 L 222 540" fill="none" stroke="#000000" stroke-width="1.4" marker-end="url(#act-arrow)"/>
-    <text x="600" y="528" font-size="11" font-weight="bold" fill="#0066cc">[Không: Lọc Top bài thi vào Vòng tiếp theo]</text>
+    <!-- Branch: NO (Lặp lại vòng tiếp theo) -->
+    <path d="M 1120 535 L 1120 514 L 222 514 L 222 540" fill="none" stroke="#0066cc" stroke-width="1.6" marker-end="url(#act-arrow)"/>
+    <text x="670" y="508" text-anchor="middle" font-size="11" font-weight="bold" fill="#0066cc">[Không: Lọc Top bài thi vào Vòng tiếp theo]</text>
 
-    <!-- Branch: YES -->
+    <!-- Branch: YES (Vòng chung kết trao giải) -->
     <line x1="1120" y1="605" x2="1120" y2="650" stroke="#000000" stroke-width="1.4" marker-end="url(#act-arrow)"/>
     <text x="1130" y="630" font-size="11" font-weight="bold" fill="#008800">[Chung khảo]</text>
 
