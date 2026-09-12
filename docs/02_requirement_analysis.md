@@ -4,7 +4,7 @@
 
 The project addresses the lack of a unified platform for managing film photography contests. Existing contest operations typically depend on disconnected tools such as online forms, spreadsheets, email, cloud drives, and social media. This creates fragmented data, weak traceability, difficult verification, inconsistent judging, and poor long-term archival value.
 
-The target system must support the full business lifecycle of a film photography contest while preserving analog-specific technical metadata such as film stock, roll, frame, camera, lens, scan details, and provenance.
+The proposed platform should support the full business lifecycle of a film photography contest while preserving analog-specific technical metadata such as film stock, roll, frame, camera, lens, scan details, and provenance. For this database course phase, that lifecycle is treated as the business baseline and is modeled and validated through the SQL Server database; application clients, runtime services, and real AI services are architectural proposals rather than delivered software.
 
 ## 2. Scope Baseline
 
@@ -63,6 +63,8 @@ The target system must support the full business lifecycle of a film photography
 | Design Decision | A chosen implementation or modeling option among multiple plausible alternatives. |
 
 ## 4. Stakeholder Analysis
+
+The four primary operational roles are `Administrator`, `Organizer`, `Judge`, and `Participant`. They are system roles with permissions defined in the RBAC baseline below. Sponsors, curators, and academic reviewers are supporting stakeholders: they provide constraints or consume outputs, but they are not additional operational roles in the current database model.
 
 | Stakeholder | Interest | Responsibilities | Information Needed | Priority |
 | --- | --- | --- | --- | --- |
