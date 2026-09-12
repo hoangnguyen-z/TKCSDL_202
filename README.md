@@ -47,7 +47,10 @@ Chi tiết phân công và liên kết các artifact được ghi tại [docs/09
 |   |-- 05_logical_database_design.md
 |   |-- 06_physical_database_design_sql_server.md
 |   |-- 07_validation_traceability.md
-|   `-- 08_project_freeze.md
+|   |-- 08_project_freeze.md
+|   `-- diagrams/
+|       |-- component_diagram.puml
+|       `-- deployment_diagram.puml
 |-- docker/
 |   `-- init-database.ps1
 |-- database/
@@ -72,7 +75,12 @@ Chi tiết phân công và liên kết các artifact được ghi tại [docs/09
     |-- TST-JDG-002_multi_round_judging.sql
     |-- TST-RES-001_result_finalization.sql
     |-- TST-ARC-001_historical_archive.sql
-    `-- TST-AUD-001_audit_status_change.sql
+    |-- TST-AUD-001_audit_status_change.sql
+    |-- TST-INT-001_invalid_foreign_key.sql
+    |-- TST-INT-002_invalid_status.sql
+    |-- TST-INT-003_invalid_criterion_weight.sql
+    |-- TST-INT-004_invalid_date_window.sql
+    `-- TST-RET-001_restricted_deletion.sql
 ```
 
 ## Key Artifacts

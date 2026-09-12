@@ -1,0 +1,42 @@
+@startuml
+title Film Photography Contest Platform - Deployment Diagram
+left to right direction
+skinparam componentStyle rectangle
+
+node "User Workstation" as workstation {
+  artifact "Web Browser / Application Client" as browser
+  artifact "SSMS 22" as ssms
+}
+
+node "Application Host\n(future deployment boundary)" as appHost {
+  component "Application API" as api
+  component "AI Integration Adapter" as adapter
+}
+
+node "Docker Desktop Host" as dockerHost {
+  node "Docker Compose" as compose {
+    node "tkcsdl-sqlserver\nSQL Server 2022 CU24" as sqlContainer {
+      database "FilmContestDB\nPort 1433" as db
+      component "sqlcmd" as sqlcmd
+    }
+  }
+  folder "Named volume\nsqlserver_data" as volume
+}
+
+cloud "Object Storage" as storage
+cloud "External AI Service" as ai
+
+browser --> api : HTTPS
+ssms --> db : TDS TCP localhost:14333
+api --> db : TDS TCP
+api --> storage : image URI/path access
+adapter --> ai : HTTPS
+api --> adapter
+sqlcmd --> db : initialization and tests
+db --> volume : persistent data
+
+note bottom of dockerHost
+docker-compose.yml maps host port 14333 to SQL Server port 1433.
+SSMS authentication: SQL Server Authentication using sa and the local .env password.
+end note
+@enduml
