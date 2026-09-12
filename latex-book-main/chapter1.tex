@@ -45,11 +45,11 @@ Phương thức quản lý thủ công, phân tán bộc lộ 5 điểm nghẽn 
 
 \subsection{Mục tiêu Nghiệp vụ (Business Objectives)}
 \begin{itemize}
-    \item \textbf{BO-01 (Tập trung hóa)}: Xây dựng nền tảng số hóa toàn diện, thống nhất mọi nghiệp vụ quản lý cuộc thi nhiếp ảnh phim trên một hệ thống duy nhất.
+    \item \textbf{BO-01 (Tập trung hóa)}: Đặc tả nền tảng số hóa đề xuất và xây dựng nền tảng dữ liệu thống nhất cho các nghiệp vụ quản lý cuộc thi nhiếp ảnh phim trong phạm vi đồ án cơ sở dữ liệu.
     \item \textbf{BO-02 (Chuẩn hóa Siêu dữ liệu)}: Thiết lập mô hình quản lý xuất xứ dữ liệu ảnh phim đa tầng, gắn chặt bài thi với cuộn phim, khung hình, thông số lab và scan.
     \item \textbf{BO-03 (Chấm thi Minh bạch)}: Cung cấp môi trường chấm thi chuyên nghiệp, hỗ trợ đa vòng, đa tiêu chí với cơ chế kiểm soát phân công và bảo toàn lịch sử đánh giá.
     \item \textbf{BO-04 (Lưu trữ Di sản)}: Xây dựng kho lưu trữ số (\textit{Digital Archive}) lưu trữ bền vững các tác phẩm đoạt giải dưới dạng bản chụp lịch sử (\textit{snapshot}) độc lập với các thay đổi cấu hình tương lai.
-    \item \textbf{BO-05 (Thẩm định AI có Kiểm soát)}: Tích hợp module AI hỗ trợ phát hiện ảnh trùng lặp và ảnh tạo bởi AI theo mô hình \textit{Human-in-the-loop}, nâng cao năng suất thẩm định cho Ban tổ chức.
+    \item \textbf{BO-05 (Thẩm định AI có Kiểm soát)}: Đặc tả ranh giới tích hợp AI và mô hình lưu kết quả phân tích advisory để hỗ trợ phát hiện ảnh trùng lặp và ảnh tạo bởi AI theo mô hình \textit{Human-in-the-loop}; việc huấn luyện và inference AI thực tế nằm ngoài phase này.
 \end{itemize}
 
 \subsection{Tiêu chuẩn Thành công Kỹ thuật (Technical Success Criteria)}
@@ -75,7 +75,7 @@ Phương thức quản lý thủ công, phân tán bộc lộ 5 điểm nghẽn 
 \midrule
 \textbf{Trong phạm vi} \newline (\textit{In-Scope}) & 
 $\bullet$ Phân tích yêu cầu nghiệp vụ (FR, NFR, BR, Use Cases) \newline
-$\bullet$ Thiết kế kiến trúc hệ thống (Context, Modules, AI Design) \newline
+$\bullet$ Thiết kế kiến trúc hệ thống đề xuất (Context, Modules, AI Integration Boundary) \newline
 $\bullet$ Thiết kế CSDL 3 cấp độ (Conceptual, Logical, Physical) \newline
 $\bullet$ Hiện thực hóa CSDL trên Microsoft SQL Server (DDL, Stored Procedures, Triggers, Views) \newline
 $\bullet$ Dữ liệu mẫu tham chiếu và kịch bản kiểm thử T-SQL \newline
@@ -83,9 +83,10 @@ $\bullet$ Bộ ma trận kiểm chứng chất lượng (RTM, CRUD, Decision Log
 Bản thiết kế CSDL hoàn chỉnh, nhất quán, tối ưu hiệu năng và có khả năng bảo toàn toàn vẹn dữ liệu ở cấp độ doanh nghiệp. \\
 \midrule
 \textbf{Ngoài phạm vi} \newline (\textit{Out-of-Scope}) & 
-$\bullet$ Lập trình giao diện Web / Mobile \newline
-$\bullet$ Lập trình Backend API runtime \newline
-$\bullet$ Huấn luyện (Training) mô hình AI thực tế &
+$\bullet$ Lập trình giao diện Web và ứng dụng Mobile; đây là các client được đề xuất trong kiến trúc \newline
+$\bullet$ Lập trình Backend API runtime; đây là service được đề xuất trong kiến trúc \newline
+$\bullet$ Huấn luyện, hosting hoặc inference mô hình AI thực tế; AI service chỉ là thành phần tích hợp được đề xuất \newline
+$\bullet$ Triển khai object storage đám mây thực tế; CSDL chỉ lưu URI/path, hash và metadata &
 Tập trung toàn bộ nguồn lực vào thiết kế kiến trúc và mô hình hóa dữ liệu chuyên sâu. \\
 \bottomrule
 \end{tabular}
@@ -97,7 +98,7 @@ Tập trung toàn bộ nguồn lực vào thiết kế kiến trúc và mô hìn
 \begin{enumerate}
     \item Hệ quản trị cơ sở dữ liệu mục tiêu chính thức là \textbf{Microsoft SQL Server (2022+)}.
     \item Mọi kết quả xử lý từ trí tuệ nhân tạo (AI) đều mang tính chất tư vấn (\textit{advisory}), hệ thống không tự động loại bài thi nếu chưa có sự phê duyệt từ Ban tổ chức.
-    \item Tệp nhị phân của hình ảnh được lưu trữ tại dịch vụ lưu trữ đối tượng (\textit{Object Storage}), cơ sở dữ liệu chỉ lưu trữ đường dẫn (\textit{URI/Path}), mã băm kiểm tra toàn vẹn (\textit{SHA-256 hash}) và siêu dữ liệu kỹ thuật.
+    \item Kiến trúc đích giả định tệp nhị phân của hình ảnh được lưu trữ tại dịch vụ lưu trữ đối tượng (\textit{Object Storage}); trong phase này chưa triển khai dịch vụ đó, cơ sở dữ liệu chỉ lưu trữ đường dẫn (\textit{URI/Path}), mã băm kiểm tra toàn vẹn (\textit{SHA-256 hash}) và siêu dữ liệu kỹ thuật.
 \end{enumerate}
 
 % ----------------------------------------------------------------------
@@ -140,7 +141,7 @@ Nhằm đảm bảo sự nhất quán tuyệt đối về ngữ nghĩa trong to�
 \section{Phân tích Stakeholders và Ma trận Vai trò Hệ thống}
 \label{s:c1_stakeholders}
 
-Hệ thống phục vụ 4 nhóm tác nhân người dùng chính cùng các bên liên quan bên ngoài. Bảng~\ref{tab:c1_stakeholders} tổng hợp trách nhiệm và nhu cầu thông tin của từng tác nhân:
+Kiến trúc đích phục vụ 4 nhóm tác nhân người dùng chính cùng các bên liên quan bên ngoài. Bảng~\ref{tab:c1_stakeholders} tổng hợp trách nhiệm và nhu cầu thông tin của từng tác nhân; các client Web/Mobile và Backend runtime để hiện thực tương tác này chưa thuộc deliverable của phase cơ sở dữ liệu:
 
 \begin{table}[htbp]
 \centering
