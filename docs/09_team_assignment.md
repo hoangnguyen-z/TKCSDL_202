@@ -26,3 +26,13 @@ Requirement Lead chịu trách nhiệm duy trì tính nhất quán của require
 `Source requirements -> Business flows -> FR/NFR/BR -> Use cases -> Architecture and database artifacts -> Tests`
 
 Các thay đổi requirement cần được đối chiếu với [docs/07_validation_traceability.md](07_validation_traceability.md) trước khi merge.
+
+### Requirement Review Checklist
+
+Trước khi chấp nhận một thay đổi requirement, Requirement Lead kiểm tra:
+
+1. Source requirement và phạm vi thay đổi đã được xác định.
+2. Flow, FR/NFR/BR và use case liên quan đã được cập nhật.
+3. Tác động tới architecture, database artifact và test đã được ghi nhận.
+4. Official requirement được phân biệt với proposed rule hoặc design decision.
+5. Các ID và liên kết trong RTM không bị trùng hoặc đứt.
