@@ -18,7 +18,11 @@ This repository contains the full analysis, architecture, database design, SQL S
 
 | Thành viên | Vai trò | Phạm vi phụ trách |
 | --- | --- | --- |
-| Trung Châu | Requirement Lead | Requirement baseline, gap analysis, business glossary, stakeholders, AS-IS/TO-BE flows, FR, NFR, BR và use cases |
+| Trung Châu (`Pinginguyen`) | Requirement Lead | Requirement baseline, gap analysis, business glossary, stakeholders, AS-IS/TO-BE flows, FR, NFR, BR, use cases và traceability |
+
+Requirement Lead GitHub identity: `Pinginguyen` (`trungchau1210@gmail.com`).
+
+The Requirement Lead owns the chain from source requirements to business flows, FR/NFR/BR, use cases, architecture inputs, database design inputs, and validation tests. Official requirements are separated from proposed business rules and design decisions so that the repository distinguishes source-backed scope from design proposals.
 
 Chi tiết phân công và liên kết các artifact được ghi tại [docs/09_team_assignment.md](docs/09_team_assignment.md).
 

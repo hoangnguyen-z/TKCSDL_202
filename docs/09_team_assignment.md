@@ -3,6 +3,8 @@
 ## Trung Châu
 
 - **Vai trò:** Requirement Lead
+- **GitHub account:** `Pinginguyen`
+- **Commit email:** `trungchau1210@gmail.com`
 - **GitHub repository:** [hoangnguyen-z/TKCSDL_202](https://github.com/hoangnguyen-z/TKCSDL_202)
 - **Phạm vi phụ trách:** Requirement Analysis và các đầu vào nghiệp vụ làm cơ sở cho thiết kế kiến trúc, CSDL và kiểm thử.
 
@@ -14,6 +16,8 @@
 | [docs/02_requirement_analysis.md](02_requirement_analysis.md) | Business problem, scope, glossary, stakeholders, RBAC baseline, AS-IS/TO-BE, core flows, FR, NFR, BR và use cases |
 | [latex-book-main/chapter1.tex](../latex-book-main/chapter1.tex) | Bối cảnh, pain points, mục tiêu, phạm vi, glossary và stakeholder analysis trong báo cáo LaTeX |
 | [latex-book-main/chapter2.tex](../latex-book-main/chapter2.tex) | AS-IS/TO-BE, core business flows, FR, NFR, BR và use-case specifications trong báo cáo LaTeX |
+
+Các artifact trên được duy trì theo đúng phạm vi Requirement Lead; phần triển khai SQL, Docker và test runtime có thể do thành viên khác thực hiện nhưng phải nhận được requirement inputs và giữ liên kết traceability.
 
 ## Traceability Responsibility
 
