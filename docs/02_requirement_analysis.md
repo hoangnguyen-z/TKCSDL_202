@@ -11,7 +11,7 @@ The proposed platform should support the full business lifecycle of a film photo
 ### 2.1 In Scope
 
 - Requirement Analysis
-- System Architecture Design
+- Proposed System Architecture Design, including Web, Mobile, Backend, object storage, and AI integration boundaries
 - Database Design at three levels: Conceptual, Logical, Physical
 - Microsoft SQL Server implementation scripts
 - Docker and Docker Compose setup for SQL Server runtime
@@ -20,11 +20,11 @@ The proposed platform should support the full business lifecycle of a film photo
 
 ### 2.2 Out of Scope
 
-- Frontend implementation
-- Backend implementation
-- Mobile application implementation
-- Real AI model training or production inference integration
-- Real cloud object storage implementation
+- Web frontend implementation (the Web client is a proposed architecture component)
+- Mobile application implementation (the Mobile client is a proposed architecture component)
+- Backend/API runtime implementation (the Backend service is a proposed architecture component)
+- Real AI model training, model hosting, or production inference integration (the AI service is a proposed architecture component)
+- Real cloud object storage implementation (the database stores URI/path, hash, and metadata references only)
 - Final capstone report writing
 
 ### 2.3 Scope Assumptions
@@ -32,6 +32,7 @@ The proposed platform should support the full business lifecycle of a film photo
 - SQL Server is the only target DBMS for the current project phase.
 - Dockerized SQL Server is the primary runtime environment.
 - SSMS 22 on the host machine is the primary operational client.
+- Web, Mobile, Backend, object storage, and AI components shown in architecture artifacts describe the target solution and integration contracts; they are not implemented deliverables in this phase.
 - AI outputs are advisory only and cannot automatically make final business decisions without human review.
 
 ## 3. Domain Glossary
