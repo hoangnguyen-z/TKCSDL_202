@@ -10,34 +10,34 @@ The model covers the complete chain:
 
 ## 2. Business Entities and Meaning
 
-| Entity | Meaning |
-| --- | --- |
-| UserAccount | A platform identity used to access the system. |
-| Role | A named responsibility set such as Administrator, Organizer, Judge, or Participant. |
-| UserRole | The assignment of a role to a user account. |
-| ParticipantProfile | Participant-specific details attached to a user who can register and submit work. |
-| Contest | A competition event with schedule, policy, and status. |
-| ContestCategory | A competition class or section inside a contest. |
-| Registration | A participant's enrollment into a contest and its eligibility outcome. |
-| FilmStock | A reference concept describing a stock of film. |
-| Camera | A reference concept describing a camera body. |
-| Lens | A reference concept describing a lens. |
-| Lab | A reference concept describing a film processing lab. |
-| FilmRoll | A participant-owned roll of film used to preserve provenance. |
-| FilmFrame | An individual frame on a film roll that may become a contest entry. |
-| Submission | A contest entry created from one film frame under one approved registration and one contest category. |
-| VerificationCase | The current verification review record for a submission. |
-| AIAnalysisResult | An advisory AI output linked to a submission, possibly with evidence or related submission reference. |
-| JudgingRound | A round of evaluation scoped to a contest category. |
-| JudgeAssignment | The assignment of a judge to a judging round. |
-| ScoringCriterion | A criterion with weight and score range used in a judging round. |
-| Evaluation | One judge's assessment of one submission in one judging round. |
-| EvaluationScore | A criterion-level score inside an evaluation. |
-| Result | The finalized category ranking record for a submission. |
-| AwardDefinition | A contest/category-specific award that can later be assigned. |
-| AwardAssignment | The linking of an award definition to a finalized result. |
-| ArchiveItem | An immutable archived snapshot of a selected finalized result. |
-| AuditLog | A business event history record for traceability. |
+| Entity | Meaning | Why it is needed at conceptual level |
+| --- | --- | --- |
+| UserAccount | A platform identity used to access the system. | Separates identity and access ownership from business activities. |
+| Role | A named responsibility set such as Administrator, Organizer, Judge, or Participant. | Defines the responsibility vocabulary used by RBAC. |
+| UserRole | The assignment of a role to a user account. | Represents the UserAccount-to-Role many-to-many business relationship. |
+| ParticipantProfile | Participant-specific details attached to a user who can register and submit work. | Captures participant business data without duplicating the user identity. |
+| Contest | A competition event with schedule, policy, and status. | Anchors contest configuration and the complete contest lifecycle. |
+| ContestCategory | A competition class or section inside a contest. | Represents category-specific eligibility, judging and results. |
+| Registration | A participant's enrollment into a contest and its eligibility outcome. | Records the participant-contest transaction before submissions exist. |
+| FilmStock | A reference concept describing a stock of film. | Preserves technical provenance for film rolls. |
+| Camera | A reference concept describing a camera body. | Identifies the capture equipment associated with a frame. |
+| Lens | A reference concept describing a lens. | Identifies the optical equipment associated with a frame. |
+| Lab | A reference concept describing a film processing lab. | Preserves developing and processing provenance for a roll. |
+| FilmRoll | A participant-owned roll of film used to preserve provenance. | Groups physical frames and their film metadata. |
+| FilmFrame | An individual frame on a film roll that may become a contest entry. | Provides the physical source and reusable unit for a submission. |
+| Submission | A contest entry created from one film frame under one approved registration and one contest category. | Represents the work being verified, judged and ranked. |
+| VerificationCase | The current verification review record for a submission. | Separates human eligibility decisions from the submission itself. |
+| AIAnalysisResult | An advisory AI output linked to a submission, possibly with evidence or related submission reference. | Preserves AI evidence without making AI the final decision-maker. |
+| JudgingRound | A round of evaluation scoped to a contest category. | Supports multi-round judging and round-specific policy. |
+| JudgeAssignment | The assignment of a judge to a judging round. | Records judging workload and scope. |
+| ScoringCriterion | A criterion with weight and score range used in a judging round. | Defines the evaluation dimensions for a specific round. |
+| Evaluation | One judge's assessment of one submission in one judging round. | Captures the atomic judging event. |
+| EvaluationScore | A criterion-level score inside an evaluation. | Resolves the evaluation-to-criterion many-to-many relationship. |
+| Result | The finalized category ranking record for a submission. | Preserves the official ranking outcome. |
+| AwardDefinition | A contest/category-specific award that can later be assigned. | Defines the available prize structure independently of winners. |
+| AwardAssignment | The linking of an award definition to a finalized result. | Records which finalized result received which award. |
+| ArchiveItem | An immutable archived snapshot of a selected finalized result. | Preserves historical meaning after live data changes. |
+| AuditLog | A business event history record for traceability. | Provides accountability for important lifecycle changes. |
 
 ## 3. Core Relationships, Cardinality, and Optionality
 

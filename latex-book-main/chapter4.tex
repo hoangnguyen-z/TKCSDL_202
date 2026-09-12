@@ -24,37 +24,39 @@ $$\text{User/Role} \rightarrow \text{Participant} \rightarrow \text{Registration
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{p{0.25\linewidth}p{0.7\linewidth}}
+\begin{tabular}{p{0.22\linewidth}p{0.42\linewidth}p{0.28\linewidth}}
 \toprule
-\textbf{Thực thể Ý niệm} & \textbf{Ý nghĩa nghiệp vụ trong thế giới thực} \\
+\textbf{Thực thể Ý niệm} & \textbf{Ý nghĩa nghiệp vụ trong thế giới thực} & \textbf{Lý do cần ở mức ý niệm} \\
 \midrule
-\textbf{UserAccount} & Danh tính người dùng truy cập vào nền tảng. \\
-\textbf{Role} & Vai trò trách nhiệm trong hệ thống (Admin, Organizer, Judge, Participant). \\
-\textbf{UserRole} & Sự phân công một hoặc nhiều vai trò cho một tài khoản người dùng. \\
-\textbf{ParticipantProfile} & Hồ sơ chi tiết của thí sinh tham gia cuộc thi. \\
-\textbf{Contest} & Sự kiện cuộc thi nhiếp ảnh phim với thể lệ và khung thời gian. \\
-\textbf{ContestCategory} & Hạng mục chuyên môn trong cuộc thi (Chân dung, Phong cảnh, Thể nghiệm). \\
-\textbf{Registration} & Đơn đăng ký tham gia cuộc thi cụ thể của một thí sinh. \\
-\textbf{FilmStock / Lab} & Danh mục tham chiếu dòng phim và phòng lab tráng phim. \\
-\textbf{Camera / Lens} & Danh mục tham chiếu thiết bị thân máy ảnh và ống kính quang học. \\
-\textbf{FilmRoll} & Cuộn phim vật lý thuộc sở hữu của thí sinh. \\
-\textbf{FilmFrame} & Khung hình phim đơn lẻ trên cuộn phim được số hóa. \\
-\textbf{Submission} & Tác phẩm dự thi liên kết khung hình với hạng mục cuộc thi. \\
-\textbf{VerificationCase} & Hồ sơ thẩm định tính hợp lệ của bài dự thi do Ban tổ chức thực hiện. \\
-\textbf{AIAnalysisResult} & Bản ghi kết quả phân tích độ tương đồng hoặc phát hiện ảnh AI. \\
-\textbf{JudgingRound} & Vòng chấm thi cụ thể trong một hạng mục (Sơ khảo, Chung khảo). \\
-\textbf{JudgeAssignment} & Phân công một giám khảo cụ thể tham gia chấm một vòng thi. \\
-\textbf{ScoringCriterion} & Tiêu chí chấm điểm có thang điểm và trọng số trong một vòng. \\
-\textbf{Evaluation} & Phiếu đánh giá của một giám khảo đối với một bài thi trong vòng. \\
-\textbf{EvaluationScore} & Điểm chi tiết cho từng tiêu chí trong một phiếu đánh giá. \\
-\textbf{Result} & Bản ghi kết quả xếp hạng chính thức của bài thi theo hạng mục. \\
-\textbf{AwardDefinition} & Định nghĩa cơ cấu giải thưởng (Nhất, Nhì, Ba, Khuyến khích). \\
-\textbf{AwardAssignment} & Gán giải thưởng cụ thể cho bài thi có kết quả chung cuộc. \\
-\textbf{ArchiveItem} & Bản chụp bất biến lưu trữ di sản tác phẩm đoạt giải lâu dài. \\
-\textbf{AuditLog} & Nhật ký kiểm toán lưu vết các thao tác thay đổi dữ liệu quan trọng. \\
+\textbf{UserAccount} & Danh tính người dùng truy cập nền tảng. & Tách danh tính khỏi nghiệp vụ. \\
+\textbf{Role} & Vai trò trách nhiệm (Admin, Organizer, Judge, Participant). & Chuẩn hóa từ vựng phân quyền. \\
+\textbf{UserRole} & Phân công vai trò cho tài khoản. & Biểu diễn quan hệ N:M User--Role. \\
+\textbf{ParticipantProfile} & Hồ sơ chi tiết của thí sinh. & Lưu dữ liệu nghiệp vụ riêng của thí sinh. \\
+\textbf{Contest} & Sự kiện thi có thể lệ và thời gian. & Neo toàn bộ vòng đời cuộc thi. \\
+\textbf{ContestCategory} & Hạng mục chuyên môn trong cuộc thi. & Phân định điều kiện, chấm và kết quả theo hạng mục. \\
+\textbf{Registration} & Đơn đăng ký của thí sinh vào cuộc thi. & Ghi nhận giao dịch tham gia trước khi nộp bài. \\
+\textbf{FilmStock} & Danh mục dòng phim. & Bảo toàn xuất xứ kỹ thuật của cuộn phim. \\
+\textbf{Camera} & Danh mục thân máy ảnh. & Nhận diện thiết bị chụp của frame. \\
+\textbf{Lens} & Danh mục ống kính. & Nhận diện thiết bị quang học của frame. \\
+\textbf{Lab} & Danh mục phòng lab tráng phim. & Bảo toàn xuất xứ xử lý cuộn phim. \\
+\textbf{FilmRoll} & Cuộn phim vật lý của thí sinh. & Nhóm các frame và metadata phim. \\
+\textbf{FilmFrame} & Khung hình đơn trên cuộn phim. & Là nguồn vật lý của bài dự thi. \\
+\textbf{Submission} & Tác phẩm gắn frame với đăng ký và hạng mục. & Đối tượng được thẩm định, chấm và xếp hạng. \\
+\textbf{VerificationCase} & Hồ sơ thẩm định bài dự thi. & Tách quyết định con người khỏi submission. \\
+\textbf{AIAnalysisResult} & Kết quả phân tích AI mang tính tư vấn. & Lưu bằng chứng AI nhưng không thay quyết định người. \\
+\textbf{JudgingRound} & Vòng chấm trong một hạng mục. & Hỗ trợ chấm nhiều vòng. \\
+\textbf{JudgeAssignment} & Phân công giám khảo vào vòng chấm. & Xác định phạm vi công việc. \\
+\textbf{ScoringCriterion} & Tiêu chí, trọng số và thang điểm. & Định nghĩa cách đánh giá theo vòng. \\
+\textbf{Evaluation} & Phiếu đánh giá của một giám khảo. & Ghi nhận sự kiện chấm điểm nguyên tử. \\
+\textbf{EvaluationScore} & Điểm theo từng tiêu chí. & Giải quyết quan hệ N:M Evaluation--Criterion. \\
+\textbf{Result} & Kết quả xếp hạng chính thức. & Bảo toàn kết quả cuối cùng. \\
+\textbf{AwardDefinition} & Định nghĩa cơ cấu giải thưởng. & Tách cấu hình giải khỏi người nhận giải. \\
+\textbf{AwardAssignment} & Gán giải cho kết quả chung cuộc. & Ghi nhận kết quả trao giải. \\
+\textbf{ArchiveItem} & Bản chụp bất biến của kết quả được lưu trữ. & Bảo toàn lịch sử khi dữ liệu sống thay đổi. \\
+\textbf{AuditLog} & Nhật ký thay đổi nghiệp vụ quan trọng. & Bảo đảm truy vết và trách nhiệm. \\
 \bottomrule
 \end{tabular}
-\caption{Danh mục 24 thực thể ý niệm cốt lõi}
+\caption{Danh mục 26 thực thể ý niệm cốt lõi và sự cần thiết ở mức nghiệp vụ}
 \label{tab:c4_entity_inventory}
 \end{table}
 
