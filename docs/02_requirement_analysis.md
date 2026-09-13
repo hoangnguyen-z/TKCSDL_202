@@ -163,7 +163,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Output:
   - Contest and dependent configuration records.
 - Status Transition:
-  - `Draft -> Published -> Open -> Closed -> Finalized -> Archived`
+  - Contest: `DRAFT -> PUBLISHED -> OPEN -> CLOSED -> FINALIZED -> ARCHIVED`
 - Data Affected:
   - Contest, Category, Judging Round, Scoring Criterion, Award Definition
 - Related BR:
@@ -177,16 +177,17 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Contest registration window is open.
 - Main Flow:
   1. Participant submits registration.
-  2. System records registration as pending.
+  2. System records registration as `PENDING`.
   3. Organizer or policy process reviews eligibility.
-  4. Registration becomes approved or rejected.
+  4. Registration becomes `APPROVED` or `REJECTED`.
 - Alternative / Exception Flow:
   - Duplicate registration attempt is blocked.
   - Registration after deadline is rejected.
 - Output:
   - Registration decision and status.
 - Status Transition:
-  - `Draft -> Pending -> Approved / Rejected / Withdrawn`
+  - Registration: `PENDING -> APPROVED / REJECTED / WITHDRAWN`
+  - Eligibility: `PENDING -> ELIGIBLE / INELIGIBLE`
 - Data Affected:
   - Registration, Audit Log
 - Related BR:
@@ -208,8 +209,8 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Output:
   - Reusable film roll and frame records.
 - Status Transition:
-  - Film Roll: `Draft -> Ready -> Archived`
-  - Film Frame: `Draft -> Ready -> Submitted -> Archived`
+  - Film Roll: `DRAFT -> READY -> ARCHIVED`
+  - Film Frame: `DRAFT -> READY -> SUBMITTED -> ARCHIVED`
 - Data Affected:
   - Film Roll, Film Frame
 - Related BR:
@@ -219,14 +220,14 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 
 - Trigger: Participant submits a frame to a contest category.
 - Preconditions:
-  - Registration is approved.
+  - Registration is `APPROVED` and eligibility is `ELIGIBLE`.
   - Submission window is open.
-  - Frame is in ready state.
+  - Frame is in `READY` state.
 - Main Flow:
   1. Participant selects contest, category, and frame.
   2. Participant uploads scanned image and statement.
   3. System validates timing, ownership, and uniqueness.
-  4. Submission is saved as pending verification.
+  4. Submission is saved as `PENDING_VERIFICATION`.
 - Alternative / Exception Flow:
   - Late submission is rejected.
   - Same frame is already submitted to the same contest.
@@ -234,7 +235,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Output:
   - Submission record awaiting verification.
 - Status Transition:
-  - `Draft -> PendingVerification -> Verified / Rejected / NeedsClarification -> Judged -> Finalized -> Archived`
+  - Submission: `DRAFT -> PENDING_VERIFICATION -> VERIFIED / REJECTED / NEEDS_CLARIFICATION -> JUDGED -> FINALIZED -> ARCHIVED`
 - Data Affected:
   - Submission, Audit Log
 - Related BR:
@@ -244,7 +245,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 
 - Trigger: Organizer reviews a pending submission.
 - Preconditions:
-  - Submission status is `PendingVerification` or `NeedsClarification`.
+  - Submission status is `PENDING_VERIFICATION` or `NEEDS_CLARIFICATION`.
 - Main Flow:
   1. System evaluates completeness and technical validity.
   2. AI analysis records similarity and AI-generated signals.
@@ -256,7 +257,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Output:
   - Verification decision and linked AI analysis records.
 - Status Transition:
-  - Verification: `Pending -> UnderReview -> Verified / Rejected / NeedsClarification`
+  - Verification Case: `PENDING -> UNDER_REVIEW -> VERIFIED / REJECTED / NEEDS_CLARIFICATION`
   - Submission mirrors the final verification outcome.
 - Data Affected:
   - Verification Case, AI Analysis Result, Submission, Audit Log
@@ -281,8 +282,8 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Output:
   - Persisted evaluations and score breakdowns.
 - Status Transition:
-  - Judge Assignment: `Assigned -> InProgress -> Submitted / Cancelled`
-  - Evaluation: `Draft -> Submitted -> Locked`
+  - Judge Assignment: `ASSIGNED -> IN_PROGRESS -> SUBMITTED / CANCELLED`
+  - Evaluation: `DRAFT -> SUBMITTED -> LOCKED`
 - Data Affected:
   - Judge Assignment, Evaluation, Evaluation Score, Audit Log
 - Related BR:
@@ -305,7 +306,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Output:
   - Final results, award assignments, publication state.
 - Status Transition:
-  - Result: `Draft -> Finalized -> Published`
+  - Result: `DRAFT -> FINALIZED -> PUBLISHED`
 - Data Affected:
   - Result, Award Assignment, Audit Log
 - Related BR:
@@ -326,7 +327,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Output:
   - Stable archive item snapshot.
 - Status Transition:
-  - Archive Item: `PendingArchive -> Archived -> Retired`
+  - Archive Item: `ARCHIVED -> RETIRED`
 - Data Affected:
   - Archive Item, Audit Log
 - Related BR:
@@ -395,7 +396,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 | BR-O-004 | Official | A film frame must belong to exactly one film roll. | Provenance chain is required. | FR-010, FR-011 | Database |
 | BR-O-005 | Official | A submission must bind exactly one approved registration, one frame, one contest, and one category. | Submission traceability requirement. | FR-013, FR-016 | Database + SQL logic |
 | BR-O-006 | Official | AI analysis results are advisory and cannot finalize verification by themselves. | Human decision ownership is mandatory. | FR-018, FR-019 | Application-design layer + human decision |
-| BR-O-007 | Official | Verification must end in exactly one of: Verified, Rejected, or NeedsClarification. | Clear workflow control. | FR-017, FR-019 | Database + SQL logic |
+| BR-O-007 | Official | Verification must end in exactly one of: `VERIFIED`, `REJECTED`, or `NEEDS_CLARIFICATION`. | Clear workflow control. | FR-017, FR-019 | Database + SQL logic |
 | BR-O-008 | Official | Judge assignments must be scoped to a specific judging round. | Prevent ambiguous evaluation scope. | FR-020, FR-024 | Database |
 | BR-O-009 | Official | An evaluation records one judge's judgment of one submission in one round. | Core judging granularity. | FR-021, FR-022 | Database |
 | BR-O-010 | Official | Results may be finalized only after required evaluations for the final round are complete. | Prevent premature ranking. | FR-025 | SQL logic + application-design layer |
@@ -437,7 +438,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Alternative / Exception:
   - Publish blocked if required configuration is missing.
 - Output:
-  - Published contest configuration.
+  - `PUBLISHED` contest configuration.
 - Data Affected:
   - Contest, Category, Judging Round, Scoring Criterion, Award Definition
 - Related BR:
@@ -458,7 +459,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Duplicate registration blocked.
   - Late registration blocked.
 - Output:
-  - Registration status decision.
+  - Registration status decision: `APPROVED`, `REJECTED`, or `WITHDRAWN`.
 - Data Affected:
   - Registration, Audit Log
 - Related BR:
@@ -477,7 +478,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Alternative / Exception:
   - Duplicate frame number blocked within roll.
 - Output:
-  - Ready film assets for reuse in submissions.
+  - `READY` film assets for reuse in submissions.
 - Data Affected:
   - Film Roll, Film Frame
 - Related BR:
@@ -488,7 +489,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Primary Actor: Participant
 - Trigger: Participant submits a frame to a category.
 - Preconditions:
-  - Registration approved.
+  - Registration `APPROVED` and eligibility `ELIGIBLE`.
   - Submission window open.
 - Main Flow:
   1. Select contest, category, frame.
@@ -499,7 +500,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Submission deadline passed.
   - Frame does not belong to the registered participant.
 - Output:
-  - Submission awaiting verification.
+  - Submission at `PENDING_VERIFICATION`.
 - Data Affected:
   - Submission, Audit Log
 - Related BR:
@@ -511,7 +512,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Supporting Actor: AI Analysis Service
 - Trigger: Submission enters verification queue.
 - Preconditions:
-  - Submission is pending verification.
+  - Submission status is `PENDING_VERIFICATION` or `NEEDS_CLARIFICATION`.
 - Main Flow:
   1. Review completeness and technical checks.
   2. Review AI analysis results.
@@ -542,7 +543,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Late round submission blocked.
   - Submission outside the judge's assigned workload is blocked.
 - Output:
-  - Evaluation with score breakdown.
+  - Evaluation with score breakdown at `SUBMITTED`.
 - Data Affected:
   - Evaluation, Evaluation Score, Audit Log
 - Related BR:
@@ -563,7 +564,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Alternative / Exception:
   - Missing evaluations block finalization.
 - Output:
-  - Final results and awards.
+  - Final results and awards at `FINALIZED`, followed by `PUBLISHED`.
 - Data Affected:
   - Result, Award Assignment, Audit Log
 - Related BR:
@@ -582,7 +583,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Alternative / Exception:
   - Archive blocked if result is not finalized.
 - Output:
-  - Immutable archive item.
+  - Immutable archive item at `ARCHIVED`.
 - Data Affected:
   - Archive Item, Audit Log
 - Related BR:
