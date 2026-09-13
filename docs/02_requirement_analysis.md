@@ -430,6 +430,22 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Actor has Organizer role.
   - Contest code is available.
 - Main Flow:
+  1. Create contest in `DRAFT`.
+  2. Add categories, judging rounds, criteria, and awards.
+  3. Validate date windows and required configuration.
+  4. Publish as `PUBLISHED`; open registration changes the contest to `OPEN`.
+- Alternative / Exception Flow:
+  - Duplicate contest code or invalid date windows block creation or update.
+  - Missing category or judging round blocks publication.
+- Output:
+  - Published contest configuration.
+- Status Transition:
+  - Contest: `DRAFT -> PUBLISHED -> OPEN -> CLOSED -> FINALIZED -> ARCHIVED`.
+- Data Affected:
+  - Contest, Category, Judging Round, Scoring Criterion, Award Definition, Audit Log.
+- Related BR:
+  - BR-O-001, BR-O-002, BR-P-007, BR-P-008.
+- Main Flow:
   1. Create contest in draft.
   2. Add categories.
   3. Add rounds for each category.
@@ -453,13 +469,32 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Participant account is active.
 - Main Flow:
   1. Participant submits registration.
-  2. System marks registration pending.
+  2. System records registration and eligibility as `PENDING`.
+  3. Organizer reviews eligibility and updates the decision.
+- Alternative / Exception Flow:
+  - Duplicate registration, inactive account, or closed registration window blocks the request.
+  - Ineligible registration is recorded as `REJECTED` with eligibility `INELIGIBLE`.
+- Output:
+  - Registration decision with `APPROVED`, `REJECTED`, or `WITHDRAWN` status.
+- Status Transition:
+  - Registration: `PENDING -> APPROVED / REJECTED / WITHDRAWN`.
+  - Eligibility: `PENDING -> ELIGIBLE / INELIGIBLE`.
+- Data Affected:
+  - Registration, Audit Log.
+- Related BR:
+  - BR-O-003, BR-P-002, BR-P-003.
+- Main Flow:
+  1. Participant submits registration.
+  2. System records registration and eligibility as `PENDING`.
   3. Organizer reviews and approves or rejects.
 - Alternative / Exception:
   - Duplicate registration blocked.
   - Late registration blocked.
 - Output:
   - Registration status decision: `APPROVED`, `REJECTED`, or `WITHDRAWN`.
+- Status Transition:
+  - Registration: `PENDING -> APPROVED / REJECTED / WITHDRAWN`.
+  - Eligibility: `PENDING -> ELIGIBLE / INELIGIBLE`.
 - Data Affected:
   - Registration, Audit Log
 - Related BR:
@@ -472,17 +507,21 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Preconditions:
   - Participant profile exists.
 - Main Flow:
-  1. Create film roll.
-  2. Create frames under the roll.
-  3. Attach technical details and references.
-- Alternative / Exception:
-  - Duplicate frame number blocked within roll.
+  1. Create a film roll in `DRAFT` with film stock, lab, format, and ISO metadata.
+  2. Add frames under the roll and attach camera, lens, and scan references.
+  3. Mark complete roll and frame records as `READY`.
+- Alternative / Exception Flow:
+  - Duplicate roll code or frame number within a roll is blocked.
+  - Incomplete metadata remains in `DRAFT` and cannot be submitted.
 - Output:
-  - `READY` film assets for reuse in submissions.
+  - Reusable film roll and frame records in `READY` state.
+- Status Transition:
+  - Film Roll: `DRAFT -> READY -> ARCHIVED`.
+  - Film Frame: `DRAFT -> READY -> SUBMITTED -> ARCHIVED`.
 - Data Affected:
-  - Film Roll, Film Frame
+  - Film Roll, Film Frame, reference data, Audit Log.
 - Related BR:
-  - BR-O-004, BR-P-004, BR-P-005
+  - BR-O-004, BR-P-004, BR-P-005.
 
 ### UC-04 Submit Film Entry
 
@@ -494,15 +533,18 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Main Flow:
   1. Select contest, category, frame.
   2. Upload scanned image reference and statement.
-  3. Save submission as pending verification.
+  3. Validate ownership, contest timing, category membership, and uniqueness.
+  4. Save submission as `PENDING_VERIFICATION`.
 - Alternative / Exception:
   - Frame already submitted to same contest.
   - Submission deadline passed.
   - Frame does not belong to the registered participant.
 - Output:
   - Submission at `PENDING_VERIFICATION`.
+- Status Transition:
+  - Submission: `DRAFT -> PENDING_VERIFICATION`.
 - Data Affected:
-  - Submission, Audit Log
+  - Submission, Film Frame, Audit Log.
 - Related BR:
   - BR-O-003, BR-O-005, BR-P-006, BR-P-009
 
@@ -515,13 +557,18 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Submission status is `PENDING_VERIFICATION` or `NEEDS_CLARIFICATION`.
 - Main Flow:
   1. Review completeness and technical checks.
-  2. Review AI analysis results.
-  3. Approve, reject, or request clarification.
+  2. Record and review advisory AI analysis results.
+  3. Organizer resolves the case as `VERIFIED`, `REJECTED`, or `NEEDS_CLARIFICATION`.
+  4. Synchronize the submission status and audit the human decision.
 - Alternative / Exception:
   - Suspicious case remains under manual review.
     - Missing or incomplete technical metadata results in a clarification request before verification can be completed.
+  - AI output alone cannot change the verification decision.
 - Output:
   - Verification decision and updated submission status.
+- Status Transition:
+  - Verification Case: `PENDING -> UNDER_REVIEW -> VERIFIED / REJECTED / NEEDS_CLARIFICATION`.
+  - Submission: `PENDING_VERIFICATION -> VERIFIED / REJECTED / NEEDS_CLARIFICATION`.
 - Data Affected:
   - Verification Case, AI Analysis Result, Submission, Audit Log
 - Related BR:
@@ -537,13 +584,17 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Main Flow:
   1. Open assigned submission.
   2. Enter criterion-level scores and comments.
-  3. Submit evaluation.
+  3. Submit evaluation; the database persists criterion scores and recalculates the total.
+  4. Mark assignment and evaluation as `SUBMITTED`; lock the evaluation when required.
 - Alternative / Exception:
   - Duplicate evaluation in same round is blocked.
   - Late round submission blocked.
   - Submission outside the judge's assigned workload is blocked.
 - Output:
   - Evaluation with score breakdown at `SUBMITTED`.
+- Status Transition:
+  - Judge Assignment: `ASSIGNED -> IN_PROGRESS -> SUBMITTED / CANCELLED`.
+  - Evaluation: `DRAFT -> SUBMITTED -> LOCKED`.
 - Data Affected:
   - Evaluation, Evaluation Score, Audit Log
 - Related BR:
@@ -558,13 +609,16 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Main Flow:
   1. Review score aggregation.
   2. Resolve ties if needed.
-  3. Finalize results.
-  4. Assign awards.
-  5. Publish.
+  3. Create or update results in `DRAFT`.
+  4. Finalize results as `FINALIZED`, assign awards, and publish as `PUBLISHED`.
 - Alternative / Exception:
   - Missing evaluations block finalization.
+  - Invalid ranking or award/category mismatch blocks finalization.
+  - A finalized result requires the approved administrative and audit path for any intervention.
 - Output:
   - Final results and awards at `FINALIZED`, followed by `PUBLISHED`.
+- Status Transition:
+  - Result: `DRAFT -> FINALIZED -> PUBLISHED`.
 - Data Affected:
   - Result, Award Assignment, Audit Log
 - Related BR:
@@ -579,11 +633,14 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Main Flow:
   1. Select finalized result.
   2. Snapshot metadata and judging context.
-  3. Store archive item.
+  3. Store the immutable archive item as `ARCHIVED`.
 - Alternative / Exception:
   - Archive blocked if result is not finalized.
+  - Duplicate archive item blocks creation; archived data is not updated or hard-deleted.
 - Output:
   - Immutable archive item at `ARCHIVED`.
+- Status Transition:
+  - Archive Item: `ARCHIVED -> RETIRED`.
 - Data Affected:
   - Archive Item, Audit Log
 - Related BR:
