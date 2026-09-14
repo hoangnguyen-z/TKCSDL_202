@@ -11,7 +11,7 @@ Mọi quyết định kiến trúc và mô hình hóa CSDL đều được cân 
 \begin{table}[htbp]
 \centering
 \scriptsize
-\begin{tabular}{p{0.1\linewidth}p{0.22\linewidth}p{0.25\linewidth}p{0.35\linewidth}}
+\begin{tabularx}{\textwidth}{p{1.5cm}p{3.2cm}p{3.6cm}>{\raggedright\arraybackslash}X}
 \toprule
 \textbf{Mã DD} & \textbf{Vấn đề thiết kế} & \textbf{Phương án lựa chọn} & \textbf{Căn cứ \& Tác động kỹ thuật} \\
 \midrule
@@ -24,7 +24,7 @@ Mọi quyết định kiến trúc và mô hình hóa CSDL đều được cân 
 \textbf{DD-007} & Lưu trữ Tệp ảnh & Lưu đường dẫn URI và mã băm SHA-256 trong CSDL, ảnh lưu trên Object Storage & Tránh phình to dung lượng CSDL, tăng tốc độ truy vấn và sao lưu phục hồi. \\
 \textbf{DD-008} & Chính sách Xóa dữ liệu & Cấm xóa vật lý (\texttt{NO ACTION}), sử dụng chuyển trạng thái nghiệp vụ & Bảo vệ toàn vẹn lịch sử chấm thi, tranh chấp và kiểm toán. \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \caption{Nhật ký quyết định thiết kế cốt lõi (Design Decision Log)}
 \label{tab:c7_decision_log}
 \end{table}

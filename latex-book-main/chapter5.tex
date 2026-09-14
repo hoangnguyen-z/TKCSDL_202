@@ -19,25 +19,25 @@ Hệ quản trị cơ sở dữ liệu Microsoft SQL Server (bản 2022+ chạy 
 
 \begin{table}[htbp]
 \centering
-\small
-\begin{tabular}{p{0.25\linewidth}p{0.35\linewidth}p{0.35\linewidth}}
+\footnotesize
+\begin{tabularx}{\textwidth}{>{\bfseries}p{3.0cm}p{4.2cm}>{\raggedright\arraybackslash}X}
 \toprule
 \textbf{Loại đối tượng} & \textbf{Quy ước đặt tên} & \textbf{Ví dụ minh họa} \\
 \midrule
-\textbf{Schema} & Chữ thường, danh từ số ít theo module & \texttt{iam}, \texttt{contest}, \texttt{submission} \\
-\textbf{Bảng (Table)} & PascalCase, danh từ & \texttt{UserAccount}, \texttt{FilmFrame}, \texttt{Submission} \\
-\textbf{Cột (Column)} & snake\_case, rõ nghĩa & \texttt{user\_id}, \texttt{contest\_code}, \texttt{submitted\_at} \\
-\textbf{Khóa chính (PK)} & \texttt{PK\_<Schema>\_<Table>} & \texttt{PK\_submission\_Submission} \\
-\textbf{Khóa ngoại (FK)} & \texttt{FK\_<Schema>\_<Table>\_<Ref>} & \texttt{FK\_submission\_Submission\_Contest} \\
-\textbf{Duy nhất (UNIQUE)} & \texttt{UQ\_<Schema>\_<Table>\_<Cols>} & \texttt{UQ\_submission\_Submission\_contest\_frame} \\
-\textbf{Miền giá trị (CHECK)} & \texttt{CK\_<Schema>\_<Table>\_<Rule>} & \texttt{CK\_judging\_Evaluation\_total\_score} \\
-\textbf{Giá trị mặc định (DF)} & \texttt{DF\_<Schema>\_<Table>\_<Col>} & \texttt{DF\_iam\_UserAccount\_created\_at} \\
-\textbf{Chỉ mục (Index)} & \texttt{IX\_<Schema>\_<Table>\_<Cols>} & \texttt{IX\_submission\_Submission\_contest\_status} \\
-\textbf{View} & Schema \texttt{reporting}, tiền tố \texttt{vw\_} & \texttt{reporting.vw\_submission\_overview} \\
-\textbf{Stored Procedure} & Schema module, tiền tố \texttt{usp\_} & \texttt{submission.usp\_create\_submission} \\
-\textbf{Trigger} & \texttt{TR\_<Schema>\_<Table>\_<Event>} & \texttt{TR\_judging\_EvaluationScore\_AIU} \\
+Schema & Chữ thường, danh từ số ít theo module & \texttt{iam}, \texttt{contest}, \texttt{submission} \\
+Bảng (Table) & PascalCase, danh từ & \texttt{UserAccount}, \texttt{FilmFrame}, \texttt{Submission} \\
+Cột (Column) & snake\_case, rõ nghĩa & \texttt{user\_id}, \texttt{contest\_code}, \texttt{submitted\_at} \\
+Khóa chính (PK) & \texttt{PK\_<Schema>\_<Table>} & \texttt{PK\_submission\_Submission} \\
+Khóa ngoại (FK) & \texttt{FK\_<Schema>\_<Table>\_<Ref>} & \texttt{FK\_submission\_Submission\_Contest} \\
+Duy nhất (UNIQUE) & \texttt{UQ\_<Schema>\_<Table>\_<Cols>} & \texttt{UQ\_submission\_Submission\_contest\_frame} \\
+Miền giá trị (CHECK) & \texttt{CK\_<Schema>\_<Table>\_<Rule>} & \texttt{CK\_judging\_Evaluation\_total\_score} \\
+Giá trị mặc định (DF) & \texttt{DF\_<Schema>\_<Table>\_<Col>} & \texttt{DF\_iam\_UserAccount\_created\_at} \\
+Chỉ mục (Index) & \texttt{IX\_<Schema>\_<Table>\_<Cols>} & \texttt{IX\_submission\_Submission\_contest\_status} \\
+View & Schema \texttt{reporting}, tiền tố \texttt{vw\_} & \texttt{reporting.vw\_submission\_overview} \\
+Stored Procedure & Schema module, tiền tố \texttt{usp\_} & \texttt{submission.usp\_create\_submission} \\
+Trigger & \texttt{TR\_<Schema>\_<Table>\_<Event>} & \texttt{TR\_judging\_EvaluationScore\_AIU} \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \caption{Quy ước đặt tên đối tượng cơ sở dữ liệu vật lý}
 \label{tab:c5_naming}
 \end{table}
@@ -51,7 +51,7 @@ Cơ sở dữ liệu được phân chia thành 12 Schema chuyên biệt nhằm 
     \item \texttt{iam}: \texttt{UserAccount}, \texttt{Role}, \texttt{UserRole}.
     \item \texttt{participant}: \texttt{ParticipantProfile}, \texttt{Registration}.
     \item \texttt{reference}: \texttt{FilmStock}, \texttt{Camera}, \texttt{Lens}, \texttt{Lab}.
-    \item \texttt{contest}: \texttt{Contest}, \texttt{ContestCategory}, \texttt{JudgingRound}, \texttt{ScoringCriterion}, \texttt{AwardDefinition}.
+    \item \texttt{contest}: \texttt{Contest}, \texttt{ContestCategory}, \texttt{JudgingRound}, \\ \texttt{ScoringCriterion}, \texttt{AwardDefinition}.
     \item \texttt{film}: \texttt{FilmRoll}, \texttt{FilmFrame}.
     \item \texttt{submission}: \texttt{Submission}.
     \item \texttt{verification}: \texttt{VerificationCase}, \texttt{AIAnalysisResult}.
@@ -78,7 +78,7 @@ Hệ thống tránh việc sử dụng tùy tiện kiểu \texttt{VARCHAR(255)} 
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{p{0.25\linewidth}p{0.3\linewidth}p{0.4\linewidth}}
+\begin{tabularx}{\textwidth}{p{3.2cm}p{3.6cm}>{\raggedright\arraybackslash}X}
 \toprule
 \textbf{Mục đích sử dụng} & \textbf{Kiểu dữ liệu SQL Server} & \textbf{Giải thích kỹ thuật} \\
 \midrule
@@ -93,7 +93,7 @@ Mã trạng thái & \texttt{NVARCHAR(30)} & Dễ đọc hiểu khi truy vấn, k
 Thời gian giao dịch & \texttt{DATETIME2(0)} & Tiết kiệm dung lượng (6 bytes), độ chính xác đến giây. \\
 Bản chụp Snapshot & \texttt{NVARCHAR(MAX)} & Lưu trữ cấu trúc JSON bản chụp lịch sử di sản số. \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \caption{Chiến lược ánh xạ kiểu dữ liệu trên Microsoft SQL Server}
 \label{tab:c5_datatypes}
 \end{table}
@@ -128,7 +128,7 @@ Các chỉ mục phi cụm (\textit{Non-clustered Indexes}) được thiết k�
 \begin{table}[htbp]
 \centering
 \scriptsize
-\begin{tabular}{p{0.32\linewidth}p{0.25\linewidth}p{0.2\linewidth}p{0.18\linewidth}}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.8cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}X}
 \toprule
 \textbf{Tên Index} & \textbf{Cột khóa (Key Columns)} & \textbf{Cột bao phủ (INCLUDE)} & \textbf{Mục đích truy vấn tối ưu} \\
 \midrule
@@ -139,7 +139,7 @@ Các chỉ mục phi cụm (\textit{Non-clustered Indexes}) được thiết k�
 \texttt{IX\_result\_Result\_rank} & \texttt{category\_id}, \texttt{final\_rank} & \texttt{submission\_id}, \texttt{final\_score} & Công bố bảng xếp hạng kết quả theo thứ hạng. \\
 \texttt{IX\_archive\_ArchiveItem\_search} & \texttt{archive\_status}, \texttt{archived\_at} & \texttt{result\_id}, \texttt{submission\_id} & Tìm kiếm và triển lãm tác phẩm trong kho di sản số. \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \caption{Chiến lược chỉ mục tối ưu hóa hiệu năng truy vấn}
 \label{tab:c5_indexes}
 \end{table}

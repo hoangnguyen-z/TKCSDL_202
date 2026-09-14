@@ -50,7 +50,7 @@ Hệ thống được thiết kế với 31 yêu cầu chức năng (\textit{FR}
 \begin{table}[htbp]
 \centering
 \scriptsize
-\begin{tabular}{p{0.12\linewidth}p{0.82\linewidth}}
+\begin{tabularx}{\textwidth}{p{1.8cm}>{\raggedright\arraybackslash}X}
 \toprule
 \textbf{Mã FR} & \textbf{Đặc tả chi tiết yêu cầu chức năng} \\
 \midrule
@@ -86,7 +86,7 @@ Hệ thống được thiết kế với 31 yêu cầu chức năng (\textit{FR}
 \textbf{FR-030} & Hệ thống thực thi phân quyền truy cập theo vai trò (\textit{RBAC}) cho Admin, Organizer, Judge và Participant. \\
 \textbf{FR-031} & Hệ thống cung cấp các giao diện báo cáo, tra cứu hàng đợi xác minh, tiến độ chấm thi và tìm kiếm kho lưu trữ. \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \caption{Danh mục 31 Yêu cầu Chức năng chuẩn hóa}
 \label{tab:c2_fr}
 \end{table}
@@ -117,7 +117,7 @@ Hệ thống được thiết kế với 31 yêu cầu chức năng (\textit{FR}
 \begin{table}[htbp]
 \centering
 \scriptsize
-\begin{tabular}{p{0.14\linewidth}p{0.1\linewidth}p{0.48\linewidth}p{0.2\linewidth}}
+\begin{tabularx}{\textwidth}{p{2.0cm}p{1.6cm}>{\raggedright\arraybackslash}Xp{3.8cm}}
 \toprule
 \textbf{Mã BR} & \textbf{Loại} & \textbf{Nội dung quy tắc nghiệp vụ} & \textbf{Nơi thực thi dự kiến} \\
 \midrule
@@ -152,7 +152,7 @@ Hệ thống được thiết kế với 31 yêu cầu chức năng (\textit{FR}
 \textbf{BR-P-017} & Đề xuất & Kho lưu trữ di sản số lưu dữ liệu dạng bản chụp (Snapshot) thay vì chỉ giữ khóa ngoại sống. & CSDL Design Decision \\
 \textbf{BR-P-018} & Đề xuất & Cấm xóa vật lý (Hard Delete) đối với cuộc thi, bài thi, bảng điểm; sử dụng xóa mềm/khóa trạng thái. & CSDL (FK ON DELETE RESTRICT) \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \caption{Bảng quy tắc nghiệp vụ cốt lõi và vị trí thực thi}
 \label{tab:c2_br}
 \end{table}
@@ -232,21 +232,21 @@ Dưới đây là đặc tả chi tiết 4 trường hợp sử dụng trung tâ
 
 \begin{table}[htbp]
 \centering
-\scriptsize
-\begin{tabular}{p{0.08\linewidth}p{0.13\linewidth}p{0.2\linewidth}p{0.2\linewidth}p{0.22\linewidth}p{0.12\linewidth}}
+\tiny
+\begin{tabularx}{\textwidth}{p{0.8cm}>{\raggedright\arraybackslash}p{1.6cm}>{\raggedright\arraybackslash}p{2.2cm}>{\raggedright\arraybackslash}p{2.8cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{2.6cm}}
 \toprule
 \textbf{UC} & \textbf{Trigger / Actor} & \textbf{Preconditions} & \textbf{Main / Alternative flow} & \textbf{Output / Status transition} & \textbf{Data / BR} \\
 \midrule
-\textbf{UC-01} & Organizer cấu hình cuộc thi & Tài khoản active, có role Organizer & Tạo cấu hình, category, round, criterion, award; thiếu cấu hình hoặc sai date thì chặn publish & Cấu hình cuộc thi; \texttt{DRAFT -> PUBLISHED -> OPEN}; Contest, Category, Round, Criterion, Award; BR-O-001, BR-O-002 \\
-\textbf{UC-02} & Participant đăng ký & Account active, registration window mở & Gửi registration, Organizer xét duyệt; trùng hoặc quá hạn thì chặn & Registration; \texttt{PENDING -> APPROVED/REJECTED/WITHDRAWN}; Registration, AuditLog; BR-O-003, BR-P-002, BR-P-003 \\
-\textbf{UC-03} & Participant quản lý film asset & ParticipantProfile tồn tại & Tạo roll, frame và metadata; trùng frame hoặc thiếu metadata thì giữ \texttt{DRAFT} & Film asset sẵn sàng; \texttt{DRAFT -> READY -> SUBMITTED/ARCHIVED}; FilmRoll, FilmFrame; BR-O-004, BR-P-004, BR-P-005 \\
-\textbf{UC-04} & Participant nộp frame & Registration \texttt{APPROVED}/\texttt{ELIGIBLE}, frame \texttt{READY}, submission window mở & Chọn category, lưu URI scan và statement; quá hạn, sai ownership hoặc trùng frame thì rollback & Submission; \texttt{DRAFT -> PENDING\_VERIFICATION}; Submission, AuditLog; BR-O-003, BR-O-005, BR-P-006, BR-P-009 \\
-\textbf{UC-05} & Organizer xác minh submission & Submission \texttt{PENDING\_VERIFICATION} hoặc \texttt{NEEDS\_CLARIFICATION} & Kiểm tra metadata, xem AI advisory và quyết định thủ công; thiếu dữ liệu thì yêu cầu clarification & Verification decision; \texttt{PENDING -> UNDER\_REVIEW -> VERIFIED/REJECTED/NEEDS\_CLARIFICATION}; VerificationCase, AIAnalysisResult, Submission; BR-O-006, BR-O-007, BR-P-010, BR-P-011 \\
-\textbf{UC-06} & Judge đánh giá & Assignment hợp lệ, submission \texttt{VERIFIED}, round mở & Nhập criterion scores và comment; ngoài workload, trùng evaluation hoặc quá hạn thì chặn & Evaluation; \texttt{DRAFT -> SUBMITTED -> LOCKED}; JudgeAssignment, Evaluation, EvaluationScore, AuditLog; BR-O-008, BR-O-009, BR-P-012, BR-P-013 \\
-\textbf{UC-07} & Organizer finalize result & Final round đủ evaluation \texttt{SUBMITTED}/\texttt{LOCKED} & Aggregate score, xử lý tie, gán award và publish; thiếu evaluation thì chặn & Result; \texttt{DRAFT -> FINALIZED -> PUBLISHED}; Result, AwardAssignment, AuditLog; BR-O-010, BR-P-014, BR-P-015, BR-P-016 \\
-\textbf{UC-08} & Organizer archive result & Result \texttt{FINALIZED} và đủ điều kiện archive & Snapshot metadata và judging context; chưa finalized thì chặn, snapshot không sửa & Archive item; \texttt{ARCHIVED -> RETIRED}; ArchiveItem, AuditLog; BR-O-011, BR-P-017, BR-P-018 \\
+\textbf{UC-01} & Organizer cấu hình cuộc thi & Tài khoản active, có role Organizer & Tạo cấu hình, category, round, criterion, award; thiếu cấu hình hoặc sai date thì chặn publish & Cấu hình cuộc thi; \texttt{DRAFT -> PUBLISHED -> OPEN} & Contest, Category, Round, Criterion, Award; BR-O-001, BR-O-002 \\
+\textbf{UC-02} & Participant đăng ký & Account active, registration window mở & Gửi registration, Organizer xét duyệt; trùng hoặc quá hạn thì chặn & Registration; \texttt{PENDING -> APPROVED/\allowbreak REJECTED/\allowbreak WITHDRAWN} & Registration, AuditLog; BR-O-003, BR-P-002, BR-P-003 \\
+\textbf{UC-03} & Participant quản lý film asset & Participant\allowbreak Profile tồn tại & Tạo roll, frame và metadata; trùng frame hoặc thiếu metadata thì giữ \texttt{DRAFT} & Film asset sẵn sàng; \texttt{DRAFT -> READY -> SUBMITTED/\allowbreak ARCHIVED} & FilmRoll, FilmFrame; BR-O-004, BR-P-004, BR-P-005 \\
+\textbf{UC-04} & Participant nộp frame & Registration \texttt{APPROVED}/\allowbreak\texttt{ELIGIBLE}, frame \texttt{READY}, submission window mở & Chọn category, lưu URI scan và statement; quá hạn, sai ownership hoặc trùng frame thì rollback & Submission; \texttt{DRAFT -> PENDING\_\allowbreak VERIFICATION} & Submission, AuditLog; BR-O-003, BR-O-005, BR-P-006, BR-P-009 \\
+\textbf{UC-05} & Organizer xác minh submission & Submission \texttt{PENDING\_\allowbreak VERIFICATION} hoặc \texttt{NEEDS\_\allowbreak CLARIFICATION} & Kiểm tra metadata, xem AI advisory và quyết định thủ công; thiếu dữ liệu thì yêu cầu clarification & Verification decision; \texttt{PENDING -> UNDER\_\allowbreak REVIEW -> VERIFIED/\allowbreak REJECTED/\allowbreak NEEDS\_\allowbreak CLARIFICATION} & Verification\allowbreak Case, AIAnalysis\allowbreak Result, Submission; BR-O-006, BR-O-007, BR-P-010, BR-P-011 \\
+\textbf{UC-06} & Judge đánh giá & Assignment hợp lệ, submission \texttt{VERIFIED}, round mở & Nhập criterion scores và comment; ngoài workload, trùng evaluation hoặc quá hạn thì chặn & Evaluation; \texttt{DRAFT -> SUBMITTED -> LOCKED} & Judge\allowbreak Assignment, Evaluation, EvaluationScore, AuditLog; BR-O-008, BR-O-009, BR-P-012, BR-P-013 \\
+\textbf{UC-07} & Organizer finalize result & Final round đủ evaluation \texttt{SUBMITTED}/\allowbreak\texttt{LOCKED} & Aggregate score, xử lý tie, gán award và publish; thiếu evaluation thì chặn & Result; \texttt{DRAFT -> FINALIZED -> PUBLISHED} & Result, Award\allowbreak Assignment, AuditLog; BR-O-010, BR-P-014, BR-P-015, BR-P-016 \\
+\textbf{UC-08} & Organizer archive result & Result \texttt{FINALIZED} và đủ điều kiện archive & Snapshot metadata và judging context; chưa finalized thì chặn, snapshot không sửa & Archive item; \texttt{ARCHIVED -> RETIRED} & ArchiveItem, AuditLog; BR-O-011, BR-P-017, BR-P-018 \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \caption{Đối soát đầy đủ tám use case với flow, trạng thái, dữ liệu và business rules}
 \label{tab:c2_uc_baseline}
 \end{table}

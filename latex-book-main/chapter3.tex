@@ -46,7 +46,7 @@ Kiến trúc hệ thống tuân thủ nghiêm ngặt 8 nguyên lý chỉ đạo:
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{p{0.22\linewidth}p{0.38\linewidth}p{0.34\linewidth}}
+\begin{tabularx}{\textwidth}{p{3.2cm}p{5.5cm}>{\raggedright\arraybackslash}X}
 \toprule
 \textbf{Nguyên lý} & \textbf{Nội dung nguyên lý} & \textbf{Tác động đến thiết kế CSDL} \\
 \midrule
@@ -82,7 +82,7 @@ Hệ thống dễ dàng đóng gói, triển khai và kiểm thử lặp lại t
 Mọi thao tác dữ liệu phải được phân quyền theo vai trò (RBAC) và lưu vết người thực hiện. & 
 Tích hợp bảng User-Role, cột \texttt{actor\_user\_id} và bảng \texttt{audit\_logs}. \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \caption{Các nguyên lý kiến trúc cốt lõi}
 \label{tab:c3_principles}
 \end{table}
@@ -96,7 +96,7 @@ Toàn bộ hệ thống được phân rã thành 11 phân hệ chức năng (\t
 \begin{table}[htbp]
 \centering
 \scriptsize
-\begin{tabular}{p{0.18\linewidth}p{0.32\linewidth}p{0.25\linewidth}p{0.18\linewidth}}
+\begin{tabularx}{\textwidth}{p{2.6cm}p{4.2cm}p{3.6cm}>{\raggedright\arraybackslash}X}
 \toprule
 \textbf{Phân hệ Module} & \textbf{Trách nhiệm nghiệp vụ} & \textbf{Dữ liệu sở hữu (Write)} & \textbf{Dữ liệu tham chiếu (Read)} \\
 \midrule
@@ -112,7 +112,7 @@ Toàn bộ hệ thống được phân rã thành 11 phân hệ chức năng (\t
 \textbf{10. AI \& Analytics} & Lưu trữ kết quả phân tích AI (trùng lặp, phát hiện AI, gắn thẻ). & \texttt{ai\_analysis\_results} & \texttt{submissions} \\
 \textbf{11. Audit \& Reporting} & Ghi nhật ký kiểm toán và cung cấp góc nhìn báo cáo hiệu năng. & \texttt{audit\_logs}, \texttt{reporting\_views} & Toàn bộ các bảng trong CSDL \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \caption{Phân rã 11 phân hệ module và ma trận sở hữu dữ liệu}
 \label{tab:c3_modules}
 \end{table}
@@ -134,7 +134,7 @@ Hệ thống được tổ chức theo mô hình kiến trúc phân tầng chu�
 Hệ thống được đóng gói để triển khai độc lập và nhất quán trên nền tảng container:
 \begin{itemize}
     \item \textbf{Máy chủ Host}: Chạy Docker Engine và công cụ quản trị SQL Server Management Studio (SSMS 22).
-    \item \textbf{SQL Server Container}: Chạy image chính thức \texttt{mcr.microsoft.com/mssql/server:2022-CU24-ubuntu-22.04}, kết nối qua cổng TCP 1433 với ổ đĩa gắn ngoài (\textit{Persistent Volume}) đảm bảo an toàn dữ liệu khi khởi động lại container.
+    \item \textbf{SQL Server Container}: Chạy image chính thức \texttt{mcr.microsoft.com/mssql/\allowbreak server:\allowbreak 2022-CU24-ubuntu-22.04}, kết nối qua cổng TCP 1433 với ổ đĩa gắn ngoài (\textit{Persistent Volume}) đảm bảo an toàn dữ liệu khi khởi động lại container.
     \item \textbf{Dịch vụ Đám mây Ngoại vi}: Cloud Object Storage (lưu trữ tệp ảnh nhị phân) và AI Analysis Engine (cung cấp API thẩm định).
 \end{itemize}
 

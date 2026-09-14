@@ -19,12 +19,17 @@ Một trong những sai lầm phổ biến nhất trong thiết kế cơ sở d�
 \label{s:c4_conceptual_entities}
 
 Mô hình ý niệm bao phủ trọn vẹn chuỗi giá trị từ tài khoản người dùng đến lưu trữ di sản số:
-$$\text{User/Role} \rightarrow \text{Participant} \rightarrow \text{Registration} \rightarrow \text{Film Roll} \rightarrow \text{Film Frame} \rightarrow \text{Submission} \rightarrow \text{Verification} \rightarrow \text{Judging} \rightarrow \text{Result} \rightarrow \text{Archive}$$
+\begin{equation*}
+\begin{split}
+\text{User/Role} &\rightarrow \text{Participant} \rightarrow \text{Registration} \rightarrow \text{Film Roll} \rightarrow \text{Film Frame} \\
+&\rightarrow \text{Submission} \rightarrow \text{Verification} \rightarrow \text{Judging} \rightarrow \text{Result} \rightarrow \text{Archive}
+\end{split}
+\end{equation*}
 
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{p{0.22\linewidth}p{0.42\linewidth}p{0.28\linewidth}}
+\begin{tabularx}{\textwidth}{>{\bfseries}p{3.2cm}p{4.8cm}>{\raggedright\arraybackslash}X}
 \toprule
 \textbf{Thực thể Ý niệm} & \textbf{Ý nghĩa nghiệp vụ trong thế giới thực} & \textbf{Lý do cần ở mức ý niệm} \\
 \midrule
@@ -55,7 +60,7 @@ $$\text{User/Role} \rightarrow \text{Participant} \rightarrow \text{Registration
 \textbf{ArchiveItem} & Bản chụp bất biến của kết quả được lưu trữ. & Bảo toàn lịch sử khi dữ liệu sống thay đổi. \\
 \textbf{AuditLog} & Nhật ký thay đổi nghiệp vụ quan trọng. & Bảo đảm truy vết và trách nhiệm. \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \caption{Danh mục 26 thực thể ý niệm cốt lõi và sự cần thiết ở mức nghiệp vụ}
 \label{tab:c4_entity_inventory}
 \end{table}
@@ -63,7 +68,7 @@ $$\text{User/Role} \rightarrow \text{Participant} \rightarrow \text{Registration
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth,keepaspectratio]{figures/fig_conceptual_erd.png}
-    \caption{Sơ đồ Thực thể -- Liên kết Ý niệm mở rộng (Extended Conceptual ERD) theo ký hiệu Chen mở rộng}
+    \caption{Sơ đồ Thực thể Liên kết Ý niệm (Conceptual ERD) chuẩn hóa 26 thực thể}
     \label{fig:c4_conceptual_erd}
 \end{figure}
 
@@ -71,23 +76,31 @@ $$\text{User/Role} \rightarrow \text{Participant} \rightarrow \text{Registration
 \section{Bản số (Cardinality) và Ràng buộc Quan hệ Ý niệm}
 \label{s:c4_cardinalities}
 
-Các mối quan hệ ý niệm giữa các thực thể được xác lập dựa trên các quy tắc nghiệp vụ nghiêm ngặt:
-
+Mỗi mối quan hệ được xác lập bằng bản số chuẩn (\textit{Cardinality}):
 \begin{itemize}
-    \item \textbf{Phân hệ Danh tính \& Thí sinh}:
+    \item \textbf{Phân hệ Quản trị Cuộc thi}:
     \begin{itemize}
-        \item $\text{UserAccount } (1,1) \longleftrightarrow (0,N) \text{ UserRole } (1,1) \longleftrightarrow (1,N) \text{ Role}$: Một tài khoản có thể có nhiều vai trò; giải quyết quan hệ Nhiều-Nhiều.
+        \item $\text{Contest } (1,1) \longleftrightarrow (1,N) \text{ ContestCategory}$: Mỗi cuộc thi bắt buộc có ít nhất một hạng mục chuyên môn (BR-O-001).
+        \item $\text{Contest } (1,1) \longleftrightarrow (0,N) \text{ Registration}$: Cuộc thi tiếp nhận các đơn đăng ký từ thí sinh.
+        \item $\text{Contest } (1,1) \longleftrightarrow (0,N) \text{ Submission}$: Cuộc thi là ngữ cảnh chứa các bài dự thi.
+    \end{itemize}
+    \item \textbf{Phân hệ Quản lý Người dùng \& Thí sinh}:
+    \begin{itemize}
+        \item $\text{UserAccount } (1,1) \longleftrightarrow (1,N) \text{ UserRole}$: Một người dùng có thể sở hữu nhiều vai trò khác nhau (BR-P-001).
         \item $\text{UserAccount } (1,1) \longleftrightarrow (0,1) \text{ ParticipantProfile}$: Quan hệ một-một tùy chọn.
     \end{itemize}
     \item \textbf{Phân hệ Xuất xứ Phim Vật lý}:
     \begin{itemize}
         \item $\text{ParticipantProfile } (1,1) \longleftrightarrow (0,N) \text{ FilmRoll}$: Một thí sinh sở hữu nhiều cuộn phim.
         \item $\text{FilmRoll } (1,1) \longleftrightarrow (1,N) \text{ FilmFrame}$: Một cuộn phim chứa nhiều khung hình; một khung hình bắt buộc phải thuộc về đúng một cuộn phim.
+        \item $\text{FilmFrame } (1,1) \longleftrightarrow (0,1) \text{ Camera}$: Khung hình ghi nhận thiết bị máy ảnh sử dụng.
+        \item $\text{FilmFrame } (1,1) \longleftrightarrow (0,1) \text{ Lens}$: Khung hình ghi nhận ống kính sử dụng.
+        \item $\text{FilmRoll } (1,1) \longleftrightarrow (0,1) \text{ Lab}$: Cuộn phim được xử lý tráng tại một phòng lab.
     \end{itemize}
     \item \textbf{Phân hệ Nộp bài \& Thẩm định}:
     \begin{itemize}
         \item $\text{Registration } (1,1) \longleftrightarrow (0,N) \text{ Submission}$: Một đơn đăng ký có thể nộp nhiều bài thi vào các hạng mục cho phép.
-        \item $\text{FilmFrame } (1,1) \longleftrightarrow (0,N) \text{ Submission}$: Một khung hình có thể nộp vào các cuộc thi khác nhau, nhưng quy tắc nghiệp vụ BR-P-006 giới hạn không quá 1 lần trong cùng một cuộc thi.
+        \item $\text{FilmFrame } (1,1) \longleftrightarrow (0,N) \text{ Submission}$: Khung hình được sử dụng làm tác phẩm dự thi.
         \item $\text{Submission } (1,1) \longleftrightarrow (1,1) \text{ VerificationCase}$: Mỗi bài thi có đúng một hồ sơ thẩm định chính thức.
         \item $\text{Submission } (1,1) \longleftrightarrow (0,N) \text{ AIAnalysisResult}$: Một bài thi có thể có nhiều kết quả phân tích từ các mô hình AI khác nhau.
     \end{itemize}
@@ -95,9 +108,12 @@ Các mối quan hệ ý niệm giữa các thực thể được xác lập dự
     \begin{itemize}
         \item $\text{ContestCategory } (1,1) \longleftrightarrow (1,N) \text{ JudgingRound}$: Mỗi hạng mục có ít nhất một vòng chấm thi.
         \item $\text{JudgingRound } (1,1) \longleftrightarrow (1,N) \text{ ScoringCriterion}$: Mỗi vòng có một hoặc nhiều tiêu chí chấm điểm riêng biệt.
-        \item $\text{JudgingRound } (1,1) \longleftrightarrow (0,N) \text{ JudgeAssignment } (1,1) \longleftrightarrow (1,N) \text{ UserAccount (Judge)}$: Phân công giám khảo vào vòng thi.
-        \item $\text{Evaluation } (1,1) \longleftrightarrow (1,N) \text{ EvaluationScore } (1,1) \longleftrightarrow (1,N) \text{ ScoringCriterion}$: Phiếu chấm chứa điểm chi tiết theo tiêu chí.
-        \item $\text{Result } (1,1) \longleftrightarrow (0,N) \text{ AwardAssignment } (1,1) \longleftrightarrow (1,1) \text{ AwardDefinition}$: Gán giải thưởng cho kết quả chung cuộc.
+        \item $\text{JudgingRound } (1,1) \longleftrightarrow (0,N) \text{ JudgeAssignment}$; \\
+        $\text{JudgeAssignment } (1,1) \longleftrightarrow (1,N) \text{ Judge}$: Phân công giám khảo vào vòng thi.
+        \item $\text{Evaluation } (1,1) \longleftrightarrow (1,N) \text{ EvaluationScore}$; \\
+        $\text{EvaluationScore } (1,1) \longleftrightarrow (1,N) \text{ ScoringCriterion}$: Phiếu chấm chứa điểm theo tiêu chí.
+        \item $\text{Result } (1,1) \longleftrightarrow (0,N) \text{ AwardAssignment}$; \\
+        $\text{AwardAssignment } (1,1) \longleftrightarrow (1,1) \text{ AwardDefinition}$: Gán giải thưởng chung cuộc.
         \item $\text{Result } (1,1) \longleftrightarrow (0,1) \text{ ArchiveItem}$: Chỉ bài thi có kết quả chung cuộc mới được chuyển vào kho lưu trữ số.
     \end{itemize}
 \end{itemize}
@@ -110,8 +126,8 @@ Khi chuyển đổi từ mô hình ý niệm sang mô hình quan hệ logic, cá
 
 \begin{table}[htbp]
 \centering
-\small
-\begin{tabular}{p{0.3\linewidth}p{0.25\linewidth}p{0.38\linewidth}}
+\scriptsize
+\begin{tabularx}{\textwidth}{p{3.8cm}p{3.2cm}>{\raggedright\arraybackslash}X}
 \toprule
 \textbf{Quan hệ Ý niệm $N:M$} & \textbf{Quan hệ Kết hợp Logic} & \textbf{Thuộc tính mở rộng / Khóa thay thế} \\
 \midrule
@@ -120,7 +136,7 @@ JudgingRound $\leftrightarrow$ Judge & \texttt{JudgeAssignment} & \texttt{round\
 Evaluation $\leftrightarrow$ ScoringCriterion & \texttt{EvaluationScore} & \texttt{evaluation\_id}, \texttt{criterion\_id}, \texttt{score\_value}, \texttt{comment} \\
 Result $\leftrightarrow$ AwardDefinition & \texttt{AwardAssignment} & \texttt{result\_id}, \texttt{award\_definition\_id}, \texttt{assigned\_at} \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \caption{Giải quyết các quan hệ Nhiều-Nhiều trong mô hình logic}
 \label{tab:c4_nm_resolution}
 \end{table}
@@ -156,11 +172,19 @@ Mỗi quan hệ logic sử dụng khóa thay thế nhân tạo (\textit{Surrogat
 
 \subsection{Quan hệ FilmFrame (Khung hình phim)}
 \begin{itemize}
-    \item \textbf{Tập thuộc tính}: $\text{FilmFrame}(\underline{\text{frame\_id}}, \text{roll\_id}, \text{camera\_id}, \text{lens\_id}, \text{frame\_number}, \text{frame\_title}, \text{captured\_on}, \text{capture\_location}, \text{frame\_status}, \text{negative\_uri})$
+    \item \textbf{Tập thuộc tính}: 
+    \begin{center}
+    $\text{FilmFrame}(\underline{\text{frame\_id}}, \text{roll\_id}, \text{camera\_id}, \text{lens\_id}, \text{frame\_number},$ \\
+    $\text{frame\_title}, \text{captured\_on}, \text{capture\_location}, \text{frame\_status}, \text{negative\_uri})$
+    \end{center}
     \item \textbf{Phụ thuộc hàm cốt lõi}:
     \begin{align*}
-        \text{FD1: } & \text{frame\_id} \longrightarrow \text{roll\_id}, \text{camera\_id}, \text{lens\_id}, \text{frame\_number}, \text{frame\_title}, \text{captured\_on}, \text{capture\_location}, \text{frame\_status}, \text{negative\_uri} \\
-        \text{FD2: } & (\text{roll\_id}, \text{frame\_number}) \longrightarrow \text{frame\_id}, \text{camera\_id}, \text{lens\_id}, \text{frame\_title}, \text{captured\_on}, \text{capture\_location}, \text{frame\_status}, \text{negative\_uri}
+        \text{FD1: } & \text{frame\_id} \longrightarrow \{\text{roll\_id}, \text{camera\_id}, \text{lens\_id}, \\
+        & \phantom{\text{frame\_id} \longrightarrow \{} \text{frame\_number}, \text{frame\_title}, \text{captured\_on}, \\
+        & \phantom{\text{frame\_id} \longrightarrow \{} \text{capture\_location}, \text{frame\_status}, \text{negative\_uri}\} \\
+        \text{FD2: } & (\text{roll\_id}, \text{frame\_number}) \longrightarrow \{\text{frame\_id}, \text{camera\_id}, \text{lens\_id}, \\
+        & \phantom{(\text{roll\_id}, \text{frame\_number}) \longrightarrow \{} \text{frame\_title}, \text{captured\_on}, \text{capture\_location}, \\
+        & \phantom{(\text{roll\_id}, \text{frame\_number}) \longrightarrow \{} \text{frame\_status}, \text{negative\_uri}\}
     \end{align*}
     \item \textbf{Chứng minh 1NF}: Mọi thuộc tính đều mang giá trị nguyên tố (\textit{atomic}), không có thuộc tính lặp hay đa trị.
     \item \textbf{Chứng minh 2NF}: Khóa chính \texttt{frame\_id} gồm 1 thuộc tính đơn lẻ, do đó không tồn tại phụ thuộc hàm bộ phận vào một phần của khóa.
@@ -169,22 +193,36 @@ Mỗi quan hệ logic sử dụng khóa thay thế nhân tạo (\textit{Surrogat
 
 \subsection{Quan hệ Submission (Bài dự thi)}
 \begin{itemize}
-    \item \textbf{Tập thuộc tính}: $\text{Submission}(\underline{\text{submission\_id}}, \text{registration\_id}, \text{contest\_id}, \text{category\_id}, \text{frame\_id}, \text{submission\_title}, \text{statement}, \text{image\_uri}, \text{submitted\_at}, \text{status})$
+    \item \textbf{Tập thuộc tính}: 
+    \begin{center}
+    $\text{Submission}(\underline{\text{submission\_id}}, \text{registration\_id}, \text{contest\_id}, \text{category\_id},$ \\
+    $\text{frame\_id}, \text{submission\_title}, \text{statement}, \text{image\_uri}, \text{submitted\_at}, \text{status})$
+    \end{center}
     \item \textbf{Phụ thuộc hàm cốt lõi}:
     \begin{align*}
-        \text{FD1: } & \text{submission\_id} \longrightarrow \text{registration\_id}, \text{contest\_id}, \text{category\_id}, \text{frame\_id}, \text{submission\_title}, \text{statement}, \text{image\_uri}, \text{submitted\_at}, \text{status} \\
-        \text{FD2: } & (\text{contest\_id}, \text{frame\_id}) \longrightarrow \text{submission\_id}, \text{registration\_id}, \text{category\_id}, \text{submission\_title}, \text{statement}, \text{image\_uri}, \text{submitted\_at}, \text{status}
+        \text{FD1: } & \text{submission\_id} \longrightarrow \{\text{registration\_id}, \text{contest\_id}, \text{category\_id}, \\
+        & \phantom{\text{submission\_id} \longrightarrow \{} \text{frame\_id}, \text{submission\_title}, \text{statement}, \\
+        & \phantom{\text{submission\_id} \longrightarrow \{} \text{image\_uri}, \text{submitted\_at}, \text{status}\} \\
+        \text{FD2: } & (\text{contest\_id}, \text{frame\_id}) \longrightarrow \{\text{submission\_id}, \text{registration\_id}, \\
+        & \phantom{(\text{contest\_id}, \text{frame\_id}) \longrightarrow \{} \text{category\_id}, \text{submission\_title}, \\
+        & \phantom{(\text{contest\_id}, \text{frame\_id}) \longrightarrow \{} \text{statement}, \text{image\_uri}, \text{submitted\_at}, \text{status}\}
     \end{align*}
     \item \textbf{Chứng minh 3NF}: Không lưu trữ lặp lại thông tin tên thí sinh hay tên cuộc thi trong bảng \texttt{Submission}. Mọi thông tin danh tính đều được truy xuất qua \texttt{registration\_id} và \texttt{frame\_id}. Không có phụ thuộc hàm giữa các thuộc tính không khóa. $\Rightarrow$ \textbf{Đạt 3NF}.
 \end{itemize}
 
 \subsection{Quan hệ EvaluationScore (Điểm tiêu chí đánh giá)}
 \begin{itemize}
-    \item \textbf{Tập thuộc tính}: $\text{EvaluationScore}(\underline{\text{evaluation\_score\_id}}, \text{evaluation\_id}, \text{criterion\_id}, \text{score\_value}, \text{score\_comment})$
+    \item \textbf{Tập thuộc tính}:
+    \begin{center}
+    $\text{EvaluationScore}(\underline{\text{evaluation\_score\_id}}, \text{evaluation\_id},$ \\
+    $\text{criterion\_id}, \text{score\_value}, \text{score\_comment})$
+    \end{center}
     \item \textbf{Phụ thuộc hàm cốt lõi}:
     \begin{align*}
-        \text{FD1: } & \text{evaluation\_score\_id} \longrightarrow \text{evaluation\_id}, \text{criterion\_id}, \text{score\_value}, \text{score\_comment} \\
-        \text{FD2: } & (\text{evaluation\_id}, \text{criterion\_id}) \longrightarrow \text{evaluation\_score\_id}, \text{score\_value}, \text{score\_comment}
+        \text{FD1: } & \text{evaluation\_score\_id} \longrightarrow \{\text{evaluation\_id}, \text{criterion\_id}, \\
+        & \phantom{\text{evaluation\_score\_id} \longrightarrow \{} \text{score\_value}, \text{score\_comment}\} \\
+        \text{FD2: } & (\text{evaluation\_id}, \text{criterion\_id}) \longrightarrow \{\text{evaluation\_score\_id}, \\
+        & \phantom{(\text{evaluation\_id}, \text{criterion\_id}) \longrightarrow \{} \text{score\_value}, \text{score\_comment}\}
     \end{align*}
     \item \textbf{Chứng minh 3NF}: Tên tiêu chí, thang điểm min/max và trọng số được lưu tại \texttt{ScoringCriterion}, không bị lặp lại trong \texttt{EvaluationScore}. Bảng chỉ lưu giá trị điểm và nhận xét ứng với từng tiêu chí cụ thể. $\Rightarrow$ \textbf{Đạt 3NF}.
 \end{itemize}

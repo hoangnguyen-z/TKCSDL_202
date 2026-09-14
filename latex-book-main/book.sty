@@ -54,6 +54,7 @@
 % Adjust spacing in text
 \AtBeginDocument{\frenchspacing}
 \raggedbottom
+\setlength{\emergencystretch}{3em}
 
 % ---- Select color scheme ----
 
@@ -192,6 +193,13 @@
 
 % Enhance table formatting
 \usepackage{booktabs}
+\usepackage{tabularx}
+
+% Format verbatim font size
+\BeforeBeginEnvironment{verbatim}{\footnotesize}
+
+% Allow line break after underscore in identifiers
+\renewcommand{\_}{\textunderscore\allowbreak}
 
 % Enable rotation of tables and figures
 \usepackage{rotating}

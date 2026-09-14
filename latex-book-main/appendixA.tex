@@ -48,14 +48,15 @@ BEGIN TRY
         @registration_id = 1,
         @frame_id = 1, -- Frame số 1 đã nộp trước đó
         @submission_title = N'Bình minh trên biển',
-        @scanned_image_uri = N'https://storage.cloud/submissions/sub_dup.jpg',
+        @scanned_image_uri = 
+            N'https://storage.cloud/submissions/sub_dup.jpg',
         @actor_user_id = 1,
         @submission_id = @new_sub_id OUTPUT;
         
     PRINT 'LỖI: Thủ tục không chặn khung hình trùng lặp!';
 END TRY
 BEGIN CATCH
-    PRINT 'TEST PASS: Đã chặn thành công khung hình nộp trùng trong cuộc thi.';
+    PRINT 'TEST PASS: Đã chặn thành công khung hình nộp trùng!';
     PRINT 'Lý do chặn: ' + ERROR_MESSAGE();
 END CATCH;
 \end{verbatim}
@@ -71,18 +72,20 @@ Kịch bản kiểm tra ràng buộc duy nhất \texttt{UQ\_judging\_Evaluation\
 BEGIN TRY
     -- Lần 1: Giám khảo 3 chấm bài thi 1 trong Vòng 1 (Thành công)
     INSERT INTO judging.Evaluation (
-        round_id, submission_id, judge_user_id, evaluation_status, total_score
+        round_id, submission_id, judge_user_id, 
+        evaluation_status, total_score
     ) VALUES (1, 1, 3, 'SUBMITTED', 85.50);
 
-    -- Lần 2: Giám khảo 3 cố tình tạo thêm phiếu chấm cho bài thi 1 trong Vòng 1
+    -- Lần 2: Giám khảo 3 cố tình chấm lại bài thi 1 trong Vòng 1
     INSERT INTO judging.Evaluation (
-        round_id, submission_id, judge_user_id, evaluation_status, total_score
+        round_id, submission_id, judge_user_id, 
+        evaluation_status, total_score
     ) VALUES (1, 1, 3, 'SUBMITTED', 90.00);
 
     PRINT 'LỖI: Ràng buộc UQ không chặn phiếu chấm trùng!';
 END TRY
 BEGIN CATCH
-    PRINT 'TEST PASS: Đã chặn thành công phiếu chấm trùng lặp của Giám khảo.';
+    PRINT 'TEST PASS: Đã chặn phiếu chấm trùng của Giám khảo.';
     PRINT 'Lỗi bắt được: ' + ERROR_MESSAGE();
 END CATCH;
 \end{verbatim}

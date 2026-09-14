@@ -69,7 +69,7 @@ Phương thức quản lý thủ công, phân tán bộc lộ 5 điểm nghẽn 
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{p{0.22\linewidth}p{0.42\linewidth}p{0.3\linewidth}}
+\begin{tabularx}{\textwidth}{p{3.0cm}p{6.0cm}>{\raggedright\arraybackslash}X}
 \toprule
 \textbf{Phân loại} & \textbf{Nội dung công việc} & \textbf{Mục tiêu / Kết quả kỳ vọng} \\
 \midrule
@@ -89,7 +89,7 @@ $\bullet$ Huấn luyện, hosting hoặc inference mô hình AI thực tế; AI 
 $\bullet$ Triển khai object storage đám mây thực tế; CSDL chỉ lưu URI/path, hash và metadata &
 Tập trung toàn bộ nguồn lực vào thiết kế kiến trúc và mô hình hóa dữ liệu chuyên sâu. \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \caption{Phạm vi dự án Thiết kế Cơ sở Dữ liệu}
 \label{tab:c1_scope}
 \end{table}
@@ -110,29 +110,29 @@ Nhằm đảm bảo sự nhất quán tuyệt đối về ngữ nghĩa trong to�
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{p{0.25\linewidth}p{0.7\linewidth}}
+\begin{tabularx}{\textwidth}{>{\bfseries}p{3.5cm}>{\raggedright\arraybackslash}X}
 \toprule
 \textbf{Thuật ngữ} & \textbf{Định nghĩa chuẩn hóa} \\
 \midrule
-\textbf{Contest} & Sự kiện cuộc thi nhiếp ảnh phim, có lịch trình, thể lệ, các hạng mục và vòng chấm riêng. \\
-\textbf{Contest Category} & Hạng mục dự thi trong cuộc thi (ví dụ: Chân dung, Phong cảnh, Đời thường, Thể nghiệm). \\
-\textbf{Participant} & Người dùng đăng ký tài khoản tham gia dự thi và quản lý dữ liệu ảnh phim cá nhân. \\
-\textbf{Organizer} & Thành viên Ban tổ chức chịu trách nhiệm cấu hình cuộc thi, xác minh bài thi, phân công giám khảo và công bố kết quả. \\
-\textbf{Judge} & Giám khảo được phân công đánh giá các bài dự thi hợp lệ theo các vòng và tiêu chí xác định. \\
-\textbf{Administrator} & Quản trị viên hệ thống chịu trách nhiệm quản lý tài khoản, phân quyền, dữ liệu danh mục và giám sát hệ thống. \\
-\textbf{Film Roll} & Cuộn phim vật lý của thí sinh, chứa một hoặc nhiều khung hình (frames). \\
-\textbf{Film Frame} & Khung hình đơn lẻ trên cuộn phim, là đơn vị gốc được số hóa để nộp vào cuộc thi. \\
-\textbf{Film Stock} & Dòng phim cụ thể (nhãn hiệu, tên dòng, ISO danh định, khổ phim, quy trình tráng). \\
-\textbf{Submission} & Tác phẩm dự thi của thí sinh, liên kết một khung hình (Film Frame) với một cuộc thi và hạng mục cụ thể. \\
-\textbf{Verification} & Quy trình kiểm tra tính hợp lệ, đầy đủ của thông số kỹ thuật và rà soát cảnh báo từ AI trước khi đưa vào chấm thi. \\
-\textbf{AI Analysis Result} & Bản ghi kết quả phân tích tự động từ AI (độ tương đồng, xác suất ảnh AI, nhãn tự động) kèm độ tin cậy. \\
-\textbf{Judging Round} & Giai đoạn chấm thi chính thức (ví dụ: Vòng Sơ khảo, Vòng Bán kết, Vòng Chung khảo). \\
-\textbf{Judge Assignment} & Bản ghi phân công một giám khảo cụ thể chấm thi tại một vòng chấm nhất định. \\
-\textbf{Scoring Criterion} & Tiêu chí chấm điểm cụ thể có trọng số trong một vòng chấm (ví dụ: Bố cục, Kỹ thuật, Cảm xúc). \\
-\textbf{Evaluation} & Phiếu đánh giá và cho điểm của một giám khảo đối với một bài thi trong một vòng chấm. \\
-\textbf{Digital Archive} & Kho lưu trữ số độc lập, bảo tồn nguyên vẹn siêu dữ liệu và hình ảnh của các tác phẩm đoạt giải. \\
+Contest & Sự kiện cuộc thi nhiếp ảnh phim, có lịch trình, thể lệ, các hạng mục và vòng chấm riêng. \\
+Contest Category & Hạng mục dự thi trong cuộc thi (ví dụ: Chân dung, Phong cảnh, Đời thường, Thể nghiệm). \\
+Participant & Người dùng đăng ký tài khoản tham gia dự thi và quản lý dữ liệu ảnh phim cá nhân. \\
+Organizer & Thành viên Ban tổ chức chịu trách nhiệm cấu hình cuộc thi, xác minh bài thi, phân công giám khảo và công bố kết quả. \\
+Judge & Giám khảo được phân công đánh giá các bài dự thi hợp lệ theo các vòng và tiêu chí xác định. \\
+Administrator & Quản trị viên hệ thống chịu trách nhiệm quản lý tài khoản, phân quyền, dữ liệu danh mục và giám sát hệ thống. \\
+Film Roll & Cuộn phim vật lý của thí sinh, chứa một hoặc nhiều khung hình (frames). \\
+Film Frame & Khung hình đơn lẻ trên cuộn phim, là đơn vị gốc được số hóa để nộp vào cuộc thi. \\
+Film Stock & Dòng phim cụ thể (nhãn hiệu, tên dòng, ISO danh định, khổ phim, quy trình tráng). \\
+Submission & Tác phẩm dự thi của thí sinh, liên kết một khung hình (Film Frame) với một cuộc thi và hạng mục cụ thể. \\
+Verification & Quy trình kiểm tra tính hợp lệ, đầy đủ của thông số kỹ thuật và rà soát cảnh báo từ AI trước khi đưa vào chấm thi. \\
+AI Analysis Result & Bản ghi kết quả phân tích tự động từ AI (độ tương đồng, xác suất ảnh AI, nhãn tự động) kèm độ tin cậy. \\
+Judging Round & Giai đoạn chấm thi chính thức (ví dụ: Vòng Sơ khảo, Vòng Bán kết, Vòng Chung khảo). \\
+Judge Assignment & Bản ghi phân công một giám khảo cụ thể chấm thi tại một vòng chấm nhất định. \\
+Scoring Criterion & Tiêu chí chấm điểm cụ thể có trọng số trong một vòng chấm (ví dụ: Bố cục, Kỹ thuật, Cảm xúc). \\
+Evaluation & Phiếu đánh giá và cho điểm của một giám khảo đối với một bài thi trong một vòng chấm. \\
+Digital Archive & Kho lưu trữ số độc lập, bảo tồn nguyên vẹn siêu dữ liệu và hình ảnh của các tác phẩm đoạt giải. \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \caption{Bảng chú giải thuật ngữ miền nghiệp vụ}
 \label{tab:c1_glossary}
 \end{table}
@@ -146,7 +146,7 @@ Kiến trúc đích phục vụ 4 nhóm tác nhân người dùng chính cùng c
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{p{0.18\linewidth}p{0.28\linewidth}p{0.48\linewidth}}
+\begin{tabularx}{\textwidth}{p{2.8cm}p{4.2cm}>{\raggedright\arraybackslash}X}
 \toprule
 \textbf{Stakeholder} & \textbf{Trách nhiệm chính} & \textbf{Nhu cầu thông tin \& Tương tác hệ thống} \\
 \midrule
@@ -166,7 +166,7 @@ Danh sách bài thi được phân công trong vòng, định nghĩa tiêu chí 
 Quản trị tài khoản và phân quyền người dùng; cấu hình tham số hệ thống; quản lý dữ liệu danh mục dùng chung; giám sát nhật ký kiểm toán (Audit Logs). & 
 Báo cáo tình trạng hệ thống, nhật ký truy cập và thay đổi trạng thái, danh mục thiết bị (máy ảnh, ống kính, film stock). \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \caption{Phân tích Stakeholders và ma trận trách nhiệm}
 \label{tab:c1_stakeholders}
 \end{table}

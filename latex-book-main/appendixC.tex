@@ -70,18 +70,23 @@ CREATE TABLE submission.Submission
     submission_statement NVARCHAR(1000) NULL,
     scanned_image_uri NVARCHAR(500) NOT NULL,
     submitted_at DATETIME2(0) NOT NULL DEFAULT (SYSUTCDATETIME()),
-    submission_status NVARCHAR(30) NOT NULL DEFAULT ('PENDING_VERIFICATION'),
+    submission_status NVARCHAR(30) NOT NULL 
+        DEFAULT ('PENDING_VERIFICATION'),
     created_at DATETIME2(0) NOT NULL DEFAULT (SYSUTCDATETIME()),
-    CONSTRAINT PK_submission_Submission PRIMARY KEY CLUSTERED (submission_id),
-    CONSTRAINT FK_submission_Submission_Registration FOREIGN KEY (registration_id) 
+    CONSTRAINT PK_submission_Submission 
+        PRIMARY KEY CLUSTERED (submission_id),
+    CONSTRAINT FK_submission_Submission_Registration 
+        FOREIGN KEY (registration_id) 
         REFERENCES participant.Registration(registration_id),
-    CONSTRAINT FK_submission_Submission_Contest FOREIGN KEY (contest_id) 
-        REFERENCES contest.Contest(contest_id),
-    CONSTRAINT FK_submission_Submission_Category FOREIGN KEY (category_id) 
+    CONSTRAINT FK_submission_Submission_Contest 
+        FOREIGN KEY (contest_id) REFERENCES contest.Contest(contest_id),
+    CONSTRAINT FK_submission_Submission_Category 
+        FOREIGN KEY (category_id) 
         REFERENCES contest.ContestCategory(category_id),
-    CONSTRAINT FK_submission_Submission_FilmFrame FOREIGN KEY (frame_id) 
-        REFERENCES film.FilmFrame(frame_id),
-    CONSTRAINT UQ_submission_Submission_contest_frame UNIQUE (contest_id, frame_id)
+    CONSTRAINT FK_submission_Submission_FilmFrame 
+        FOREIGN KEY (frame_id) REFERENCES film.FilmFrame(frame_id),
+    CONSTRAINT UQ_submission_Submission_contest_frame 
+        UNIQUE (contest_id, frame_id)
 );
 \end{verbatim}
 
@@ -129,10 +134,12 @@ CREATE TABLE archive.ArchiveItem
     technical_snapshot NVARCHAR(MAX) NOT NULL,
     judging_snapshot NVARCHAR(MAX) NOT NULL,
     image_uri_snapshot NVARCHAR(500) NOT NULL,
-    CONSTRAINT PK_archive_ArchiveItem PRIMARY KEY CLUSTERED (archive_item_id),
-    CONSTRAINT FK_archive_ArchiveItem_Result FOREIGN KEY (result_id) 
-        REFERENCES result.Result(result_id),
-    CONSTRAINT FK_archive_ArchiveItem_Submission FOREIGN KEY (submission_id) 
+    CONSTRAINT PK_archive_ArchiveItem 
+        PRIMARY KEY CLUSTERED (archive_item_id),
+    CONSTRAINT FK_archive_ArchiveItem_Result 
+        FOREIGN KEY (result_id) REFERENCES result.Result(result_id),
+    CONSTRAINT FK_archive_ArchiveItem_Submission 
+        FOREIGN KEY (submission_id) 
         REFERENCES submission.Submission(submission_id),
     CONSTRAINT UQ_archive_ArchiveItem_result UNIQUE (result_id)
 );
