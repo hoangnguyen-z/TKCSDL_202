@@ -1,4 +1,6 @@
-PRINT 'Run this script in SSMS 22 with SQLCMD Mode enabled.';
+PRINT 'T-SQL validation runner: 15 test scripts.';
+PRINT 'Run from the tests folder in SSMS 22 with SQLCMD Mode enabled.';
+:on error exit
 :r .\TST-REG-001_duplicate_registration.sql
 :r .\TST-FRAME-001_duplicate_frame_number.sql
 :r .\TST-SUB-001_normal_submission.sql

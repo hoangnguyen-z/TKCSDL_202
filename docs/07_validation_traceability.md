@@ -92,3 +92,14 @@ Project Freeze is reached when:
 7. Success and failure tests behave as expected.
 8. Traceability and validation matrices are complete.
 9. No unresolved critical or high-severity inconsistencies remain.
+
+## 7. Testing & Validation Lead Addendum (2026-09-14)
+
+The detailed baseline, static checklist, environment evidence, and filename reconciliation are maintained in [docs/11_validation_lead_baseline.md](11_validation_lead_baseline.md). This addendum preserves the existing ownership sections and records validation findings only.
+
+| Finding | Evidence | Action / status |
+| --- | --- | --- |
+| The runner includes all 15 current test scripts. | `tests/00_run_all_tests.sql` and `tests/*.sql` inventory | Runner header and SQLCMD fail-fast behavior added; verified statically. |
+| Existing RTM references abbreviated test filenames in several rows. | For example, `tests/TST-REG-001.sql` does not exist; the actual file is `tests/TST-REG-001_duplicate_registration.sql`. | Filename reconciliation is recorded in the baseline; existing requirement mapping is not deleted. |
+| FR-001 through FR-006, FR-009, FR-016, FR-031 and NFR-004 through NFR-012 have no direct executable test link in the current RTM table. | Requirement baseline and RTM comparison | Marked as coverage gaps for the next validation commits; no unsupported coverage claim is added. |
+| Docker CLI is installed but no running SQL Server service was observed during baseline. | `docker compose ps` returned no running service. | Runtime execution remains blocked until the environment is started and credentials are supplied locally. |

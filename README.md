@@ -51,6 +51,8 @@ Chi tiết phân công và liên kết các artifact được ghi tại [docs/09
 |   |-- 05_logical_database_design.md
 |   |-- 06_physical_database_design_sql_server.md
 |   |-- 07_validation_traceability.md
+|   |-- 10_testing_validation_commit_prompt_schedule.md
+|   |-- 11_validation_lead_baseline.md
 |   |-- 08_project_freeze.md
 |   `-- diagrams/
 |       |-- component_diagram.puml
