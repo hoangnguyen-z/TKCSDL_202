@@ -454,6 +454,18 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 | Judge | UC-06 | Evaluate assigned verified submissions within the judging round. |
 | AI Analysis Service | UC-05 (Supporting Actor) | Provide advisory analysis results for human verification review. |
 | Administrator | No dedicated core use case in UC-01 to UC-08 | Provides platform governance, role management, and operational oversight through the RBAC baseline. |
+### 12.2 Use Case Exception Coverage Matrix
+
+| Use Case | Exception / Failure Condition | Expected System Behavior | Related Business Rules |
+| --- | --- | --- | --- |
+| UC-01 Configure Contest | Duplicate contest code, invalid date window, or incomplete configuration | Reject create/update or block publication until configuration is valid. | BR-O-001, BR-O-002, BR-P-007, BR-P-008 |
+| UC-02 Register For Contest | Duplicate registration, inactive participant, closed registration window, or ineligible registration | Reject the request or record the registration as `REJECTED` with eligibility `INELIGIBLE`. | BR-O-003, BR-P-002, BR-P-003 |
+| UC-03 Manage Film Assets | Duplicate roll/frame number or incomplete film metadata | Block duplicate data; incomplete assets remain in `DRAFT` and cannot be submitted. | BR-O-004, BR-P-004, BR-P-005 |
+| UC-04 Submit Film Entry | Duplicate frame submission, expired submission window, or ownership mismatch | Block submission and preserve the existing valid submission state. | BR-O-003, BR-O-005, BR-P-006, BR-P-009 |
+| UC-05 Verify Submission | Suspicious case, missing technical metadata, or AI-only decision attempt | Keep human review active, request clarification when needed, and prevent AI from finalizing verification. | BR-O-006, BR-O-007, BR-P-010, BR-P-011 |
+| UC-06 Evaluate Submission | Duplicate evaluation, late evaluation, or submission outside assigned workload | Block evaluation submission and preserve the valid judge assignment/evaluation state. | BR-O-008, BR-O-009, BR-P-012, BR-P-013 |
+| UC-07 Finalize Results | Missing evaluations, invalid ranking, award/category mismatch, or unauthorized post-finalization intervention | Block finalization or require the approved administrative and audit path. | BR-O-010, BR-P-014, BR-P-015, BR-P-016 |
+| UC-08 Archive Winning Work | Result not finalized, duplicate archive item, or destructive archive modification | Block archive creation/update and preserve the immutable historical snapshot. | BR-O-011, BR-P-017, BR-P-018 |
 
 ### UC-01 Configure Contest
 
