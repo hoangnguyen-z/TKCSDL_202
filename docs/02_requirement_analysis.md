@@ -430,6 +430,19 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 | BR-P-016 | Proposed | Result finalization is irreversible at the data model level without administrator intervention and audit logging. | Protects publication integrity. | FR-025, FR-027 | Application-design layer + audit |
 | BR-P-017 | Proposed | Archive items store snapshot data rather than only live foreign-key traversal. | Historical integrity must survive future changes. | FR-028 | Database design decision |
 | BR-P-018 | Proposed | Deletion of contests, submissions, evaluations, results, awards, and archive items is restricted; business closure should use status changes rather than hard delete. | Protects history and traceability. | FR-029 | Database + operational policy |
+### 11.1 Business Rule Coverage Matrix
+
+| Process Area | Business Rules | Related Flow | Related Use Case | Coverage Purpose |
+| --- | --- | --- | --- | --- |
+| Contest configuration | BR-O-001, BR-O-002, BR-P-007, BR-P-008 | F01 | UC-01 | Ensures publish readiness, category scope, round structure, and scoring configuration. |
+| Participant registration | BR-O-003, BR-P-002, BR-P-003 | F02 | UC-02 | Controls registration deadlines, duplicate registration, and eligibility lifecycle. |
+| Film asset management | BR-O-004, BR-P-004, BR-P-005 | F03 | UC-03 | Preserves film provenance, reference-data structure, and frame numbering integrity. |
+| Film submission | BR-O-003, BR-O-005, BR-P-006, BR-P-009 | F04 | UC-04 | Controls submission timing, ownership, traceability, and frame reuse. |
+| Submission verification | BR-O-006, BR-O-007, BR-P-010, BR-P-011 | F05 | UC-05 | Separates advisory AI analysis from the final human verification decision. |
+| Judging and evaluation | BR-O-008, BR-O-009, BR-P-012, BR-P-013 | F06 | UC-06 | Controls judge workload scope, evaluation uniqueness, and scoring completeness. |
+| Result finalization and awards | BR-O-010, BR-P-014, BR-P-015, BR-P-016 | F07 | UC-07 | Controls finalization readiness, tie handling, award consistency, and result integrity. |
+| Digital archive | BR-O-011, BR-P-017, BR-P-018 | F08 | UC-08 | Protects archive eligibility, immutable snapshots, and historical retention. |
+| Role-based governance | BR-P-001 | F01-F08 | UC-01-UC-08 | Applies authorization according to the actor role used in each operational context. |
 
 ## 12. Core Use Case Specifications
 ### 12.1 Actor–Use Case Coverage Matrix
