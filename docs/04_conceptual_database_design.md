@@ -4,9 +4,21 @@
 
 The conceptual model represents business meaning, provenance, contest workflow, human decision points, and archival outcomes without introducing SQL Server-specific concerns such as datatype, index, or implementation syntax.
 
+## 1.1 Conceptual Naming Convention
+
+The following names are the canonical conceptual entity names used throughout the TV4 artifacts:
+
+| Business term | Canonical entity name | Usage rule |
+| --- | --- | --- |
+| Participant | `ParticipantProfile` | Use `Participant` for a stakeholder or role description; use `ParticipantProfile` for the data entity. |
+| Verification | `VerificationCase` | Use `verification` for the workflow; use `VerificationCase` for the review record. |
+| Award | `AwardDefinition` / `AwardAssignment` | Use `AwardDefinition` for the prize structure and `AwardAssignment` for awarding it to a result. |
+| Digital archive | `ArchiveItem` | Use `digital archive` for the capability and `ArchiveItem` for the historical record. |
+| Judge | `UserAccount` with `Judge` role | Do not create a duplicate `Judge` entity; assignments and evaluations reference the user account. |
+
 The model covers the complete chain:
 
-`User/Role -> Participant -> Registration -> Film Roll -> Film Frame -> Submission -> Verification -> Judging -> Result/Award -> Digital Archive -> Audit`
+`UserAccount/Role -> ParticipantProfile -> Registration -> FilmRoll -> FilmFrame -> Submission -> VerificationCase -> JudgingRound/Evaluation -> Result/AwardAssignment -> ArchiveItem -> AuditLog`
 
 ## 2. Business Entities and Meaning
 

@@ -14,17 +14,15 @@ Một trong những sai lầm phổ biến nhất trong thiết kế cơ sở d�
     \item \textbf{Cấp độ 3 -- Thiết kế Vật lý (Physical Model)}: Trả lời câu hỏi \textit{``Cấu trúc dữ liệu được cài đặt cụ thể trên DBMS mục tiêu như thế nào?''}. Lựa chọn kiểu dữ liệu chính xác trên Microsoft SQL Server, thiết lập ràng buộc (CHECK, UNIQUE, FK actions), chiến lược đánh chỉ mục (Index) và lập trình CSDL (Views, Stored Procedures, Triggers).
 \end{enumerate}
 
+\paragraph{Quy ước Tên Thực thể Chuẩn}
+Trong toàn bộ tài liệu TV4, tên thực thể được chuẩn hóa như sau: \\texttt{ParticipantProfile} là thực thể dữ liệu của thí sinh; ``verification'' là quy trình còn \\texttt{VerificationCase} là hồ sơ thẩm định; \\texttt{AwardDefinition} là cơ cấu giải và \\texttt{AwardAssignment} là việc gán giải; ``digital archive'' là năng lực nghiệp vụ còn \\texttt{ArchiveItem} là bản ghi lịch sử. Giám khảo là \\texttt{UserAccount} mang vai trò Judge, không tạo thêm thực thể Judge.
+
 % ----------------------------------------------------------------------
 \section{Thiết kế Cấp độ 1: Danh mục Thực thể Ý niệm (Entity Inventory)}
 \label{s:c4_conceptual_entities}
 
 Mô hình ý niệm bao phủ trọn vẹn chuỗi giá trị từ tài khoản người dùng đến lưu trữ di sản số:
-\begin{equation*}
-\begin{split}
-\text{User/Role} &\rightarrow \text{Participant} \rightarrow \text{Registration} \rightarrow \text{Film Roll} \rightarrow \text{Film Frame} \\
-&\rightarrow \text{Submission} \rightarrow \text{Verification} \rightarrow \text{Judging} \rightarrow \text{Result} \rightarrow \text{Archive}
-\end{split}
-\end{equation*}
+$$\text{UserAccount/Role} \rightarrow \text{ParticipantProfile} \rightarrow \text{Registration} \rightarrow \text{FilmRoll} \rightarrow \text{FilmFrame} \rightarrow \text{Submission} \rightarrow \text{VerificationCase} \rightarrow \text{JudgingRound/Evaluation} \rightarrow \text{Result/AwardAssignment} \rightarrow \text{ArchiveItem} \rightarrow \text{AuditLog}$$
 
 \begin{table}[htbp]
 \centering
@@ -108,12 +106,9 @@ Mỗi mối quan hệ được xác lập bằng bản số chuẩn (\textit{Car
     \begin{itemize}
         \item $\text{ContestCategory } (1,1) \longleftrightarrow (1,N) \text{ JudgingRound}$: Mỗi hạng mục có ít nhất một vòng chấm thi.
         \item $\text{JudgingRound } (1,1) \longleftrightarrow (1,N) \text{ ScoringCriterion}$: Mỗi vòng có một hoặc nhiều tiêu chí chấm điểm riêng biệt.
-        \item $\text{JudgingRound } (1,1) \longleftrightarrow (0,N) \text{ JudgeAssignment}$; \\
-        $\text{JudgeAssignment } (1,1) \longleftrightarrow (1,N) \text{ Judge}$: Phân công giám khảo vào vòng thi.
-        \item $\text{Evaluation } (1,1) \longleftrightarrow (1,N) \text{ EvaluationScore}$; \\
-        $\text{EvaluationScore } (1,1) \longleftrightarrow (1,N) \text{ ScoringCriterion}$: Phiếu chấm chứa điểm theo tiêu chí.
-        \item $\text{Result } (1,1) \longleftrightarrow (0,N) \text{ AwardAssignment}$; \\
-        $\text{AwardAssignment } (1,1) \longleftrightarrow (1,1) \text{ AwardDefinition}$: Gán giải thưởng chung cuộc.
+        \item $\text{JudgingRound } (1,1) \longleftrightarrow (0,N) \text{ JudgeAssignment } (1,1) \longleftrightarrow (1,N) \text{ UserAccount (Judge role)}$: Phân công tài khoản người dùng mang vai trò Judge vào vòng thi.
+        \item $\text{Evaluation } (1,1) \longleftrightarrow (1,N) \text{ EvaluationScore } (1,1) \longleftrightarrow (1,N) \text{ ScoringCriterion}$: Phiếu chấm chứa điểm chi tiết theo tiêu chí.
+        \item $\text{Result } (1,1) \longleftrightarrow (0,N) \text{ AwardAssignment } (1,1) \longleftrightarrow (1,1) \text{ AwardDefinition}$: Gán giải thưởng cho kết quả chung cuộc.
         \item $\text{Result } (1,1) \longleftrightarrow (0,1) \text{ ArchiveItem}$: Chỉ bài thi có kết quả chung cuộc mới được chuyển vào kho lưu trữ số.
     \end{itemize}
 \end{itemize}
@@ -132,7 +127,7 @@ Khi chuyển đổi từ mô hình ý niệm sang mô hình quan hệ logic, cá
 \textbf{Quan hệ Ý niệm $N:M$} & \textbf{Quan hệ Kết hợp Logic} & \textbf{Thuộc tính mở rộng / Khóa thay thế} \\
 \midrule
 UserAccount $\leftrightarrow$ Role & \texttt{UserRole} & \texttt{user\_id}, \texttt{role\_id}, \texttt{assigned\_at}, \texttt{status} \\
-JudgingRound $\leftrightarrow$ Judge & \texttt{JudgeAssignment} & \texttt{round\_id}, \texttt{judge\_user\_id}, \texttt{assigned\_at} \\
+JudgingRound $\leftrightarrow$ UserAccount (Judge role) & \texttt{JudgeAssignment} & \texttt{round\_id}, \texttt{judge\_user\_id}, \texttt{assigned\_at} \\
 Evaluation $\leftrightarrow$ ScoringCriterion & \texttt{EvaluationScore} & \texttt{evaluation\_id}, \texttt{criterion\_id}, \texttt{score\_value}, \texttt{comment} \\
 Result $\leftrightarrow$ AwardDefinition & \texttt{AwardAssignment} & \texttt{result\_id}, \texttt{award\_definition\_id}, \texttt{assigned\_at} \\
 \bottomrule
