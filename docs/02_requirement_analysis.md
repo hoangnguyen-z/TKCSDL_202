@@ -127,6 +127,7 @@ Current contest operations use disconnected tools:
 
 ## 7. TO-BE Process
 
+
 ### 7.1 Summary
 
 The future-state system centralizes contest planning, participant registration, film asset management, submission, verification, judging, result finalization, and archival reuse in a single governed platform.
@@ -139,6 +140,16 @@ The future-state system centralizes contest planning, participant registration, 
 4. Multi-round judging with scoped criteria and judge assignments.
 5. Reproducible ranking and result finalization.
 6. Searchable long-term digital archive.
+### 7.3 AS-IS to TO-BE Process Control Mapping
+
+| AS-IS Pain Point | Current Handoff / Risk | TO-BE Process Control | Related Flow | Related Business Rules |
+| --- | --- | --- | --- | --- |
+| Registration data is scattered across online forms and spreadsheets. | Participant data must be manually transferred and reviewed, increasing duplicate and deadline errors. | Centralized registration lifecycle with eligibility status, deadline validation, and one registration per participant per contest. | F02 | BR-O-003, BR-P-002, BR-P-003 |
+| Submissions are received through email or shared-drive links. | Organizer must manually match files to participants, contests, categories, and film provenance. | Submission explicitly binds an approved registration, film frame, contest, and category with ownership and uniqueness validation. | F04 | BR-O-005, BR-P-006, BR-P-009 |
+| Verification is performed manually in spreadsheets. | Technical evidence, review decisions, and suspicious conditions may be separated across files. | Verification Case centralizes completeness and technical review while AI results remain advisory and the Organizer owns the final decision. | F05 | BR-O-006, BR-O-007, BR-P-010, BR-P-011 |
+| Judge assignment and scoring use ad-hoc communication and separate files. | Judges may receive inconsistent workloads or duplicated scoring tasks. | Round-scoped Judge Assignment and controlled Evaluation records enforce assigned workload and one evaluation per judge-submission-round. | F06 | BR-O-008, BR-O-009, BR-P-012, BR-P-013 |
+| Rankings and awards are consolidated manually. | Missing evaluations, ties, and award-category mismatches can be difficult to detect consistently. | Result finalization requires completed judging, explicit tie handling, and controlled award assignment. | F07 | BR-O-010, BR-P-014, BR-P-015, BR-P-016 |
+| Historical winning works are archived inconsistently. | Files and metadata may be lost or change when upstream data changes. | Digital Archive creates stable snapshots only from finalized results and restricts destructive deletion. | F08 | BR-O-011, BR-P-017, BR-P-018 |
 
 ## 8. Core Business Flows
 
