@@ -56,6 +56,21 @@ The model covers the complete chain:
 | ArchiveItem | An immutable archived snapshot of a selected finalized result. | Preserves historical meaning after live data changes. |
 | AuditLog | A business event history record for traceability. | Provides accountability for important lifecycle changes. |
 
+### 2.1 Entity Inventory Completeness Check
+
+| Business capability | Conceptual entities | Coverage |
+| --- | --- | --- |
+| Identity and RBAC | `UserAccount`, `Role`, `UserRole`, `ParticipantProfile` | Complete |
+| Contest configuration | `Contest`, `ContestCategory`, `JudgingRound`, `ScoringCriterion`, `AwardDefinition` | Complete |
+| Registration and provenance | `Registration`, `FilmStock`, `Camera`, `Lens`, `Lab`, `FilmRoll`, `FilmFrame` | Complete |
+| Submission and review | `Submission`, `VerificationCase`, `AIAnalysisResult` | Complete |
+| Judging and scoring | `JudgeAssignment`, `Evaluation`, `EvaluationScore` | Complete |
+| Results and historical preservation | `Result`, `AwardAssignment`, `ArchiveItem`, `AuditLog` | Complete |
+
+The inventory covers each core business capability without introducing a
+duplicate Judge entity or collapsing advisory AI evidence into the human review
+record.
+
 ## 3. Core Relationships, Cardinality, and Optionality
 
 ### 3.1 Identity and Role

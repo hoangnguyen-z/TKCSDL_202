@@ -64,6 +64,18 @@ $$\text{UserAccount/Role} \rightarrow \text{ParticipantProfile} \rightarrow \tex
 \label{tab:c4_entity_inventory}
 \end{table}
 
+\subsection{Kiểm tra Độ đầy đủ Danh mục Thực thể}
+Danh mục thực thể bao phủ đầy đủ các năng lực nghiệp vụ cốt lõi mà không tạo
+thêm thực thể Judge trùng với tài khoản người dùng:
+\begin{itemize}
+    \item \textbf{Danh tính và RBAC}: \texttt{UserAccount}, \texttt{Role}, \texttt{UserRole}, \texttt{ParticipantProfile}.
+    \item \textbf{Cấu hình cuộc thi}: \texttt{Contest}, \texttt{ContestCategory}, \texttt{JudgingRound}, \texttt{ScoringCriterion}, \texttt{AwardDefinition}.
+    \item \textbf{Đăng ký và xuất xứ}: \texttt{Registration}, \texttt{FilmStock}, \texttt{Camera}, \texttt{Lens}, \texttt{Lab}, \texttt{FilmRoll}, \texttt{FilmFrame}.
+    \item \textbf{Nộp bài và thẩm định}: \texttt{Submission}, \texttt{VerificationCase}, \texttt{AIAnalysisResult}.
+    \item \textbf{Chấm thi}: \texttt{JudgeAssignment}, \texttt{Evaluation}, \texttt{EvaluationScore}.
+    \item \textbf{Kết quả và bảo tồn lịch sử}: \texttt{Result}, \texttt{AwardAssignment}, \texttt{ArchiveItem}, \texttt{AuditLog}.
+\end{itemize}
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth,keepaspectratio]{figures/fig_conceptual_erd.png}
