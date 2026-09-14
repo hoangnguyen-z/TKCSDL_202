@@ -421,6 +421,15 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 | BR-P-018 | Proposed | Deletion of contests, submissions, evaluations, results, awards, and archive items is restricted; business closure should use status changes rather than hard delete. | Protects history and traceability. | FR-029 | Database + operational policy |
 
 ## 12. Core Use Case Specifications
+### 12.1 Actor–Use Case Coverage Matrix
+
+| Actor | Core Use Cases | Responsibility in the Core Lifecycle |
+| --- | --- | --- |
+| Participant | UC-02, UC-03, UC-04 | Register for contests, manage film assets, and submit film entries. |
+| Organizer | UC-01, UC-05, UC-07, UC-08 | Configure contests, verify submissions, finalize results, and archive selected works. |
+| Judge | UC-06 | Evaluate assigned verified submissions within the judging round. |
+| AI Analysis Service | UC-05 (Supporting Actor) | Provide advisory analysis results for human verification review. |
+| Administrator | No dedicated core use case in UC-01 to UC-08 | Provides platform governance, role management, and operational oversight through the RBAC baseline. |
 
 ### UC-01 Configure Contest
 
