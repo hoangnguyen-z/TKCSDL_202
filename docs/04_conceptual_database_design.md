@@ -142,6 +142,17 @@ record.
 1. One `AuditLog` record may reference any governed business entity by name and identifier.
 2. One governed entity may have zero or many `AuditLog` records over time.
 
+### 3.8 Relationship Coverage Check
+
+| Core flow | Controlling relationships | Cardinality decision |
+| --- | --- | --- |
+| Registration | `ParticipantProfile`--`Registration`--`Contest` | One registration belongs to one participant and one contest; each side may have many registrations. |
+| Provenance | `ParticipantProfile`--`FilmRoll`--`FilmFrame` | A roll belongs to one participant and contains one or many frames. |
+| Submission | `Registration`--`Submission`--`FilmFrame`--`ContestCategory` | A submission has one registration, one frame and one category; a frame may be reused across contests. |
+| Verification | `Submission`--`VerificationCase` and `AIAnalysisResult` | One active human review case; zero or many advisory AI results. |
+| Judging | `JudgingRound`--`JudgeAssignment`--`Evaluation`--`EvaluationScore` | Assignments and evaluations are scoped to a round; criterion scores belong to one evaluation. |
+| Results and archive | `Submission`--`Result`--`AwardAssignment`--`ArchiveItem` | Results and archive records are optional until finalization; archive is snapshot-oriented. |
+
 ## 4. Conceptual Business Rules Embedded In The Model
 
 | Rule Theme | Conceptual Position |

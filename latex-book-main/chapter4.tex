@@ -126,6 +126,26 @@ Mỗi mối quan hệ được xác lập bằng bản số chuẩn (\textit{Car
     \end{itemize}
 \end{itemize}
 
+\subsection{Bảng Đối soát Độ phủ Quan hệ}
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{0.25\linewidth}p{0.38\linewidth}p{0.25\linewidth}}
+\toprule
+\textbf{Luồng nghiệp vụ} & \textbf{Quan hệ kiểm soát} & \textbf{Quyết định bản số} \\
+\midrule
+Đăng ký & \texttt{ParticipantProfile}--\texttt{Registration}--\texttt{Contest} & Một đơn thuộc một thí sinh và một cuộc thi. \\
+Xuất xứ & \texttt{ParticipantProfile}--\texttt{FilmRoll}--\texttt{FilmFrame} & Một cuộn thuộc một thí sinh và chứa nhiều frame. \\
+Nộp bài & \texttt{Registration}--\texttt{Submission}--\texttt{FilmFrame}--\texttt{ContestCategory} & Một bài có một frame; frame có thể tái sử dụng giữa các contest. \\
+Thẩm định & \texttt{Submission}--\texttt{VerificationCase}/\texttt{AIAnalysisResult} & Một case người duyệt và nhiều kết quả AI tư vấn. \\
+Chấm thi & \texttt{JudgingRound}--\texttt{JudgeAssignment}--\texttt{Evaluation}--\texttt{EvaluationScore} & Mọi đánh giá đều nằm trong một vòng chấm. \\
+Kết quả & \texttt{Submission}--\texttt{Result}--\texttt{ArchiveItem} & Result và archive chỉ phát sinh khi đủ điều kiện cuối vòng. \\
+\bottomrule
+\end{tabular}
+\caption{Đối soát độ phủ quan hệ giữa luồng nghiệp vụ và mô hình ý niệm}
+\label{tab:c4_relationship_coverage}
+\end{table}
+
 % ----------------------------------------------------------------------
 \section{Thiết kế Cấp độ 2: Mô hình Quan hệ Logic và Giải quyết Quan hệ $N:M$}
 \label{s:c4_logical_model}
