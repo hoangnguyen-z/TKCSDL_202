@@ -150,6 +150,27 @@ Kết quả & \texttt{Submission}--\texttt{Result}--\texttt{ArchiveItem} & Resul
 \section{Thiết kế Cấp độ 2: Mô hình Quan hệ Logic và Giải quyết Quan hệ $N:M$}
 \label{s:c4_logical_model}
 
+\subsection{Phân loại Quy tắc và Ranh giới Quyết định}
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{0.2\linewidth}p{0.48\linewidth}p{0.22\linewidth}}
+\toprule
+\textbf{Loại quy tắc} & \textbf{Nội dung ở mức ý niệm} & \textbf{Chủ thể quyết định} \\
+\midrule
+Chính thức & Submission cần registration hợp lệ, một frame, một category và được con người thẩm định trước khi chấm. & Workflow và Organizer \\
+Chính thức & AI chỉ tư vấn, không tự quyết định Verified hoặc Rejected. & Organizer \\
+Chính thức & Result và ArchiveItem phản ánh kết quả đã hoàn tất và lịch sử cần bảo tồn. & Organizer và lifecycle \\
+Đề xuất & Frame được dùng lại giữa các contest nhưng không lặp trong cùng một contest. & Nhóm thiết kế / chính sách \\
+Đề xuất & User có thể giữ nhiều role nhưng vẫn chịu quy tắc xung đột lợi ích. & Nhóm thiết kế / chính sách \\
+\bottomrule
+\end{tabular}
+\caption{Phân loại business rule và ranh giới quyết định trong mô hình ý niệm}
+\label{tab:c4_rule_boundary}
+\end{table}
+
+Các chi tiết datatype, constraint, index, procedure và trigger không thuộc mô hình ý niệm; chúng được chuyển sang các cấp độ thiết kế sau.
+
 Khi chuyển đổi từ mô hình ý niệm sang mô hình quan hệ logic, các quan hệ Nhiều-Nhiều ($N:M$) được giải quyết triệt để thông qua các quan hệ kết hợp (\textit{Associative Relations}):
 
 \begin{table}[htbp]

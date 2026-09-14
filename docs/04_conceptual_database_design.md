@@ -165,6 +165,19 @@ record.
 | Criterion versioning | Criterion belongs to a round, enabling round-level scoring differences. |
 | Historical durability | Archive is modeled as a snapshot-oriented entity. |
 
+### 4.1 Rule Status and Decision Boundary
+
+| Rule category | Conceptual rule | Decision owner |
+| --- | --- | --- |
+| Official | A submission requires an approved registration, one frame, one contest category, and human verification before judging. | System workflow and organizer |
+| Official | AI analysis is advisory and cannot independently verify or reject a submission. | Organizer |
+| Official | Results and archive records represent finalized outcomes and historical preservation. | Organizer and system lifecycle |
+| Proposed | A frame may be reused across contests but not more than once in the same contest. | Design team, subject to policy confirmation |
+| Proposed | A user may hold multiple roles, while contest-level conflict-of-interest rules remain applicable. | Design team and platform policy |
+
+The conceptual model records these decisions as business meaning. Datatypes,
+constraints, indexes, procedures, and triggers belong to later design levels.
+
 ## 5. Key Design Questions And Resolutions
 
 ### 5.1 Is Participant a separate business entity or only User + Role?
