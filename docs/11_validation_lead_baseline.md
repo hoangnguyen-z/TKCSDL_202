@@ -59,3 +59,16 @@ The current RTM has no direct executable test link for FR-001 to FR-006, FR-009,
 ## Ownership protection
 
 This baseline is an additive Validation Lead artifact. Existing schema, seed, requirement and team-owned documents are not replaced. Before every commit, review `git diff`, stage only files belonging to the current prompt, and never use reset/checkout/force-push operations that could discard another member's work.
+
+## Local execution evidence (2026-09-14)
+
+| Check | Result | Evidence / blocker |
+| --- | --- | --- |
+| Database inventory | PASS | 10 database scripts and 26 table declarations found. |
+| Runner completeness | PASS | 15 `:r` entries match 15 test scripts; no missing or unreferenced test file. |
+| Static test checklist | PASS with exception noted | All 15 tests have an ID, `USE FilmContestDB` and assertion. Fourteen use transaction cleanup; `TST-JDG-002` is intentionally read-only. |
+| RTM identifier audit | GAP | 19 requirement/rule IDs are not directly present in the RTM: `BR-P-003`, `BR-P-004`, `BR-P-007`, `BR-P-008`, `BR-P-010`, `BR-P-011`, `BR-P-012`, `BR-P-016`, `FR-002`, `FR-003`, `FR-004`, `FR-005`, `NFR-005`, `NFR-006`, `NFR-007`, `NFR-008`, `NFR-009`, `NFR-010`, `NFR-011`. |
+| Compose configuration | PASS with warning | `docker compose config` renders the SQL Server service; `MSSQL_SA_PASSWORD` is blank because `.env` is absent. |
+| Runtime initialization | BLOCKED | All 10 init scripts and `.env.example` exist, but Docker daemon is unavailable and no SQL Server container is running. |
+
+These results are local validation evidence only. They are not staged, committed or uploaded as part of this execution.
