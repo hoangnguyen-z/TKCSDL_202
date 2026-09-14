@@ -1,5 +1,5 @@
 % !TeX program = xelatex
-\documentclass[letterpaper,11pt,leqno]{book}
+\documentclass[a4paper,11pt,leqno,oneside,openany]{book}
 \usepackage{book}
 \usepackage[utf8]{inputenc}
 \usepackage[vietnamese]{babel}
@@ -33,6 +33,12 @@
 \end{titlepage}
 
 \frontmatter
+
+\chapter{Lời cảm ơn}
+\input{acknowledgements}
+
+\chapter{Danh sách thành viên thực hiện}
+\input{team_members}
 
 \tableofcontents
 \listoftables
@@ -86,9 +92,6 @@
 \input{appendixC}
 
 \backmatter
-
-\chapter{Lời cảm ơn}
-\input{acknowledgements}
 
 \bibliography{\bib}
 

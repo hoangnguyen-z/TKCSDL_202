@@ -53,6 +53,7 @@
 
 % Adjust spacing in text
 \AtBeginDocument{\frenchspacing}
+\raggedbottom
 
 % ---- Select color scheme ----
 
@@ -138,13 +139,18 @@
 \titleformat{\part}[display]{\Huge\bfseries\centering}{\textsc{part}~\thepart.}{2cm}{}[]
 
 % Format chapter headings
-\titleformat{\chapter}[display]{\huge\bfseries}{\textsc{chapter}~\thechapter.}{2cm}{}[\vskip2cm]
+\titleformat{\chapter}[display]{\huge\bfseries}{\textsc{chapter}~\thechapter.}{0.8cm}{}[\vskip0.8cm]
 
 % Format section headings
 \titleformat*{\section}{\large\bfseries}
 
 % Format subsection headings
 \titleformat*{\subsection}{\bfseries}
+
+% Adjust section spacing (tighten gap before and after headings)
+\titlespacing*{\section}{0pt}{1.2ex plus .2ex minus .1ex}{0.6ex plus .1ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus .2ex minus .1ex}{0.4ex plus .1ex}
+\titlespacing*{\subsubsection}{0pt}{0.8ex plus .1ex minus .1ex}{0.3ex plus .1ex}
 
 % Format paragraph headings
 \titleformat{\paragraph}[runin]{\itshape}{}{}{}[\@addpunct{.}\hspace{1em}]
@@ -193,8 +199,19 @@
 % Enable multiple rows in table
 \usepackage{multirow}
 
-% Allow small figures and tables to be on their own page
-\renewcommand{\floatpagefraction}{0}
+% Float parameters for better placement and packing
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\bottomfraction}{0.75}
+\renewcommand{\textfraction}{0.15}
+\renewcommand{\floatpagefraction}{0.75}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}
+
+% Tighten spacing between floats and surrounding text
+\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
+\setlength{\intextsep}{8pt plus 2pt minus 2pt}
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}
 
 % Center figures and tables
 \makeatletter\g@addto@macro\@floatboxreset\centering\makeatother 
@@ -215,8 +232,8 @@
 % Format label separator
 \DeclareCaptionLabelSeparator{periodem}{.\hspace{1em}}
 
-% Format captions
-\captionsetup{labelsep=periodem}
+% Format captions with tighter spacing to figure/table
+\captionsetup{labelsep=periodem, skip=4pt}
 
 % Place table captions above table
 \captionsetup[table]{position=top}
@@ -253,7 +270,7 @@
 % ---- Format appendix ----
 
 \apptocmd{\appendix}{%
-\titleformat{\chapter}[display]{\huge\bfseries}{\textsc{appendix}~\thechapter.}{2cm}{}[\vskip2cm]%
+\titleformat{\chapter}[display]{\huge\bfseries}{\textsc{appendix}~\thechapter.}{0.8cm}{}[\vskip0.8cm]%
 }{}{}
 
 % ---- Format bibliography ----
