@@ -16,6 +16,11 @@ The following names are the canonical conceptual entity names used throughout th
 | Digital archive | `ArchiveItem` | Use `digital archive` for the capability and `ArchiveItem` for the historical record. |
 | Judge | `UserAccount` with `Judge` role | Do not create a duplicate `Judge` entity; assignments and evaluations reference the user account. |
 
+Canonical entity names must also be used in the conceptual ERD, report captions,
+traceability tables, and logical-model cross-references. Local-language labels
+may appear as explanatory display text, but they must not replace the canonical
+names in design contracts.
+
 The model covers the complete chain:
 
 `UserAccount/Role -> ParticipantProfile -> Registration -> FilmRoll -> FilmFrame -> Submission -> VerificationCase -> JudgingRound/Evaluation -> Result/AwardAssignment -> ArchiveItem -> AuditLog`
