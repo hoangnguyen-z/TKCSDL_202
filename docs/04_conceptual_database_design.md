@@ -239,6 +239,19 @@ constraints, indexes, procedures, and triggers belong to later design levels.
 
 ## 8. Readiness For Logical Modeling
 
+### 8.1 Markdown and LaTeX Synchronization
+
+| Design content | Markdown | LaTeX Chapter 4 |
+| --- | --- | --- |
+| Canonical entity vocabulary | Sections 1.1-2.1 | Methodology and entity inventory |
+| Entity necessity and coverage | Sections 2-2.1 | Entity inventory and completeness subsection |
+| Relationships and cardinality | Sections 3-3.8 | Cardinality and relationship coverage table |
+| Business rules and decision boundary | Sections 4-5.5 | Rule boundary and logical transition sections |
+
+Both artifacts describe the same conceptual contract. The LaTeX version adds
+presentation structure but must not introduce a different entity name or
+cardinality.
+
 The conceptual model is ready to transition to logical design because:
 
 - Every core flow has a complete entity chain.
