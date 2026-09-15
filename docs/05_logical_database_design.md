@@ -129,12 +129,16 @@ parent relation identity needed to preserve the conceptual cardinalities.
 
 ## 3. N:M Resolution Summary
 
-| Conceptual N:M | Resolved Relation |
-| --- | --- |
-| UserAccount <-> Role | UserRole |
-| JudgingRound <-> Judge | JudgeAssignment |
-| Evaluation <-> ScoringCriterion | EvaluationScore |
-| AwardDefinition <-> Result | AwardAssignment |
+| Conceptual N:M | Resolved relation | Associative primary key | Relationship uniqueness |
+| --- | --- | --- | --- |
+| UserAccount <-> Role | UserRole | user_role_id | (user_id, role_id) |
+| JudgingRound <-> UserAccount (Judge) | JudgeAssignment | judge_assignment_id | (round_id, judge_user_id) |
+| Evaluation <-> ScoringCriterion | EvaluationScore | evaluation_score_id | (evaluation_id, criterion_id) |
+| AwardDefinition <-> Result | AwardAssignment | award_assignment_id | (award_definition_id, result_id) |
+
+The associative relation owns the relationship attributes such as assignment
+status, score value, or assignment note. This keeps those attributes off the
+parent relations and preserves the atomic many-to-many business event.
 
 ## 4. Candidate Keys and Alternate Keys
 
