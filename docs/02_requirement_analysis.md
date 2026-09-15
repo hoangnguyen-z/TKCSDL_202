@@ -117,6 +117,15 @@ Current contest operations use disconnected tools:
 - Archive kept inconsistently or not at all
 
 ### 6.2 AS-IS Problems
+### 6.2 AS-IS Problems
+
+1. Data is fragmented across tools.
+2. Submission provenance is hard to verify.
+3. Deadline and eligibility decisions are manually error-prone.
+4. Judges lack a controlled work queue and consistent criteria.
+5. Final ranking and award publication require manual consolidation.
+6. Historical reuse of winning entries is unreliable.
+
 ### 6.3 AS-IS Data Handoff and Bottleneck Matrix
 
 | Process Stage | Current Artifact / Tool | Manual Handoff | Main Bottleneck / Risk | Downstream Impact |
@@ -512,20 +521,6 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Contest, Category, Judging Round, Scoring Criterion, Award Definition, Audit Log.
 - Related BR:
   - BR-O-001, BR-O-002, BR-P-007, BR-P-008.
-- Main Flow:
-  1. Create contest in draft.
-  2. Add categories.
-  3. Add rounds for each category.
-  4. Add criteria and awards.
-  5. Validate schedule and publish.
-- Alternative / Exception:
-  - Publish blocked if required configuration is missing.
-- Output:
-  - `PUBLISHED` contest configuration.
-- Data Affected:
-  - Contest, Category, Judging Round, Scoring Criterion, Award Definition
-- Related BR:
-  - BR-O-001, BR-P-007, BR-P-008
 
 ### UC-02 Register For Contest
 
@@ -550,20 +545,6 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Registration, Audit Log.
 - Related BR:
   - BR-O-003, BR-P-002, BR-P-003.
-- Main Flow:
-  1. Participant submits registration.
-  2. System records registration and eligibility as `PENDING`.
-  3. Organizer reviews and approves or rejects.
-- Alternative / Exception:
-  - Duplicate registration blocked.
-  - Late registration blocked.
-- Output:
-  - Registration status decision: `APPROVED`, `REJECTED`, or `WITHDRAWN`.
-- Status Transition:
-  - Registration: `PENDING -> APPROVED / REJECTED / WITHDRAWN`.
-  - Eligibility: `PENDING -> ELIGIBLE / INELIGIBLE`.
-- Data Affected:
-  - Registration, Audit Log
 - Related BR:
   - BR-O-003, BR-P-002, BR-P-003
 
@@ -629,7 +610,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   4. Synchronize the submission status and audit the human decision.
 - Alternative / Exception:
   - Suspicious case remains under manual review.
-    - Missing or incomplete technical metadata results in a clarification request before verification can be completed.
+  - Missing or incomplete technical metadata results in a clarification request before verification can be completed.
   - AI output alone cannot change the verification decision.
 - Output:
   - Verification decision and updated submission status.
