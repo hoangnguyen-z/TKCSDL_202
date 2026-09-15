@@ -117,6 +117,16 @@ Current contest operations use disconnected tools:
 - Archive kept inconsistently or not at all
 
 ### 6.2 AS-IS Problems
+### 6.3 AS-IS Data Handoff and Bottleneck Matrix
+
+| Process Stage | Current Artifact / Tool | Manual Handoff | Main Bottleneck / Risk | Downstream Impact |
+| --- | --- | --- | --- | --- |
+| Contest announcement and registration | Social media, email, online form | Participant information is transferred from submitted forms into organizer-managed records. | Registration data is separated from later submission and review records. | Eligibility and deadline checks require manual reconciliation. |
+| Submission intake | Drive link or email attachment | Participant sends image references and metadata to the Organizer. | Files, metadata, participant identity, and contest category may be stored in different locations. | Submission provenance and ownership are harder to verify consistently. |
+| Preliminary verification | Spreadsheet and manually inspected files | Organizer compares submission information against registration and technical metadata. | Review evidence and decisions depend on manual checking and individual files. | Missing or inconsistent metadata may delay verification. |
+| Judge distribution | Email and separate judging sheets | Organizer prepares and sends judging material to each Judge. | Workload scope and judging criteria can become inconsistent across copies. | Duplicate, omitted, or out-of-scope evaluations are harder to detect. |
+| Score consolidation | Individual judge spreadsheets | Judges return scoring files to the Organizer for consolidation. | Scores must be merged manually and tie cases require additional review. | Ranking and award decisions are slower and more error-prone. |
+| Result publication and archive | Consolidated files, social posts, local or cloud folders | Organizer publishes results and separately preserves winning works. | Final results and archive metadata are not maintained as one controlled lifecycle. | Historical lookup, audit, and reuse of winning works become unreliable. |
 
 1. Data is fragmented across tools.
 2. Submission provenance is hard to verify.
