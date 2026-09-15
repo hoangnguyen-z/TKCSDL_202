@@ -16,5 +16,6 @@ PRINT 'Run from the tests folder in SSMS 22 with SQLCMD Mode enabled.';
 :r .\TST-FK-001_core_foreign_keys.sql
 :r .\TST-INT-002_invalid_status.sql
 :r .\TST-INT-003_invalid_criterion_weight.sql
+:r .\TST-BOUNDARY-001_status_score_dates.sql
 :r .\TST-INT-004_invalid_date_window.sql
 :r .\TST-RET-001_restricted_deletion.sql
