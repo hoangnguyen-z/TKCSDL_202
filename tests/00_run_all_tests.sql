@@ -4,6 +4,7 @@ PRINT 'Run from the tests folder in SSMS 22 with SQLCMD Mode enabled.';
 :r .\TST-REG-001_duplicate_registration.sql
 :r .\TST-FRAME-001_duplicate_frame_number.sql
 :r .\TST-UQ-001_business_keys.sql
+:r .\TST-SEED-001_reference_data.sql
 :r .\TST-SUB-001_normal_submission.sql
 :r .\TST-SUB-002_invalid_late_submission.sql
 :r .\TST-VER-001_ai_flag_human_review.sql
