@@ -180,6 +180,31 @@ parent relations and preserves the atomic many-to-many business event.
 | Evaluation.locked_at | Null until evaluation is locked |
 | Result.tie_break_note | Optional, only populated when tie resolution needs explanation |
 
+## 5.1 Logical Uniqueness and Mandatory Relationship Rules
+
+The following rules define the logical contract before physical indexes and
+SQL Server constraint names are chosen.
+
+| Relation | Uniqueness rule | Mandatory relationship rule |
+| --- | --- | --- |
+| UserAccount | email and username are individually unique | account identity is required |
+| ParticipantProfile | user_id is unique | every profile belongs to one UserAccount |
+| ContestCategory | (contest_id, category_code) is unique | every category belongs to one Contest |
+| Registration | (contest_id, participant_id) is unique | contest and participant are required |
+| FilmFrame | (roll_id, frame_number) is unique | every frame belongs to one FilmRoll |
+| Submission | (contest_id, frame_id) is unique | registration, contest, category, and frame are required |
+| VerificationCase | submission_id is unique for the active case | every case belongs to one Submission |
+| JudgeAssignment | (round_id, judge_user_id) is unique | round and judge account are required |
+| Evaluation | (round_id, submission_id, judge_user_id) is unique | round, submission, and judge account are required |
+| EvaluationScore | (evaluation_id, criterion_id) is unique | evaluation and criterion are required |
+| Result | (category_id, submission_id) and (category_id, final_rank) are unique | category and submission are required |
+| ArchiveItem | result_id is unique | every archive item belongs to one Result |
+
+Optional foreign keys and review timestamps remain nullable only where the
+business lifecycle allows a draft or not-yet-reviewed record. A nullable
+column must not be used to weaken a relationship that is mandatory at the
+conceptual level.
+
 ## 6. Status Lifecycle Separation
 
 ### 6.1 Configuration Relations
