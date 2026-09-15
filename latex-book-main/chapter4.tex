@@ -29,7 +29,13 @@ Tên canonical phải được giữ nguyên trong ERD ý niệm, caption, bản
 \label{s:c4_conceptual_entities}
 
 Mô hình ý niệm bao phủ trọn vẹn chuỗi giá trị từ tài khoản người dùng đến lưu trữ di sản số:
-$$\text{UserAccount/Role} \rightarrow \text{ParticipantProfile} \rightarrow \text{Registration} \rightarrow \text{FilmRoll} \rightarrow \text{FilmFrame} \rightarrow \text{Submission} \rightarrow \text{VerificationCase} \rightarrow \text{JudgingRound/Evaluation} \rightarrow \text{Result/AwardAssignment} \rightarrow \text{ArchiveItem} \rightarrow \text{AuditLog}$$
+\begin{equation*}
+\begin{split}
+\text{UserAccount/Role} \rightarrow \text{ParticipantProfile} \rightarrow \text{Registration} \rightarrow \text{FilmRoll} \\
+\rightarrow \text{FilmFrame} \rightarrow \text{Submission} \rightarrow \text{VerificationCase} \rightarrow \text{JudgingRound/Evaluation} \\
+\rightarrow \text{Result/AwardAssignment} \rightarrow \text{ArchiveItem} \rightarrow \text{AuditLog}
+\end{split}
+\end{equation*}
 
 \begin{table}[htbp]
 \centering
@@ -75,9 +81,9 @@ Danh mục thực thể bao phủ đầy đủ các năng lực nghiệp vụ c�
 thêm thực thể Judge trùng với tài khoản người dùng:
 \begin{itemize}
     \item \textbf{Danh tính và RBAC}: \texttt{UserAccount}, \texttt{Role}, \texttt{UserRole}, \texttt{ParticipantProfile}.
-    \item \textbf{Cấu hình cuộc thi}: \texttt{Contest}, \texttt{ContestCategory}, \texttt{JudgingRound}, \texttt{ScoringCriterion}, \texttt{AwardDefinition}.
+    \item \textbf{Cấu hình cuộc thi}: \texttt{Contest}, \texttt{ContestCategory}, \texttt{JudgingRound}, \\ \texttt{ScoringCriterion}, \texttt{AwardDefinition}.
     \item \textbf{Đăng ký và xuất xứ}: \texttt{Registration}, \texttt{FilmStock}, \texttt{Camera}, \texttt{Lens}, \texttt{Lab}, \texttt{FilmRoll}, \texttt{FilmFrame}.
-    \item \textbf{Nộp bài và thẩm định}: \texttt{Submission}, \texttt{VerificationCase}, \texttt{AIAnalysisResult}.
+    \item \textbf{Nộp bài và thẩm định}: \texttt{Submission}, \texttt{VerificationCase}, \\ \texttt{AIAnalysisResult}.
     \item \textbf{Chấm thi}: \texttt{JudgeAssignment}, \texttt{Evaluation}, \texttt{EvaluationScore}.
     \item \textbf{Kết quả và bảo tồn lịch sử}: \texttt{Result}, \texttt{AwardAssignment}, \texttt{ArchiveItem}, \texttt{AuditLog}.
 \end{itemize}
@@ -125,9 +131,12 @@ Mỗi mối quan hệ được xác lập bằng bản số chuẩn (\textit{Car
     \begin{itemize}
         \item $\text{ContestCategory } (1,1) \longleftrightarrow (1,N) \text{ JudgingRound}$: Mỗi hạng mục có ít nhất một vòng chấm thi.
         \item $\text{JudgingRound } (1,1) \longleftrightarrow (1,N) \text{ ScoringCriterion}$: Mỗi vòng có một hoặc nhiều tiêu chí chấm điểm riêng biệt.
-        \item $\text{JudgingRound } (1,1) \longleftrightarrow (0,N) \text{ JudgeAssignment } (1,1) \longleftrightarrow (1,N) \text{ UserAccount (Judge role)}$: Phân công tài khoản người dùng mang vai trò Judge vào vòng thi.
-        \item $\text{Evaluation } (1,1) \longleftrightarrow (1,N) \text{ EvaluationScore } (1,1) \longleftrightarrow (1,N) \text{ ScoringCriterion}$: Phiếu chấm chứa điểm chi tiết theo tiêu chí.
-        \item $\text{Result } (1,1) \longleftrightarrow (0,N) \text{ AwardAssignment } (1,1) \longleftrightarrow (1,1) \text{ AwardDefinition}$: Gán giải thưởng cho kết quả chung cuộc.
+        \item $\text{JudgingRound } (1,1) \longleftrightarrow (0,N) \text{ JudgeAssignment}$; \\
+        $\text{JudgeAssignment } (1,1) \longleftrightarrow (1,N) \text{ UserAccount (Judge role)}$: Phân công tài khoản người dùng mang vai trò Judge vào vòng thi.
+        \item $\text{Evaluation } (1,1) \longleftrightarrow (1,N) \text{ EvaluationScore}$; \\
+        $\text{EvaluationScore } (1,1) \longleftrightarrow (1,N) \text{ ScoringCriterion}$: Phiếu chấm chứa điểm chi tiết theo tiêu chí.
+        \item $\text{Result } (1,1) \longleftrightarrow (0,N) \text{ AwardAssignment}$; \\
+        $\text{AwardAssignment } (1,1) \longleftrightarrow (1,1) \text{ AwardDefinition}$: Gán giải thưởng cho kết quả chung cuộc.
         \item $\text{Result } (1,1) \longleftrightarrow (0,1) \text{ ArchiveItem}$: Chỉ bài thi có kết quả chung cuộc mới được chuyển vào kho lưu trữ số.
     \end{itemize}
 \end{itemize}
@@ -136,18 +145,18 @@ Mỗi mối quan hệ được xác lập bằng bản số chuẩn (\textit{Car
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{p{0.25\linewidth}p{0.38\linewidth}p{0.25\linewidth}}
+\begin{tabularx}{\textwidth}{p{2.2cm}p{4.6cm}>{\raggedright\arraybackslash}X}
 \toprule
 \textbf{Luồng nghiệp vụ} & \textbf{Quan hệ kiểm soát} & \textbf{Quyết định bản số} \\
 \midrule
 Đăng ký & \texttt{ParticipantProfile}--\texttt{Registration}--\texttt{Contest} & Một đơn thuộc một thí sinh và một cuộc thi. \\
 Xuất xứ & \texttt{ParticipantProfile}--\texttt{FilmRoll}--\texttt{FilmFrame} & Một cuộn thuộc một thí sinh và chứa nhiều frame. \\
 Nộp bài & \texttt{Registration}--\texttt{Submission}--\texttt{FilmFrame}--\texttt{ContestCategory} & Một bài có một frame; frame có thể tái sử dụng giữa các contest. \\
-Thẩm định & \texttt{Submission}--\texttt{VerificationCase}/\texttt{AIAnalysisResult} & Một case người duyệt và nhiều kết quả AI tư vấn. \\
+Thẩm định & \texttt{Submission}--\texttt{VerificationCase}/\allowbreak\texttt{AIAnalysisResult} & Một case người duyệt và nhiều kết quả AI tư vấn. \\
 Chấm thi & \texttt{JudgingRound}--\texttt{JudgeAssignment}--\texttt{Evaluation}--\texttt{EvaluationScore} & Mọi đánh giá đều nằm trong một vòng chấm. \\
 Kết quả & \texttt{Submission}--\texttt{Result}--\texttt{ArchiveItem} & Result và archive chỉ phát sinh khi đủ điều kiện cuối vòng. \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \caption{Đối soát độ phủ quan hệ giữa luồng nghiệp vụ và mô hình ý niệm}
 \label{tab:c4_relationship_coverage}
 \end{table}
@@ -160,7 +169,7 @@ Kết quả & \texttt{Submission}--\texttt{Result}--\texttt{ArchiveItem} & Resul
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{p{0.2\linewidth}p{0.48\linewidth}p{0.22\linewidth}}
+\begin{tabularx}{\textwidth}{p{2.2cm}>{\raggedright\arraybackslash}Xp{3.2cm}}
 \toprule
 \textbf{Loại quy tắc} & \textbf{Nội dung ở mức ý niệm} & \textbf{Chủ thể quyết định} \\
 \midrule
@@ -170,7 +179,7 @@ Chính thức & Result và ArchiveItem phản ánh kết quả đã hoàn tất 
 Đề xuất & Frame được dùng lại giữa các contest nhưng không lặp trong cùng một contest. & Nhóm thiết kế / chính sách \\
 Đề xuất & User có thể giữ nhiều role nhưng vẫn chịu quy tắc xung đột lợi ích. & Nhóm thiết kế / chính sách \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \caption{Phân loại business rule và ranh giới quyết định trong mô hình ý niệm}
 \label{tab:c4_rule_boundary}
 \end{table}
