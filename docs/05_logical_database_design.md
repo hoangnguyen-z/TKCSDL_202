@@ -29,6 +29,33 @@ This alignment is the naming contract used by the logical relation tables and
 by the physical SQL Server schemas. Display labels may be localized, but
 relation identifiers remain canonical.
 
+## 2.0.1 Primary and Foreign Key Coverage
+
+Every relation has a single surrogate primary key. Foreign keys carry the
+parent relation identity needed to preserve the conceptual cardinalities.
+
+| Relation | Primary key | Foreign keys |
+| --- | --- | --- |
+| UserRole | user_role_id | user_id -> UserAccount; role_id -> Role; assigned_by_user_id -> UserAccount |
+| ParticipantProfile | participant_id | user_id -> UserAccount |
+| ContestCategory | category_id | contest_id -> Contest |
+| JudgingRound | round_id | category_id -> ContestCategory |
+| ScoringCriterion | criterion_id | round_id -> JudgingRound |
+| AwardDefinition | award_definition_id | category_id -> ContestCategory |
+| Registration | registration_id | contest_id -> Contest; participant_id -> ParticipantProfile; reviewed_by_user_id -> UserAccount |
+| FilmRoll | roll_id | participant_id -> ParticipantProfile; film_stock_id -> FilmStock; lab_id -> Lab |
+| FilmFrame | frame_id | roll_id -> FilmRoll; camera_id -> Camera; lens_id -> Lens |
+| Submission | submission_id | registration_id -> Registration; contest_id -> Contest; category_id -> ContestCategory; frame_id -> FilmFrame |
+| VerificationCase | verification_id | submission_id -> Submission; reviewed_by_user_id -> UserAccount |
+| AIAnalysisResult | ai_result_id | submission_id -> Submission; related_submission_id -> Submission; reviewed_by_user_id -> UserAccount |
+| JudgeAssignment | judge_assignment_id | round_id -> JudgingRound; judge_user_id -> UserAccount; assigned_by_user_id -> UserAccount |
+| Evaluation | evaluation_id | round_id -> JudgingRound; submission_id -> Submission; judge_user_id -> UserAccount |
+| EvaluationScore | evaluation_score_id | evaluation_id -> Evaluation; criterion_id -> ScoringCriterion |
+| Result | result_id | category_id -> ContestCategory; submission_id -> Submission; finalized_by_user_id -> UserAccount |
+| AwardAssignment | award_assignment_id | award_definition_id -> AwardDefinition; result_id -> Result; assigned_by_user_id -> UserAccount |
+| ArchiveItem | archive_item_id | result_id -> Result; submission_id -> Submission; archived_by_user_id -> UserAccount |
+| AuditLog | audit_log_id | actor_user_id -> UserAccount |
+
 ### 2.1 Identity and Access
 
 | Relation | Primary Key | Key Attributes | Notes |
