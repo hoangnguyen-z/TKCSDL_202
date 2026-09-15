@@ -160,6 +160,18 @@ The future-state system centralizes contest planning, participant registration, 
 | Judge assignment and scoring use ad-hoc communication and separate files. | Judges may receive inconsistent workloads or duplicated scoring tasks. | Round-scoped Judge Assignment and controlled Evaluation records enforce assigned workload and one evaluation per judge-submission-round. | F06 | BR-O-008, BR-O-009, BR-P-012, BR-P-013 |
 | Rankings and awards are consolidated manually. | Missing evaluations, ties, and award-category mismatches can be difficult to detect consistently. | Result finalization requires completed judging, explicit tie handling, and controlled award assignment. | F07 | BR-O-010, BR-P-014, BR-P-015, BR-P-016 |
 | Historical winning works are archived inconsistently. | Files and metadata may be lost or change when upstream data changes. | Digital Archive creates stable snapshots only from finalized results and restricts destructive deletion. | F08 | BR-O-011, BR-P-017, BR-P-018 |
+### 7.4 TO-BE Actor and Process Handoff Matrix
+
+| Flow | Primary Actor | Supporting Actor / System Role | Key Process Control | Handoff Output | Next Flow |
+| --- | --- | --- | --- | --- | --- |
+| F01 Contest Planning and Configuration | Organizer | System | Validate contest schedule, categories, judging rounds, criteria, awards, and publication readiness. | Published or open contest configuration. | F02 / F03 |
+| F02 Participant Registration | Participant | Organizer / System | Enforce registration window, prevent duplicate registration, and record eligibility decision. | Approved and eligible registration. | F04 |
+| F03 Film Roll and Frame Management | Participant | System | Preserve film provenance, frame uniqueness, and readiness of reusable film assets. | Film roll and frame records in `READY` state. | F04 |
+| F04 Film Submission | Participant | System | Validate deadline, registration, frame ownership, category scope, and submission uniqueness. | Submission in `PENDING_VERIFICATION`. | F05 |
+| F05 Submission Verification | Organizer | AI Analysis Service / System | Keep AI advisory only and require the Organizer to own the final verification decision. | Submission resolved as `VERIFIED`, `REJECTED`, or `NEEDS_CLARIFICATION`. | F06 when verified |
+| F06 Judge Assignment and Evaluation | Organizer / Judge | System | Scope judge workload by round, prevent duplicate evaluation, and persist criterion-level scoring. | Submitted evaluations and score breakdowns. | F07 |
+| F07 Ranking and Result Finalization | Organizer | System | Require completed judging, handle ties, validate awards, and control result finalization. | Finalized and published results with award assignments. | F08 |
+| F08 Digital Archive | Organizer | System | Allow archival only from finalized results and preserve immutable historical snapshots. | Searchable archive item in `ARCHIVED` state. | Archive / future reuse |
 
 ## 8. Core Business Flows
 
