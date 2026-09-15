@@ -6,6 +6,29 @@ The logical model converts the conceptual business model into normalized relatio
 
 ## 2. Logical Relations
 
+### 2.0 Conceptual-to-Logical Name Alignment
+
+The logical model preserves the canonical conceptual entity names. Each row
+below is implemented as one relation with the same business name; associative
+relations retain the conceptual relationship meaning while making its keys
+explicit.
+
+| Conceptual entity | Logical relation | Mapping decision |
+| --- | --- | --- |
+| UserAccount | UserAccount | Identity relation retained without a Judge duplicate |
+| ParticipantProfile | ParticipantProfile | Participant subtype retained as a one-to-zero-or-one relation |
+| VerificationCase | VerificationCase | Human review record kept separate from AIAnalysisResult |
+| AwardDefinition | AwardDefinition | Award structure kept separate from winner assignment |
+| AwardAssignment | AwardAssignment | Result-to-award relationship resolved as an associative relation |
+| ArchiveItem | ArchiveItem | Historical snapshot relation retained as a distinct record |
+| UserRole | UserRole | UserAccount-to-Role relationship resolved with explicit keys |
+| JudgeAssignment | JudgeAssignment | JudgingRound-to-UserAccount assignment resolved with explicit keys |
+| EvaluationScore | EvaluationScore | Evaluation-to-ScoringCriterion relationship resolved with explicit keys |
+
+This alignment is the naming contract used by the logical relation tables and
+by the physical SQL Server schemas. Display labels may be localized, but
+relation identifiers remain canonical.
+
 ### 2.1 Identity and Access
 
 | Relation | Primary Key | Key Attributes | Notes |
