@@ -8,6 +8,7 @@ PRINT 'Run from the tests folder in SSMS 22 with SQLCMD Mode enabled.';
 :r .\TST-SEED-002_demo_graph_consistency.sql
 :r .\TST-SUB-001_normal_submission.sql
 :r .\TST-SUB-002_invalid_late_submission.sql
+:r .\TST-SUB-003_creation_procedure_matrix.sql
 :r .\TST-VER-001_ai_flag_human_review.sql
 :r .\TST-JDG-001_duplicate_judge_evaluation.sql
 :r .\TST-JDG-002_multi_round_judging.sql
