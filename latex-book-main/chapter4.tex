@@ -291,6 +291,25 @@ Mỗi quan hệ logic sử dụng khóa thay thế nhân tạo (\textit{Surrogat
     \item \textbf{Chứng minh 3NF}: Tên tiêu chí, thang điểm min/max và trọng số được lưu tại \texttt{ScoringCriterion}, không bị lặp lại trong \texttt{EvaluationScore}. Bảng chỉ lưu giá trị điểm và nhận xét ứng với từng tiêu chí cụ thể. $\Rightarrow$ \textbf{Đạt 3NF}.
 \end{itemize}
 
+\subsection{Quan hệ Result (Kết quả Xếp hạng và Công bố)}
+\begin{itemize}
+    \item \textbf{Tập thuộc tính}:
+    \begin{center}
+    $\text{Result}(\underline{\text{result\_id}}, \text{category\_id}, \text{submission\_id}, \text{final\_score}, \text{final\_rank},$ \\
+    $\text{result\_status}, \text{tie\_break\_note}, \text{finalized\_at}, \text{finalized\_by\_user\_id}, \text{published\_at})$
+    \end{center}
+    \item \textbf{Phụ thuộc hàm cốt lõi}:
+    \begin{align*}
+        \text{FD1: } & \text{result\_id} \longrightarrow \{\text{category\_id}, \text{submission\_id}, \text{final\_score}, \text{final\_rank}, \\
+        & \qquad \text{result\_status}, \text{tie\_break\_note}, \text{finalized\_at}, \\
+        & \qquad \text{finalized\_by\_user\_id}, \text{published\_at}\} \\
+        \text{FD2: } & (\text{category\_id}, \text{submission\_id}) \longrightarrow \{\text{result\_id}, \text{final\_score}, \text{final\_rank}, \\
+        & \qquad \text{result\_status}, \text{tie\_break\_note}, \text{finalized\_at}, \\
+        & \qquad \text{finalized\_by\_user\_id}, \text{published\_at}\}
+    \end{align*}
+    \item \textbf{Chứng minh 3NF}: Không lưu trữ lặp lại thông tin thí sinh, cuộn phim hay tên hạng mục trong bảng \texttt{Result}. Toàn bộ thông tin ngữ cảnh được truy xuất gián tiếp qua khóa ngoại \texttt{category\_id} và \texttt{submission\_id}. Ý nghĩa của kết quả phụ thuộc hàm đầy đủ vào cặp thực thể (\texttt{category\_id}, \texttt{submission\_id}). $\Rightarrow$ \textbf{Đạt 3NF}.
+\end{itemize}
+
 % ----------------------------------------------------------------------
 \section{Chiến lược Phi Chuẩn hóa có Kiểm soát cho Kho Lưu trữ Số}
 \label{s:c4_archive_denormalization}
@@ -301,3 +320,69 @@ Quan hệ \texttt{ArchiveItem} là trường hợp ngoại lệ duy nhất đư�
     \item Thay vì chỉ lưu trữ các khóa ngoại sống (\texttt{result\_id}, \texttt{submission\_id}) trỏ về các bảng giao dịch, \texttt{ArchiveItem} lưu trữ các bản chụp JSON bất biến: \texttt{contest\_snapshot}, \texttt{category\_snapshot}, \texttt{participant\_snapshot}, \texttt{technical\_snapshot}, \texttt{judging\_snapshot}.
     \item \textbf{Căn cứ lý thuyết \& Thực tiễn}: Kho lưu trữ di sản số có mục đích bảo tồn nguyên trạng giá trị lịch sử tại thời điểm trao giải. Nếu trong tương lai tài khoản thí sinh đổi tên, hoặc cấu hình cuộc thi gốc bị điều chỉnh/ẩn đi, tác phẩm trong kho lưu trữ di sản vẫn giữ nguyên 100\% thông tin trung thực của thời điểm đoạt giải mà không bị sai lệch.
 \end{itemize}
+
+% ----------------------------------------------------------------------
+\section{Từ điển Dữ liệu Logic (Logical Data Dictionary)}
+\label{s:c4_data_dictionary}
+
+Bảng~\ref{tab:c4_data_dictionary} hệ thống hóa từ điển dữ liệu logic cho các thuộc tính nghiệp vụ cốt lõi, xác lập rõ ranh giới ngữ nghĩa và vòng đời dữ liệu giữa các phân hệ:
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{>{\bfseries\raggedright\arraybackslash}p{4.2cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{2.8cm}}
+\toprule
+\textbf{Thực thể.Thuộc tính} & \textbf{Ý nghĩa nghiệp vụ \& Ràng buộc logic} & \textbf{Miền giá trị / Quy ước} \\
+\midrule
+UserAccount.\allowbreak email & Địa chỉ email duy nhất dùng đăng nhập hệ thống & Duy nhất (UNIQUE), hợp lệ \\
+Role.\allowbreak role\_code & Mã vai trò kiểm soát truy cập (RBAC) & ADMIN, ORGANIZER, \allowbreak JUDGE, PARTICIPANT \\
+ParticipantProfile.\allowbreak status & Trạng thái hoạt động của hồ sơ thí sinh & ACTIVE, INACTIVE, \allowbreak SUSPENDED \\
+Contest.\allowbreak contest\_code & Mã định danh nghiệp vụ của cuộc thi & Duy nhất toàn hệ thống \\
+Contest.\allowbreak contest\_status & Vòng đời tổ chức của cuộc thi & DRAFT, PUBLISHED, \allowbreak OPEN, CLOSED, \allowbreak FINALIZED, ARCHIVED \\
+ContestCategory.\allowbreak category\_code & Mã hạng mục chuyên môn trong cuộc thi & Duy nhất trong phạm vi contest \\
+JudgingRound.\allowbreak is\_final\_round & Cờ đánh dấu vòng chấm chung khảo quyết định giải & TRUE / FALSE \\
+ScoringCriterion.\allowbreak weight\_percent & Trọng số đóng góp của tiêu chí vào điểm tổng & $0 < \text{weight} \leq 100$ \\
+FilmFrame.\allowbreak frame\_number & Số thứ tự khung hình trên cuộn phim vật lý & Duy nhất theo từng roll\_id \\
+Submission.\allowbreak submission\_status & Trạng thái xử lý bài thi qua các giai đoạn & PENDING\_VERIFICATION, \allowbreak VERIFIED, REJECTED, \allowbreak JUDGED, FINALIZED \\
+VerificationCase.\allowbreak final\_decision & Quyết định thẩm định chính thức của con người & VERIFIED, REJECTED, \allowbreak NEEDS\_CLARIFICATION \\
+AIAnalysisResult.\allowbreak confidence & Điểm số tin cậy do mô hình AI trả về & $0.0000 \leq \text{conf} \leq 1.0000$ \\
+JudgeAssignment.\allowbreak status & Tình trạng nhận việc của giám khảo trong vòng & ASSIGNED, IN\_PROGRESS, \allowbreak SUBMITTED, CANCELLED \\
+Evaluation.\allowbreak total\_score & Tổng điểm có trọng số của một giám khảo & Tổng điểm hợp lệ $\geq 0$ \\
+Result.\allowbreak final\_rank & Thứ hạng chung cuộc của bài thi trong hạng mục & Số nguyên dương $\geq 1$ \\
+ArchiveItem.\allowbreak contest\_snapshot & Bản chụp bất biến của cuộc thi tại thời điểm trao giải & Định dạng JSON cấu trúc \\
+AuditLog.\allowbreak action\_code & Mã định danh hành động nghiệp vụ cần kiểm toán & INSERT, UPDATE, \allowbreak STATUS\_CHANGE \\
+\bottomrule
+\end{tabularx}
+\caption{Từ điển dữ liệu logic cho các thực thể và thuộc tính trọng yếu}
+\label{tab:c4_data_dictionary}
+\end{table}
+
+% ----------------------------------------------------------------------
+\section{Vòng đời Trạng thái của các Thực thể Cốt lõi (Entity Lifecycle)}
+\label{s:c4_lifecycles}
+
+Sự vận hành của cơ sở dữ liệu được định hướng bởi các máy trạng thái hữu hạn (\textit{Finite State Machines}) chặt chẽ. Bảng~\ref{tab:c4_lifecycles} tổng kết chuỗi chuyển đổi trạng thái hợp lệ của các thực thể trung tâm:
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\textwidth}{>{\bfseries}p{3.2cm}>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Thực thể} & \textbf{Chuỗi chuyển đổi trạng thái vòng đời chuẩn} \\
+\midrule
+Contest & \texttt{DRAFT} $\rightarrow$ \texttt{PUBLISHED} $\rightarrow$ \texttt{OPEN} $\rightarrow$ \texttt{CLOSED} $\rightarrow$ \texttt{FINALIZED} $\rightarrow$ \texttt{ARCHIVED} \\
+Registration & \texttt{PENDING} $\rightarrow$ \texttt{APPROVED} / \texttt{REJECTED} / \texttt{WITHDRAWN} \\
+FilmRoll & \texttt{DRAFT} $\rightarrow$ \texttt{READY} $\rightarrow$ \texttt{ARCHIVED} \\
+FilmFrame & \texttt{DRAFT} $\rightarrow$ \texttt{READY} $\rightarrow$ \texttt{SUBMITTED} $\rightarrow$ \texttt{ARCHIVED} \\
+Submission & \texttt{DRAFT} $\rightarrow$ \texttt{PENDING\_VERIFICATION} $\rightarrow$ \texttt{VERIFIED} / \texttt{REJECTED} / \\
+ & \texttt{NEEDS\_CLARIFICATION} $\rightarrow$ \texttt{JUDGED} $\rightarrow$ \texttt{FINALIZED} $\rightarrow$ \texttt{ARCHIVED} \\
+VerificationCase & \texttt{PENDING} $\rightarrow$ \texttt{UNDER\_REVIEW} $\rightarrow$ \texttt{VERIFIED} / \texttt{REJECTED} / \texttt{NEEDS\_CLARIFICATION} \\
+JudgeAssignment & \texttt{ASSIGNED} $\rightarrow$ \texttt{IN\_PROGRESS} $\rightarrow$ \texttt{SUBMITTED} / \texttt{CANCELLED} \\
+Evaluation & \texttt{DRAFT} $\rightarrow$ \texttt{SUBMITTED} $\rightarrow$ \texttt{LOCKED} \\
+Result & \texttt{DRAFT} $\rightarrow$ \texttt{FINALIZED} $\rightarrow$ \texttt{PUBLISHED} \\
+ArchiveItem & \texttt{PENDING\_ARCHIVE} $\rightarrow$ \texttt{ARCHIVED} $\rightarrow$ \texttt{RETIRED} \\
+\bottomrule
+\end{tabularx}
+\caption{Tổng hợp vòng đời trạng thái của các thực thể cốt lõi trong hệ thống}
+\label{tab:c4_lifecycles}
+\end{table}
