@@ -168,67 +168,110 @@ Hệ thống được thiết kế với 31 yêu cầu chức năng (\textit{FR}
     \label{fig:c2_use_case}
 \end{figure}
 
-Dưới đây là đặc tả chi tiết 4 trường hợp sử dụng trung tâm trong hệ thống:
+Dưới đây là đặc tả hợp đồng chi tiết (\textit{Detailed Use Case Contracts}) cho các trường hợp sử dụng trung tâm trong hệ thống:
 
 \subsection{UC-01: Cấu hình và Phát hành Cuộc thi (Configure Contest)}
 \begin{itemize}
     \item \textbf{Tác nhân chính}: Ban tổ chức (Organizer).
-    \item \textbf{Điều kiện tiên quyết}: Tài khoản Ban tổ chức đang hoạt động hợp lệ.
+    \item \textbf{Mục tiêu}: Khởi tạo, hoàn thiện cấu hình thể lệ, hạng mục, vòng chấm, tiêu chí và phát hành cuộc thi ra công chúng.
+    \item \textbf{Ràng buộc phân quyền}: Chỉ tài khoản đang hoạt động mang vai trò \texttt{Organizer} mới có quyền khởi tạo và phát hành cuộc thi.
+    \item \textbf{Bất biến nghiệp vụ}: Cuộc thi bắt buộc phải có ít nhất một hạng mục chuyên môn và mỗi hạng mục phải có ít nhất một vòng chấm thi trước khi được phát hành (\texttt{BR-O-001}).
+    \item \textbf{Điều kiện tiên quyết}: Tài khoản Ban tổ chức hợp lệ; lịch trình đăng ký và nộp bài tuân thủ quy tắc thời gian (\texttt{BR-O-003}).
     \item \textbf{Luồng sự kiện chính}:
     \begin{enumerate}
-        \item Ban tổ chức tạo mới cuộc thi ở trạng thái Nháp (\texttt{DRAFT}), thiết lập tiêu đề, thể lệ và lịch trình.
-        \item Tạo các hạng mục thi (\textit{Categories}) trong cuộc thi.
-        \item Khởi tạo các vòng chấm thi (\textit{Judging Rounds}) cho từng hạng mục.
-        \item Thiết lập danh sách tiêu chí chấm điểm và trọng số cho từng vòng.
-        \item Thiết lập cơ cấu giải thưởng.
-        \item Ban tổ chức yêu cầu phát hành cuộc thi. Hệ thống kiểm tra điều kiện toàn vẹn (BR-O-001) và chuyển trạng thái sang \texttt{PUBLISHED}; khi mở đăng ký, trạng thái là \texttt{OPEN}.
+        \item Ban tổ chức tạo mới cuộc thi ở trạng thái Nháp (\texttt{DRAFT}), thiết lập tiêu đề, thể lệ, thời hạn mở/đóng đăng ký và nộp bài.
+        \item Thiết lập các hạng mục thi (\textit{Categories}) trong cuộc thi.
+        \item Khởi tạo các vòng chấm thi (\textit{Judging Rounds}) độc lập cho từng hạng mục.
+        \item Thiết lập danh mục tiêu chí chấm điểm (\textit{Scoring Criteria}), thang điểm min/max và trọng số phần trăm cho từng vòng.
+        \item Thiết lập cơ cấu giải thưởng (\textit{Award Definitions}).
+        \item Ban tổ chức yêu cầu phát hành. Hệ thống kiểm tra toàn vẹn điều kiện tiên quyết, chuyển trạng thái sang \texttt{PUBLISHED}; khi đến hạn mở đăng ký, hệ thống tự động kích hoạt trạng thái \texttt{OPEN}.
     \end{enumerate}
-    \item \textbf{Luồng ngoại lệ}: Nếu cuộc thi thiếu hạng mục hoặc vòng chấm, hệ thống từ chối phát hành và hiển thị thông báo lỗi.
+    \item \textbf{Luồng ngoại lệ \& Bảo đảm thất bại}: Nếu cuộc thi thiếu hạng mục hoặc vòng chấm, hệ thống chặn phát hành và giữ nguyên trạng thái \texttt{DRAFT}. Mọi thay đổi không hợp lệ đều bị hủy bỏ giao dịch.
+    \item \textbf{Dữ liệu tác động \& Vết kiểm toán}: \texttt{Contest}, \texttt{ContestCategory}, \\ \texttt{JudgingRound}, \texttt{ScoringCriterion}, \texttt{AwardDefinition} và \texttt{AuditLog}.
 \end{itemize}
 
 \subsection{UC-04: Nộp Bài Dự thi Ảnh Phim (Submit Film Entry)}
 \begin{itemize}
     \item \textbf{Tác nhân chính}: Thí sinh (Participant).
-    \item \textbf{Điều kiện tiên quyết}: Thí sinh có đơn đăng ký \texttt{APPROVED} và eligibility \texttt{ELIGIBLE}; thời gian nộp bài đang mở; khung hình phim ở trạng thái \texttt{READY}.
+    \item \textbf{Mục tiêu}: Liên kết một khung hình phim vật lý hợp lệ vào hạng mục cuộc thi kèm theo tệp ảnh quét số hóa độ phân giải cao và lời tựa nghệ thuật.
+    \item \textbf{Ràng buộc phân quyền}: Thí sinh phải sở hữu đơn đăng ký được duyệt (\texttt{APPROVED}) và có tư cách dự thi (\texttt{ELIGIBLE}) trong cuộc thi mục tiêu.
+    \item \textbf{Bất biến nghiệp vụ}: Một khung hình phim (\texttt{frame\_id}) chỉ được nộp tối đa một lần trong cùng một cuộc thi (\texttt{BR-P-006}). Thời điểm nộp bài phải nằm trong khung thời gian hợp lệ (\texttt{BR-O-003}). Khung hình phải thuộc cuộn phim do chính thí sinh sở hữu (\texttt{BR-P-004}).
     \item \textbf{Luồng sự kiện chính}:
     \begin{enumerate}
-        \item Thí sinh chọn cuộc thi, hạng mục và chọn khung hình phim (\textit{Film Frame}) từ cuộn phim của mình.
-        \item Tải lên tệp ảnh scan độ phân giải cao và nhập lời tựa nghệ thuật (\textit{Statement}).
-        \item Hệ thống kiểm tra thời hạn (BR-O-003) và kiểm tra tính duy nhất của khung hình trong cuộc thi (BR-P-006).
-        \item Hệ thống lưu bài thi ở trạng thái \texttt{PENDING\_VERIFICATION} và ghi nhật ký kiểm toán.
+        \item Thí sinh chọn cuộc thi, hạng mục tham gia và chọn khung hình phim (\textit{Film Frame}) ở trạng thái sẵn sàng (\texttt{READY}).
+        \item Tải lên tệp ảnh scan chất lượng cao và nhập lời tựa nghệ thuật (\textit{Statement}).
+        \item Thủ tục \texttt{usp\_create\_submission} mở giao dịch (\texttt{BEGIN TRANSACTION}), kiểm tra toàn diện điều kiện tiên quyết và ràng buộc toàn vẹn.
+        \item Hệ thống khởi tạo bản ghi bài thi ở trạng thái \texttt{PENDING\_VERIFICATION}, khởi tạo hồ sơ thẩm định \texttt{VerificationCase} ở trạng thái \texttt{PENDING}, ghi vết vào \texttt{AuditLog} và cam kết giao dịch (\texttt{COMMIT}).
     \end{enumerate}
-    \item \textbf{Luồng ngoại lệ}: Nếu khung hình đã được nộp trong cuộc thi này trước đó, hệ thống chặn thao tác và thông báo vi phạm quy tắc.
+    \item \textbf{Luồng ngoại lệ \& Bảo đảm thất bại}: Nếu vi phạm thời hạn nộp, vi phạm quyền sở hữu khung hình hoặc khung hình đã nộp trước đó trong cuộc thi, thủ tục lập tức kích hoạt lỗi (\texttt{THROW}) và hủy bỏ toàn bộ giao dịch (\texttt{ROLLBACK}), bảo đảm cơ sở dữ liệu không bị ghi nhận dữ liệu rác.
+    \item \textbf{Dữ liệu tác động}: \texttt{Submission}, \texttt{VerificationCase}, \texttt{AuditLog}.
 \end{itemize}
 
 \subsection{UC-05: Thẩm định Bài thi và Xử lý Cảnh báo AI (Verify Submission)}
 \begin{itemize}
-    \item \textbf{Tác nhân chính}: Ban tổ chức (Organizer).
-    \item \textbf{Điều kiện tiên quyết}: Bài thi đang ở trạng thái \texttt{PENDING\_VERIFICATION} hoặc \texttt{NEEDS\_CLARIFICATION}.
+    \item \textbf{Tác nhân chính}: Ban tổ chức / Chuyên viên Thẩm định (Organizer).
+    \item \textbf{Mục tiêu}: Đánh giá tính xác thực, độ đầy đủ của siêu dữ liệu xuất xứ phim và xem xét các cờ cảnh báo AI trước khi quyết định đưa bài thi vào vòng chấm.
+    \item \textbf{Ràng buộc phân quyền}: Quyền quyết định phê duyệt thẩm định thuộc về con người (Ban tổ chức). Module phân tích AI chỉ đóng vai trò tư vấn độc lập (\texttt{BR-O-006}).
+    \item \textbf{Bất biến nghiệp vụ}: Kết quả thẩm định bắt buộc phải kết thúc tại đúng một trong ba trạng thái: \texttt{VERIFIED}, \texttt{REJECTED} hoặc \texttt{NEEDS\_CLARIFICATION} (\texttt{BR-O-007}).
     \item \textbf{Luồng sự kiện chính}:
     \begin{enumerate}
-        \item Ban tổ chức mở chi tiết bài thi và kiểm tra độ đầy đủ của thông số cuộn phim.
-        \item Hệ thống hiển thị kết quả phân tích tự động từ AI (độ tương đồng hình ảnh, điểm số nghi vấn ảnh do AI tạo ra).
-        \item Ban tổ chức xem xét cảnh báo và đưa ra quyết định: \texttt{VERIFIED}, \texttt{REJECTED} hoặc \texttt{NEEDS\_CLARIFICATION}.
-        \item Hệ thống cập nhật trạng thái bài thi và lưu quyết định thẩm định kèm lý do.
+        \item Ban tổ chức mở hàng đợi thẩm định \texttt{vw\_verification\_queue}, kiểm tra thông số kỹ thuật cuộn phim, máy ảnh, ống kính và lab tráng.
+        \item Hệ thống hiển thị kết quả phân tích tự động từ các mô hình AI (độ tương đồng hình ảnh, xác suất ảnh AI tạo ra) lưu trữ tại \texttt{AIAnalysisResult}.
+        \item Ban tổ chức xem xét toàn diện bằng chứng và đưa ra quyết định chính thức thông qua thủ tục \texttt{usp\_record\_verification\_decision}.
+        \item Hệ thống cập nhật hồ sơ \texttt{VerificationCase}, đồng bộ trạng thái \texttt{Submission} và ghi nhật ký kiểm toán.
     \end{enumerate}
+    \item \textbf{Luồng ngoại lệ}: Nếu thiếu thông tin kỹ thuật hoặc hình ảnh scan không rõ số frame mép phim, Ban tổ chức chuyển trạng thái sang \texttt{NEEDS\_CLARIFICATION} để yêu cầu thí sinh gửi hình chụp dải phim gốc.
+    \item \textbf{Dữ liệu tác động}: \texttt{VerificationCase}, \texttt{AIAnalysisResult}, \texttt{Submission}, \texttt{AuditLog}.
 \end{itemize}
 
 \subsection{UC-06: Chấm điểm Bài thi (Evaluate Submission)}
 \begin{itemize}
     \item \textbf{Tác nhân chính}: Giám khảo (Judge).
-    \item \textbf{Điều kiện tiên quyết}: Giám khảo đã được phân công vào vòng chấm thi; bài thi ở trạng thái \texttt{VERIFIED}; vòng chấm đang trong thời gian hoạt động.
+    \item \textbf{Mục tiêu}: Đánh giá chuyên môn độc lập và ghi nhận điểm số chi tiết theo tiêu chí cho bài thi trong vòng chấm được phân công.
+    \item \textbf{Ràng buộc phân quyền}: Giám khảo chỉ được chấm các bài thi thuộc phạm vi vòng thi mà mình được phân công chính thức (\texttt{BR-O-008}).
+    \item \textbf{Bất biến nghiệp vụ}: Một giám khảo tuyệt đối không thể nộp hai phiếu chấm cho cùng một bài thi trong cùng một vòng chấm (\texttt{BR-O-009}). Điểm tổng phiếu chấm phải nhất quán với tổng điểm các tiêu chí thành phần.
     \item \textbf{Luồng sự kiện chính}:
     \begin{enumerate}
-        \item Giám khảo mở danh sách bài thi được phân công trong vòng.
-        \item Xem chi tiết hình ảnh và thông số kỹ thuật chụp của tác phẩm.
-        \item Chấm điểm từng tiêu chí theo thang điểm quy định và ghi nhận xét.
-        \item Nộp phiếu chấm (\texttt{Submit Evaluation}). Hệ thống kiểm tra tính hợp lệ của điểm số và tính toán tổng điểm có trọng số.
+        \item Giám khảo mở hàng đợi công việc \texttt{vw\_judge\_work\_queue}, tiếp cận tác phẩm đã đạt chuẩn \texttt{VERIFIED}.
+        \item Nghiên cứu tác phẩm, ảnh phóng lớn và lời tựa nghệ thuật.
+        \item Nhập điểm số cho từng tiêu chí đánh giá và ghi nhận xét chuyên môn.
+        \item Nộp phiếu chấm (\texttt{Submit Evaluation}). Hệ thống kiểm tra thang điểm hợp lệ, tính toán tổng điểm có trọng số, lưu vào \texttt{EvaluationScore}, cập nhật \texttt{Evaluation} sang trạng thái \texttt{SUBMITTED} và khóa phiếu chấm (\texttt{LOCKED}).
     \end{enumerate}
-    \item \textbf{Luồng ngoại lệ}: Giám khảo không thể tạo phiếu chấm thứ hai cho cùng một bài thi trong cùng một vòng chấm (BR-O-009).
+    \item \textbf{Luồng ngoại lệ \& Bảo đảm thất bại}: Nếu chấm trùng bài, chấm ngoài hạn chót vòng chấm hoặc điểm vượt quá thang min/max của tiêu chí, hệ thống từ chối lưu và giữ nguyên phiếu chấm hợp lệ trước đó.
+    \item \textbf{Dữ liệu tác động}: \texttt{JudgeAssignment}, \texttt{Evaluation}, \texttt{EvaluationScore}, \texttt{AuditLog}.
 \end{itemize}
 
-\subsection{Baseline đầy đủ cho UC-01 đến UC-08}
-Để bảo đảm tính truy vết và thống nhất với tám luồng nghiệp vụ, mỗi use case được đối soát theo cùng một bộ trường: trigger, preconditions, main flow, alternative flow, output, status transition, data affected và related business rules.
+\subsection{UC-07: Tổng kết Điểm, Xếp hạng và Trao giải (Finalize Results)}
+\begin{itemize}
+    \item \textbf{Tác nhân chính}: Ban tổ chức (Organizer).
+    \item \textbf{Mục tiêu}: Tổng hợp kết quả đánh giá từ vòng chấm chung khảo, giải quyết hòa điểm, xác lập bảng xếp hạng chính thức và gán giải thưởng.
+    \item \textbf{Bất biến nghiệp vụ}: Kết quả chỉ được khóa (\texttt{FINALIZED}) khi 100\% phiếu chấm bắt buộc của vòng chung khảo đã hoàn tất (\texttt{BR-O-010}). Cơ cấu giải thưởng gán phải tương thích tuyệt đối với hạng mục cuộc thi.
+    \item \textbf{Luồng sự kiện chính}:
+    \begin{enumerate}
+        \item Ban tổ chức kích hoạt thủ tục \texttt{usp\_finalize\_results\_for\_round}. Hệ thống tự động tính điểm trung bình từ các giám khảo, sắp xếp thứ hạng từ 1 đến $N$.
+        \item Ban tổ chức đối soát trường hợp hòa điểm (nếu có) và ghi nhận lý do vào \texttt{tie\_break\_note}.
+        \item Ban tổ chức gán giải thưởng (\textit{Award Assignment}) cho các tác phẩm dẫn đầu.
+        \item Ban tổ chức khóa kết quả (\texttt{FINALIZED}) và phát hành công bố chính thức (\texttt{PUBLISHED}).
+    \end{enumerate}
+    \item \textbf{Dữ liệu tác động}: \texttt{Result}, \texttt{AwardAssignment}, \texttt{AuditLog}.
+\end{itemize}
+
+\subsection{UC-08: Lưu trữ Di sản Số (Archive Winning Work)}
+\begin{itemize}
+    \item \textbf{Tác nhân chính}: Ban tổ chức / Quản trị viên Di sản số (Organizer / Archivist).
+    \item \textbf{Mục tiêu}: Đóng gói và lưu trữ bản chụp bất biến (\textit{Immutable Historical Snapshot}) của các tác phẩm đoạt giải phục vụ bảo tồn lâu dài.
+    \item \textbf{Bất biến nghiệp vụ}: Chỉ những bài thi có kết quả đã khóa chính thức (\texttt{FINALIZED}) mới được phép chuyển vào kho lưu trữ số (\texttt{BR-O-011}). Bản chụp lưu trữ được bảo vệ tuyệt đối khỏi các thao tác cập nhật hay xóa dây chuyền (\texttt{BR-P-017}).
+    \item \textbf{Luồng sự kiện chính}:
+    \begin{enumerate}
+        \item Hệ thống lọc các tác phẩm đoạt giải từ kết quả chung cuộc đã phê duyệt.
+        \item Tạo lập bản ghi \texttt{ArchiveItem}, trích xuất toàn bộ siêu dữ liệu cuộc thi, thông tin tác giả, thông số kỹ thuật cuộn phim/máy ảnh và điểm số đánh giá thành các gói JSON bất biến.
+        \item Chuyển trạng thái bản ghi sang \texttt{ARCHIVED}, công bố trên danh mục tra cứu di sản \texttt{vw\_archive\_catalog}.
+    \end{enumerate}
+    \item \textbf{Dữ liệu tác động}: \texttt{ArchiveItem}, \texttt{AuditLog}.
+\end{itemize}
+
+\subsection{Baseline Đối soát Đầy đủ cho UC-01 đến UC-08}
+Để bảo đảm tính truy vết và thống nhất với 8 luồng nghiệp vụ, toàn bộ use case được đối soát chuẩn hóa qua ma trận Bảng~\ref{tab:c2_uc_baseline}:
 
 \begin{table}[htbp]
 \centering
