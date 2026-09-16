@@ -14,6 +14,7 @@ PRINT 'Run from the tests folder in SSMS 22 with SQLCMD Mode enabled.';
 :r .\TST-JDG-001_duplicate_judge_evaluation.sql
 :r .\TST-JDG-002_multi_round_judging.sql
 :r .\TST-RES-001_result_finalization.sql
+:r .\TST-RES-002_finalization_idempotency.sql
 :r .\TST-ARC-001_historical_archive.sql
 :r .\TST-AUD-001_audit_status_change.sql
 :r .\TST-INT-001_invalid_foreign_key.sql
