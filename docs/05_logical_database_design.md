@@ -75,6 +75,24 @@ parent relation identity needed to preserve the conceptual cardinalities.
 | ScoringCriterion | criterion_id | round_id, criterion_code, criterion_name, weight_percent, score_min_value, score_max_value, sort_order, criterion_status | Criteria scoped to round |
 | AwardDefinition | award_definition_id | category_id, award_code, award_name, rank_order, award_type, prize_description, award_status | Award templates per category |
 
+### 2.2.1 Identity and Contest Relation Contract
+
+The logical mapping preserves the conceptual ownership boundary with explicit
+foreign keys and alternate keys:
+
+| Logical relation | Required foreign keys | Business uniqueness |
+| --- | --- | --- |
+| `UserRole` | `user_id -> UserAccount`; `role_id -> Role` | `(user_id, role_id)` |
+| `ParticipantProfile` | `user_id -> UserAccount` | `user_id` |
+| `ContestCategory` | `contest_id -> Contest` | `(contest_id, category_code)` |
+| `Registration` | `contest_id -> Contest`; `participant_id -> ParticipantProfile` | `(contest_id, participant_id)` |
+
+`Submission` therefore reaches participant ownership through
+`Submission.registration_id -> Registration.participant_id`, while its
+category remains contest-scoped through `category_id`. These dependencies are
+logical relationship rules; SQL Server constraint names and index choices are
+deferred to the physical design.
+
 ### 2.3 Registration and Participant Activity
 
 | Relation | Primary Key | Key Attributes | Notes |

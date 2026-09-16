@@ -88,6 +88,23 @@ record.
 4. One `Registration` must belong to exactly one `ParticipantProfile`.
 5. One `Registration` must belong to exactly one `Contest`.
 
+### 3.2.1 Identity and Contest Boundary
+
+The identity and contest relationships form the ownership boundary for all
+later transactions:
+
+| Relationship | Conceptual meaning | Mandatory side |
+| --- | --- | --- |
+| `UserAccount`--`UserRole`--`Role` | A user receives one or more responsibility assignments, and a role may be assigned to many users. | Both links are required for each `UserRole`. |
+| `UserAccount`--`ParticipantProfile` | A participant profile extends one platform identity without duplicating account ownership. | `ParticipantProfile` requires one `UserAccount`; the profile is optional for a user. |
+| `Contest`--`ContestCategory` | A contest publishes its eligibility and judging scope through categories. | Each category requires one contest; a publishable contest requires at least one category. |
+| `ParticipantProfile`--`Registration`--`Contest` | Registration is the participant's enrollment in one contest. | Each registration requires exactly one participant and one contest. |
+
+This boundary means that a submission inherits participant ownership through
+its approved registration rather than storing a second participant identity.
+Contest categories remain scoped to their parent contest, so downstream
+judging and result records cannot become detached from the contest context.
+
 ### 3.3 Film Provenance
 
 1. One `ParticipantProfile` may own zero or many `FilmRoll` records.
