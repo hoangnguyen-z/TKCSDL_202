@@ -132,6 +132,19 @@ Hệ thống được thiết kế với 31 yêu cầu chức năng (\textit{FR}
 \textbf{BR-O-009} & Bắt buộc & Một phiếu chấm ghi nhận đánh giá của đúng 1 giám khảo cho đúng 1 bài thi trong 1 vòng chấm. & CSDL (UNIQUE Composite) \\
 \textbf{BR-O-010} & Bắt buộc & Kết quả chung cuộc chỉ được khóa khi tất cả bài thi ở vòng chung kết đã nhận đủ phiếu chấm. & Stored Procedure / Logic \\
 \textbf{BR-O-011} & Bắt buộc & Bản ghi lưu trữ di sản số chỉ được khởi tạo từ các bài thi đã có kết quả chung cuộc chính thức. & Stored Procedure / Logic \\
+\bottomrule
+\end{tabularx}
+\caption{Bảng quy tắc nghiệp vụ bắt buộc từ đề bài (BR-O-001 đến BR-O-011)}
+\label{tab:c2_br}
+\label{tab:c2_br_mandatory}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\scriptsize
+\begin{tabularx}{\textwidth}{p{2.0cm}p{1.6cm}>{\raggedright\arraybackslash}Xp{3.8cm}}
+\toprule
+\textbf{Mã BR} & \textbf{Loại} & \textbf{Nội dung quy tắc nghiệp vụ} & \textbf{Nơi thực thi dự kiến} \\
 \midrule
 \textbf{BR-P-001} & Đề xuất & Một người dùng có thể sở hữu nhiều vai trò trong hệ thống (User $\leftrightarrow$ Role N:M). & CSDL (Associative Table) \\
 \textbf{BR-P-002} & Đề xuất & Một thí sinh chỉ có tối đa 1 bản đăng ký tham gia có hiệu lực cho mỗi cuộc thi. & CSDL (UNIQUE Composite) \\
@@ -153,8 +166,8 @@ Hệ thống được thiết kế với 31 yêu cầu chức năng (\textit{FR}
 \textbf{BR-P-018} & Đề xuất & Cấm xóa vật lý (Hard Delete) đối với cuộc thi, bài thi, bảng điểm; sử dụng xóa mềm/khóa trạng thái. & CSDL (FK ON DELETE RESTRICT) \\
 \bottomrule
 \end{tabularx}
-\caption{Bảng quy tắc nghiệp vụ cốt lõi và vị trí thực thi}
-\label{tab:c2_br}
+\caption{Bảng quy tắc nghiệp vụ đề xuất từ thiết kế hệ thống (BR-P-001 đến BR-P-018)}
+\label{tab:c2_br_proposed}
 \end{table}
 
 % ----------------------------------------------------------------------
