@@ -175,6 +175,22 @@ analysis reports a favorable outcome.
 11. One `EvaluationScore` must belong to exactly one `Evaluation`.
 12. One `EvaluationScore` must correspond to exactly one `ScoringCriterion`.
 
+### 3.5.1 Judging Scope and Evaluation Identity
+
+Judging is scoped by category and round so that assignments and scores remain
+auditable:
+
+| Relationship | Conceptual meaning | Uniqueness or scope rule |
+| --- | --- | --- |
+| `ContestCategory`--`JudgingRound` | A category defines one or more ordered judging rounds. | Each round belongs to one category and has a distinct sequence. |
+| `JudgingRound`--`JudgeAssignment`--`UserAccount` | A judge is assigned to a round through an explicit assignment. | The same judge is assigned at most once to a round. |
+| `JudgingRound`--`Evaluation`--`Submission`--`UserAccount` | A judge evaluates a submission within one round. | One judge-submission-round combination produces at most one evaluation. |
+| `Evaluation`--`EvaluationScore`--`ScoringCriterion` | An evaluation records one score for each applicable criterion. | A criterion appears at most once within an evaluation. |
+
+The round is the controlling context for both the assigned judge and the
+criterion set. This prevents scores from different rounds or categories from
+being merged into one evaluation accidentally.
+
 ### 3.6 Results, Awards, and Archive
 
 1. One `Submission` may produce zero or one finalized `Result` per contest category.

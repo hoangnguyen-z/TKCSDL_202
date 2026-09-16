@@ -163,6 +163,23 @@ changing lifecycles in one relation.
 | Evaluation | evaluation_id | round_id, submission_id, judge_user_id, evaluation_status, total_score, submitted_at, locked_at, overall_comment | One judge-submission-round combination |
 | EvaluationScore | evaluation_score_id | evaluation_id, criterion_id, score_value, score_comment | One row per criterion inside evaluation |
 
+### 2.7.1 Judging and Evaluation Relation Contract
+
+The logical model resolves judging scope and evaluation detail with explicit
+associative relations:
+
+| Logical relation | Required foreign keys | Business uniqueness |
+| --- | --- | --- |
+| `JudgingRound` | `category_id -> ContestCategory` | `(category_id, round_number)` |
+| `JudgeAssignment` | `round_id -> JudgingRound`; `judge_user_id -> UserAccount` | `(round_id, judge_user_id)` |
+| `Evaluation` | `round_id -> JudgingRound`; `submission_id -> Submission`; `judge_user_id -> UserAccount` | `(round_id, submission_id, judge_user_id)` |
+| `EvaluationScore` | `evaluation_id -> Evaluation`; `criterion_id -> ScoringCriterion` | `(evaluation_id, criterion_id)` |
+
+`EvaluationScore` stores only the criterion-level result and comment. Criterion
+names, weights, and score ranges remain in `ScoringCriterion`; round and judge
+context remain in `Evaluation` and `JudgeAssignment`. This keeps the logical
+relations atomic and supports multiple judging rounds without ambiguity.
+
 ### 2.8 Results and Archive
 
 | Relation | Primary Key | Key Attributes | Notes |
