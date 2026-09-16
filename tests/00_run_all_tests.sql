@@ -11,6 +11,7 @@ PRINT 'Run from the tests folder in SSMS 22 with SQLCMD Mode enabled.';
 :r .\TST-SUB-003_creation_procedure_matrix.sql
 :r .\TST-VER-001_ai_flag_human_review.sql
 :r .\TST-VER-002_human_gate_terminal_state.sql
+:r .\TST-FN-001_round_max_score.sql
 :r .\TST-JDG-001_duplicate_judge_evaluation.sql
 :r .\TST-JDG-002_multi_round_judging.sql
 :r .\TST-RES-001_result_finalization.sql
