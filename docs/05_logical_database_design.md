@@ -115,6 +115,22 @@ deferred to the physical design.
 | FilmRoll | roll_id | participant_id, film_stock_id, lab_id, roll_code, film_format_code, iso_setting, developed_at, scanned_at, roll_status | Participant-owned roll |
 | FilmFrame | frame_id | roll_id, camera_id, lens_id, frame_number, frame_title, captured_on, capture_location, frame_status, negative_image_uri, contact_sheet_uri | Unique frame number per roll |
 
+### 2.5.1 Film Provenance Relation Contract
+
+The logical relations preserve provenance ownership while allowing incomplete
+reference metadata during preparation:
+
+| Logical relation | Required foreign keys | Business uniqueness or reuse |
+| --- | --- | --- |
+| `FilmRoll` | `participant_id -> ParticipantProfile` | `(participant_id, roll_code)` |
+| `FilmFrame` | `roll_id -> FilmRoll`; optional `camera_id -> Camera`; optional `lens_id -> Lens` | `(roll_id, frame_number)` |
+| `FilmRoll` reference metadata | optional `film_stock_id -> FilmStock`; optional `lab_id -> Lab` | Nullability is allowed only while provenance is incomplete. |
+
+`Submission.frame_id` references the existing `FilmFrame`; it does not copy
+roll, camera, lens, stock, or lab attributes. This preserves 3NF and lets one
+frame participate in different contests under the separate submission
+uniqueness rule.
+
 ### 2.6 Submission and Verification
 
 | Relation | Primary Key | Key Attributes | Notes |

@@ -116,6 +116,22 @@ judging and result records cannot become detached from the contest context.
 7. One `FilmFrame` may reference zero or one `Camera`.
 8. One `FilmFrame` may reference zero or one `Lens`.
 
+### 3.3.1 Provenance Ownership Contract
+
+The provenance chain keeps physical source information separate from contest
+activity:
+
+| Relationship | Conceptual meaning | Reuse or ownership rule |
+| --- | --- | --- |
+| `ParticipantProfile`--`FilmRoll` | A participant owns the physical roll record. | A roll has exactly one owner. |
+| `FilmRoll`--`FilmFrame` | A roll contains its numbered frames. | A frame cannot exist without one roll; frame numbers are unique within that roll. |
+| `FilmRoll`--`FilmStock` / `Lab` | A roll may record its stock and processing laboratory. | Reference details are optional while the roll is being prepared. |
+| `FilmFrame`--`Camera` / `Lens` | A frame may preserve capture equipment provenance. | Equipment references are optional when the source metadata is incomplete. |
+
+`FilmFrame` is the reusable physical source unit. Reuse across contests is a
+business decision on `Submission`, not a reason to duplicate the frame or its
+film provenance.
+
 ### 3.4 Submission and Verification
 
 1. One `Submission` must belong to exactly one `Registration`.
