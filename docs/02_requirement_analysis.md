@@ -501,8 +501,17 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 ### UC-01 Configure Contest
 
 - Primary Actor: Organizer
+- Goal:
+  - Configure a complete contest structure that is valid for publication and later operational flows.
+- Flow Mapping:
+  - F01 Contest Planning and Configuration.
 - Trigger: Organizer initiates a new contest setup.
 - Preconditions:
+- Authorization Constraint:
+  - Only an actor operating in the Organizer role may create, configure, publish, open, close, or finalize a contest.
+- Key Business Invariants:
+  - A contest cannot be published without at least one category and one judging round per category.
+  - Scoring criteria remain scoped to their judging rounds and category context.
   - Actor has Organizer role.
   - Contest code is available.
 - Main Flow:
@@ -514,19 +523,36 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Duplicate contest code or invalid date windows block creation or update.
   - Missing category or judging round blocks publication.
 - Output:
+- Success Postconditions:
+  - Contest configuration is persisted with categories, rounds, criteria, and awards.
+  - The contest reaches a valid published lifecycle state.
+- Failure Guarantee:
+  - Invalid schedules or incomplete configuration do not advance the contest into a publishable state.
+- Completion Criterion:
+  - The use case completes when a valid contest configuration is published and available to downstream registration and asset-preparation flows.
   - Published contest configuration.
 - Status Transition:
   - Contest: `DRAFT -> PUBLISHED -> OPEN -> CLOSED -> FINALIZED -> ARCHIVED`.
 - Data Affected:
   - Contest, Category, Judging Round, Scoring Criterion, Award Definition, Audit Log.
 - Related BR:
+  - FR-001, FR-002, FR-003, FR-004, FR-005.
   - BR-O-001, BR-O-002, BR-P-007, BR-P-008.
 
 ### UC-02 Register For Contest
 
 - Primary Actor: Participant
+- Goal:
+  - Establish one traceable participant registration and eligibility decision for a contest.
+- Flow Mapping:
+  - F02 Participant Registration.
 - Trigger: Participant chooses a published contest.
 - Preconditions:
+- Authorization Constraint:
+  - The Participant submits the registration; the Organizer owns the eligibility review decision.
+- Key Business Invariants:
+  - A participant cannot hold duplicate active registrations for the same contest.
+  - Registration actions must occur within the configured registration window.
   - Contest registration is open.
   - Participant account is active.
 - Main Flow:
@@ -537,6 +563,13 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Duplicate registration, inactive account, or closed registration window blocks the request.
   - Ineligible registration is recorded as `REJECTED` with eligibility `INELIGIBLE`.
 - Output:
+- Success Postconditions:
+  - Registration status and eligibility status are explicitly persisted.
+  - An approved and eligible registration becomes available to the submission flow.
+- Failure Guarantee:
+  - Duplicate, late, inactive-account, or ineligible requests cannot produce an approved eligible registration.
+- Completion Criterion:
+  - The use case completes when the registration reaches an explicit approved, rejected, or withdrawn outcome.
   - Registration decision with `APPROVED`, `REJECTED`, or `WITHDRAWN` status.
 - Status Transition:
   - Registration: `PENDING -> APPROVED / REJECTED / WITHDRAWN`.
@@ -545,12 +578,30 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Registration, Audit Log.
 - Related BR:
   - BR-O-003, BR-P-002, BR-P-003.
-- Related BR:
   - BR-O-003, BR-P-002, BR-P-003
+  - FR-007, FR-008, FR-009.
 
 ### UC-03 Manage Film Assets
 
 - Primary Actor: Participant
+- Goal:
+  - Build reusable and traceable film-roll and frame metadata before contest submission.
+- Flow Mapping:
+  - F03 Film Roll and Frame Management.
+- Authorization Constraint:
+  - Participants may create and maintain only film assets associated with their own participant profile.
+- Key Business Invariants:
+  - Each film frame belongs to exactly one film roll.
+  - Frame numbers are unique within a roll, while incomplete assets remain non-submittable.
+- Success Postconditions:
+  - Complete film rolls and frames are persisted in `READY` state.
+  - Film provenance remains traceable through roll, frame, technical reference data, and participant ownership.
+- Failure Guarantee:
+  - Duplicate frame numbering is blocked and incomplete assets remain in `DRAFT`.
+- Completion Criterion:
+  - The use case completes when at least one valid frame is ready for a future submission.
+- Related FR:
+  - FR-010, FR-011, FR-012.
 - Trigger: Participant prepares film metadata.
 - Preconditions:
   - Participant profile exists.
@@ -574,6 +625,24 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 ### UC-04 Submit Film Entry
 
 - Primary Actor: Participant
+- Goal:
+  - Submit one eligible participant-owned frame to a contest category while preserving provenance and submission uniqueness.
+- Flow Mapping:
+  - F04 Film Submission.
+- Authorization Constraint:
+  - A Participant may submit only through their own approved registration and may select only a frame they own.
+- Key Business Invariants:
+  - One submission binds one approved registration, one frame, one contest, and one category.
+  - The same frame cannot be submitted more than once within the same contest.
+- Success Postconditions:
+  - A valid submission is persisted at `PENDING_VERIFICATION`.
+  - Registration, frame ownership, category, and contest provenance remain traceable from the submission.
+- Failure Guarantee:
+  - Late, duplicate, ownership-mismatched, or otherwise invalid attempts do not create a valid submission.
+- Completion Criterion:
+  - The use case completes when the submission enters the verification queue.
+- Related FR:
+  - FR-013, FR-014, FR-015, FR-016.
 - Trigger: Participant submits a frame to a category.
 - Preconditions:
   - Registration `APPROVED` and eligibility `ELIGIBLE`.
@@ -599,6 +668,24 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 ### UC-05 Verify Submission
 
 - Primary Actor: Organizer
+- Goal:
+  - Produce a human-owned verification decision using submission evidence and advisory AI analysis.
+- Flow Mapping:
+  - F05 Submission Verification.
+- Authorization Constraint:
+  - The Organizer owns the final verification decision; AI analysis has advisory authority only.
+- Key Business Invariants:
+  - AI output cannot independently produce a terminal verification decision.
+  - Verification must resolve to `VERIFIED`, `REJECTED`, or `NEEDS_CLARIFICATION`.
+- Success Postconditions:
+  - The Verification Case and Submission expose the same resolved verification outcome.
+  - AI evidence remains stored separately from the human decision.
+- Failure Guarantee:
+  - Missing evidence or suspicious conditions remain under clarification/manual review rather than being silently approved.
+- Completion Criterion:
+  - The use case completes when an Organizer records an explicit verification outcome.
+- Related FR:
+  - FR-017, FR-018, FR-019.
 - Supporting Actor: AI Analysis Service
 - Trigger: Submission enters verification queue.
 - Preconditions:
@@ -625,6 +712,24 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 ### UC-06 Evaluate Submission
 
 - Primary Actor: Judge
+- Goal:
+  - Capture one judge's criterion-level evaluation for an assigned verified submission in a judging round.
+- Flow Mapping:
+  - F06 Judge Assignment and Evaluation.
+- Authorization Constraint:
+  - A Judge may evaluate only submissions available through their assigned round workload.
+- Key Business Invariants:
+  - A Judge cannot evaluate the same submission more than once in the same round.
+  - A submitted evaluation must contain valid criterion-level scoring and a consistent total score.
+- Success Postconditions:
+  - Criterion scores and evaluation total are persisted.
+  - Assignment and evaluation lifecycle state reflect successful submission.
+- Failure Guarantee:
+  - Duplicate, late, or out-of-scope evaluations are blocked without replacing an existing valid evaluation.
+- Completion Criterion:
+  - The use case completes when the evaluation reaches `SUBMITTED` and is available to result aggregation.
+- Related FR:
+  - FR-020, FR-021, FR-022, FR-023, FR-024.
 - Trigger: Judge opens assigned round workload.
 - Preconditions:
   - Judge is assigned to the round.
@@ -651,6 +756,24 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 ### UC-07 Finalize Results
 
 - Primary Actor: Organizer
+- Goal:
+  - Convert completed judging evidence into controlled final rankings, awards, and published results.
+- Flow Mapping:
+  - F07 Ranking and Result Finalization.
+- Authorization Constraint:
+  - The Organizer controls result finalization and publication; post-finalization intervention follows the approved administrative and audit path.
+- Key Business Invariants:
+  - Results cannot be finalized before required final-round evaluations are complete.
+  - Award assignments must remain consistent with finalized result and contest-category scope.
+- Success Postconditions:
+  - Ranked results reach `FINALIZED` and may subsequently reach `PUBLISHED`.
+  - Valid award assignments are linked to the corresponding finalized results.
+- Failure Guarantee:
+  - Missing evaluations, unresolved ranking conflicts, or invalid award mappings leave results unfinalized.
+- Completion Criterion:
+  - The use case completes when final results and awards are approved and published.
+- Related FR:
+  - FR-025, FR-026, FR-027.
 - Trigger: Final round judging is complete.
 - Preconditions:
   - Required evaluations are submitted.
@@ -675,6 +798,24 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 ### UC-08 Archive Winning Work
 
 - Primary Actor: Organizer
+- Goal:
+  - Preserve finalized winning or selected work as a stable historical snapshot for long-term reuse.
+- Flow Mapping:
+  - F08 Digital Archive.
+- Authorization Constraint:
+  - The Organizer may archive only work backed by a finalized result.
+- Key Business Invariants:
+  - Archive items cannot be created from non-finalized results.
+  - Historical snapshot data remains protected from destructive upstream changes.
+- Success Postconditions:
+  - An immutable archive item is created in `ARCHIVED` state.
+  - Historical contest, participant, technical, and judging context remains available for future lookup.
+- Failure Guarantee:
+  - Premature, duplicate, or destructive archive operations are blocked.
+- Completion Criterion:
+  - The use case completes when the stable archive snapshot is available for search and historical reuse.
+- Related FR:
+  - FR-028, FR-029.
 - Trigger: Published result is selected for archive.
 - Preconditions:
   - Result is finalized.
