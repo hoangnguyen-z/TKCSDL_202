@@ -145,7 +145,7 @@ Các chỉ mục phi cụm (\textit{Non-clustered Indexes}) được thiết k�
 \end{table}
 
 % ----------------------------------------------------------------------
-\section{Lập trình Cơ sở Dữ liệu: Views, Stored Procedures và Triggers}
+\section{Lập trình Cơ sở Dữ liệu: Views, Stored Procedures, Functions và Triggers}
 \label{s:c5_programmability}
 
 Hệ thống đóng gói toàn bộ các luồng nghiệp vụ phức tạp vào các đối tượng lập trình trong CSDL:
@@ -159,12 +159,17 @@ Hệ thống đóng gói toàn bộ các luồng nghiệp vụ phức tạp vào
         \item \texttt{reporting.vw\_result\_summary}: Bảng tổng kết kết quả cuộc thi và giải thưởng đã gán.
         \item \texttt{reporting.vw\_archive\_catalog}: Danh mục tra cứu kho lưu trữ số phục vụ triển lãm.
     \end{itemize}
-    \item \textbf{Thủ tục Lưu trữ Nghiệp vụ (Stored Procedures)}:
+    \item \textbf{Thủ tục Lưu trữ Nghiệp vụ và An toàn Giao dịch (Stored Procedures)}:
     \begin{itemize}
-        \item \texttt{submission.usp\_create\_submission}: Kiểm tra toàn diện điều kiện nộp bài (thời hạn, quyền sở hữu khung hình, tính duy nhất trong cuộc thi) trong một giao dịch (\texttt{BEGIN TRANSACTION}).
-        \item \texttt{verification.usp\_record\_verification\_decision}: Ghi nhận quyết định thẩm định của Ban tổ chức và đồng bộ trạng thái bài thi.
-        \item \texttt{judging.usp\_submit\_evaluation}: Tiếp nhận và khóa phiếu chấm của giám khảo.
-        \item \texttt{result.usp\_finalize\_results\_for\_round}: Tự động tổng hợp điểm, xếp thứ hạng không trùng lặp và khóa kết quả chung cuộc.
+        \item \textbf{Chuẩn an toàn giao dịch}: Mọi thủ tục đều kích hoạt \texttt{SET XACT\_ABORT ON;} kết hợp khối \texttt{BEGIN TRY ... BEGIN CATCH} và kiểm tra \texttt{IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;} để đảm bảo tính nguyên tử (Atomicity), tự động hoàn nguyên khi có ngoại lệ phát sinh.
+        \item \texttt{submission.usp\_create\_submission}: Kiểm tra toàn diện điều kiện nộp bài (thời hạn cuộc thi, quyền sở hữu khung hình, tính duy nhất trong cuộc thi) trong một giao dịch an toàn.
+        \item \texttt{verification.usp\_record\_verification\_decision}: Ghi nhận quyết định thẩm định của Ban tổ chức và đồng bộ trạng thái bài thi theo cơ chế chuyển đổi một chiều an toàn.
+        \item \texttt{judging.usp\_submit\_evaluation}: Tiếp nhận và khóa phiếu chấm của giám khảo, ngăn chặn sửa đổi sau khi đã đệ trình.
+        \item \texttt{result.usp\_finalize\_results\_for\_round}: Tự động tổng hợp điểm, xếp thứ hạng không trùng lặp và khóa kết quả chung cuộc với tính chất lũy đẳng (\textit{Idempotent}).
+    \end{itemize}
+    \item \textbf{Hàm Tự định nghĩa (User-Defined Functions -- UDFs)}:
+    \begin{itemize}
+        \item \texttt{judging.fn\_round\_max\_total\_score(@round\_id INT)}: Hàm vô hướng (\textit{Scalar Function}) tính toán tổng điểm trần khả dĩ cho một vòng chấm dựa trên tổng \texttt{score\_max\_value} của các tiêu chí có trạng thái \texttt{ACTIVE}. Hàm được thiết kế an toàn đối với các tham số bất thường (trả về 0 khi truyền \texttt{NULL} hoặc ID vòng thi không tồn tại), hỗ trợ chuẩn hóa thang điểm và kiểm tra tính hợp lệ của dữ liệu chấm thi.
     \end{itemize}
     \item \textbf{Trigger Kiểm toán và Tính toán Tự động (Triggers)}:
     \begin{itemize}

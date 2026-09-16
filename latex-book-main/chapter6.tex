@@ -79,27 +79,50 @@ Hệ thống thiết kế đã được kiểm chứng thành công qua 7 kịch
 \section{Kết quả Thực thi Bộ Kiểm thử T-SQL Tự động}
 \label{s:c6_test_results}
 
-Bộ 10 kịch bản kiểm thử T-SQL trong thư mục \texttt{tests/} đã được chạy kiểm chứng tự động 100\% trên môi trường Microsoft SQL Server thực tế (Bảng~\ref{tab:c6_tests}):
+Toàn bộ 24 kịch bản kiểm thử T-SQL tự động trong thư mục \texttt{tests/} đã được thực thi và xác nhận vượt qua 100\% trên môi trường Microsoft SQL Server thực tế, phân chia thành 3 nhóm kiểm thử nghiệp vụ chuyên biệt (Bảng~\ref{tab:c6_tests}):
 
 \begin{table}[htbp]
 \centering
-\small
-\begin{tabularx}{\textwidth}{p{3.0cm}>{\raggedright\arraybackslash}Xp{3.2cm}}
+\scriptsize
+\begin{tabularx}{\textwidth}{>{\bfseries\ttfamily}p{2.8cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{2.9cm}}
 \toprule
-\textbf{Mã Kịch bản Test} & \textbf{Nội dung kiểm thử nghiệp vụ} & \textbf{Kết quả thực thi} \\
+Mã Kịch bản & Nội dung kiểm thử nghiệp vụ & Kết quả thực thi \\
 \midrule
-\texttt{TST-REG-001} & Chặn đăng ký trùng lặp cho cùng một thí sinh trong cuộc thi & \textbf{PASS} (Bắt lỗi UQ) \\
-\texttt{TST-FRAME-001} & Chặn trùng lặp số frame trong cùng một cuộn phim & \textbf{PASS} (Bắt lỗi UQ) \\
-\texttt{TST-SUB-001} & Nộp bài dự thi hợp lệ thành công & \textbf{PASS} (Ghi nhận đúng) \\
-\texttt{TST-SUB-002} & Chặn nộp bài quá hạn chót hoặc nộp trùng khung hình & \textbf{PASS} (Bắt lỗi Procedure) \\
-\texttt{TST-VER-001} & Thẩm định bài thi có cảnh báo AI và cập nhật trạng thái & \textbf{PASS} (Đồng bộ đúng) \\
-\texttt{TST-JDG-001} & Chặn giám khảo chấm điểm lần 2 trong cùng một vòng & \textbf{PASS} (Bắt lỗi UQ) \\
-\texttt{TST-JDG-002} & Chấm thi đa vòng với tiêu chí và trọng số độc lập & \textbf{PASS} (Độc lập dữ liệu) \\
-\texttt{TST-RES-001} & Tổng hợp điểm, xếp hạng và khóa kết quả chung cuộc & \textbf{PASS} (Xếp hạng chính xác) \\
-\texttt{TST-ARC-001} & Tạo bản chụp di sản số cho tác phẩm đoạt giải & \textbf{PASS} (Snapshot chuẩn) \\
-\texttt{TST-AUD-001} & Kích hoạt trigger tự động ghi log khi đổi trạng thái bài thi & \textbf{PASS} (Ghi log thành công) \\
+\multicolumn{3}{l}{\textbf{Nhóm 1: Ràng buộc Toàn vẹn, Khóa Nghiệp vụ và Miền giá trị}} \\
+\midrule
+TST-REG-001 & Chặn đăng ký trùng lặp cho cùng một thí sinh trong cuộc thi & \textbf{PASS} (Bắt lỗi UQ) \\
+TST-FRAME-001 & Chặn trùng lặp số frame trong cùng một cuộn phim & \textbf{PASS} (Bắt lỗi UQ) \\
+TST-UQ-001 & Kiểm chứng tính duy nhất của toàn bộ khóa nghiệp vụ tự nhiên & \textbf{PASS} (Toàn vẹn UQ) \\
+TST-INT-001 & Chặn vi phạm khóa ngoại không tồn tại giữa các phân hệ & \textbf{PASS} (Bắt lỗi FK) \\
+TST-FK-001 & Kiểm chứng liên kết khóa ngoại và toàn vẹn tham chiếu & \textbf{PASS} (Hợp lệ 100\%) \\
+TST-INT-002 & Chặn trạng thái thực thể không thuộc tập giá trị cho phép & \textbf{PASS} (Bắt lỗi Check) \\
+TST-INT-003 & Chặn trọng số tiêu chí chấm sai lệch hoặc vượt quá 100\% & \textbf{PASS} (Bắt lỗi Check) \\
+TST-INT-004 & Chặn cửa sổ thời gian nộp bài bị đảo ngược & \textbf{PASS} (Bắt lỗi Check) \\
+TST-BOUNDARY-001 & Kiểm thử giá trị biên trạng thái, thang điểm và ngày tháng & \textbf{PASS} (Kiểm soát biên) \\
+TST-RET-001 & Ngăn chặn xóa vật lý dữ liệu lịch sử và kết quả đã lưu trữ & \textbf{PASS} (Restricted Delete) \\
+\midrule
+\multicolumn{3}{l}{\textbf{Nhóm 2: Thủ tục Lưu trữ Nghiệp vụ và Kiểm soát Giao dịch}} \\
+\midrule
+TST-SUB-001 & Nộp bài dự thi hợp lệ thành công qua thủ tục lưu trữ & \textbf{PASS} (Tạo bản ghi) \\
+TST-SUB-002 & Chặn nộp bài quá hạn chót hoặc không sở hữu khung hình & \textbf{PASS} (Bắt lỗi SP) \\
+TST-SUB-003 & Ma trận kiểm thử toàn diện các điều kiện biên của thủ tục nộp bài & \textbf{PASS} (Xử lý đa kịch bản) \\
+TST-TXN-001 & Tự động hoàn nguyên giao dịch (Rollback) khi phát sinh lỗi & \textbf{PASS} (Bảo toàn ACID) \\
+TST-VER-001 & Thẩm định bài thi có cảnh báo AI và cập nhật trạng thái & \textbf{PASS} (Duyệt con người) \\
+TST-VER-002 & Cổng thẩm định con người và chặn đổi trạng thái kết thúc & \textbf{PASS} (Bảo vệ Terminal) \\
+\midrule
+\multicolumn{3}{l}{\textbf{Nhóm 3: Chấm thi, Hàm Tính toán, Xếp hạng và Lưu trữ Di sản}} \\
+\midrule
+TST-JDG-001 & Chặn giám khảo nộp phiếu chấm lần hai trong cùng một vòng & \textbf{PASS} (Bắt lỗi UQ) \\
+TST-JDG-002 & Chấm thi đa vòng với tiêu chí và trọng số độc lập & \textbf{PASS} (Độc lập dữ liệu) \\
+TST-FN-001 & Hàm vô hướng \texttt{fn\_round\_max\_total\_score} tính điểm trần & \textbf{PASS} (Khớp tổng điểm) \\
+TST-RES-001 & Tự động tổng hợp điểm, xếp hạng phân biệt và khóa kết quả & \textbf{PASS} (Xếp hạng chuẩn) \\
+TST-RES-002 & Kiểm chứng tính lũy đẳng (Idempotency) khi chạy lại chốt kết quả & \textbf{PASS} (Kết quả ổn định) \\
+TST-ARC-001 & Tạo bản chụp di sản số (Snapshot) cho tác phẩm đoạt giải & \textbf{PASS} (Snapshot chuẩn) \\
+TST-AUD-001 & Trigger tự động ghi nhật ký kiểm toán khi đổi trạng thái bài thi & \textbf{PASS} (Ghi log chuẩn) \\
+TST-SEED-001 & Kiểm chứng tính nhất quán tập dữ liệu tham chiếu nền tảng & \textbf{PASS} (Dữ liệu nền tảng) \\
+TST-SEED-002 & Kiểm chứng tính toàn vẹn của đồ thị dữ liệu mẫu & \textbf{PASS} (Đồ thị nhất quán) \\
 \bottomrule
 \end{tabularx}
-\caption{Kết quả thực thi bộ kiểm thử tự động T-SQL}
+\caption{Kết quả thực thi bộ 24 kịch bản kiểm thử tự động T-SQL}
 \label{tab:c6_tests}
 \end{table}
