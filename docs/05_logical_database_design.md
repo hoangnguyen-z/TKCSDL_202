@@ -139,6 +139,22 @@ uniqueness rule.
 | VerificationCase | verification_id | submission_id, verification_status, completeness_status, technical_status, final_decision_code, reviewed_by_user_id, reviewed_at, review_notes | Current verification record |
 | AIAnalysisResult | ai_result_id | submission_id, analysis_type_code, analysis_outcome_code, confidence_score, model_name, model_version, related_submission_id, review_decision_code, reviewed_by_user_id, reviewed_at | Advisory AI output |
 
+### 2.6.1 Submission and Verification Relation Contract
+
+The logical model keeps the human gate and advisory evidence in separate
+relations:
+
+| Logical relation | Required foreign keys | Logical rule |
+| --- | --- | --- |
+| `Submission` | `registration_id -> Registration`; `contest_id -> Contest`; `category_id -> ContestCategory`; `frame_id -> FilmFrame` | `(contest_id, frame_id)` prevents duplicate use of a frame within one contest. |
+| `VerificationCase` | `submission_id -> Submission`; optional `reviewed_by_user_id -> UserAccount` | One active verification case per submission; review metadata remains nullable until decision. |
+| `AIAnalysisResult` | `submission_id -> Submission`; optional `related_submission_id -> Submission`; optional `reviewed_by_user_id -> UserAccount` | Multiple advisory analyses may exist; none is the authoritative human decision. |
+
+The submission relation carries contest-entry attributes only. Verification
+status and review notes belong to `VerificationCase`, while model output and
+confidence belong to `AIAnalysisResult`; this avoids mixing independently
+changing lifecycles in one relation.
+
 ### 2.7 Judging
 
 | Relation | Primary Key | Key Attributes | Notes |

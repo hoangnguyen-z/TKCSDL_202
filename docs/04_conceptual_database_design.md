@@ -144,6 +144,22 @@ film provenance.
 8. One `Submission` may have zero, one, or many `AIAnalysisResult` records.
 9. One `AIAnalysisResult` must belong to exactly one `Submission`.
 
+### 3.4.1 Submission and Human Verification Boundary
+
+The submission workflow separates entry ownership, human eligibility, and
+machine-generated evidence:
+
+| Relationship | Conceptual meaning | Lifecycle implication |
+| --- | --- | --- |
+| `Registration`--`Submission` | An entry is created within one participant's contest enrollment. | Only an approved registration may produce an eligible submission. |
+| `Submission`--`VerificationCase` | The case is the authoritative human review record. | The active case has one final human decision for the submission. |
+| `Submission`--`AIAnalysisResult` | AI outputs provide evidence or warnings for review. | AI may be repeated or replaced and cannot independently verify or reject. |
+| `Submission`--`FilmFrame` | The contest entry points to an existing physical source frame. | The submission stores entry-specific data without copying provenance metadata. |
+
+Verification is therefore a gate between submission and judging. A rejected
+or unresolved case must not be treated as a judged entry, even when an AI
+analysis reports a favorable outcome.
+
 ### 3.5 Judging
 
 1. One `ContestCategory` may have one or many `JudgingRound` records.
