@@ -243,3 +243,281 @@ The architecture is ready for database design because:
 - AI and human decision boundaries are clear.
 - Access control and audit concerns are defined.
 - The database can now be modeled to support each module without ambiguity.
+
+## 15. Process-to-Architecture Traceability Review
+
+This section validates that each core business flow and use case has a clear execution boundary, module owner, data responsibility, and downstream handoff.
+
+| Flow | Use Case | Primary Actor | Owning Module | Supporting Modules | Primary Outcome |
+| --- | --- | --- | --- | --- | --- |
+| F01 | UC-01 Configure Contest | Organizer | Contest Management | Identity & Access, Audit & Reporting | Published contest configuration |
+| F02 | UC-02 Register For Contest | Participant | Registration | Contest Management, Identity & Access, Audit & Reporting | Registration and eligibility decision |
+| F03 | UC-03 Manage Film Assets | Participant | Film Asset Management | Identity & Access, Audit & Reporting | READY film roll and frame records |
+| F04 | UC-04 Submit Film Entry | Participant | Submission Management | Registration, Film Asset Management, Contest Management, Audit & Reporting | PENDING_VERIFICATION submission |
+| F05 | UC-05 Verify Submission | Organizer | Verification | Submission Management, AI & Analytics, Audit & Reporting | Human-owned verification outcome |
+| F06 | UC-06 Evaluate Submission | Judge | Judging | Verification, Contest Management, Identity & Access, Audit & Reporting | Submitted evaluation |
+| F07 | UC-07 Finalize Results | Organizer | Result & Award | Judging, Contest Management, Verification, Audit & Reporting | Finalized and published results |
+| F08 | UC-08 Archive Winning Work | Organizer | Digital Archive | Result & Award, Submission Management, Audit & Reporting | Immutable archive snapshot |
+
+### 15.1 F01 / UC-01 Contest Configuration Boundary
+
+- Primary actor:
+  - Organizer.
+- Entry condition:
+  - Authorized Organizer context exists and a new contest configuration is requested.
+- Owning module:
+  - Contest Management.
+- Read dependencies:
+  - Identity & Access for actor authorization.
+- Write responsibility:
+  - Contest, ContestCategory, JudgingRound, ScoringCriterion, and AwardDefinition.
+- Control points:
+  - Contest code uniqueness.
+  - Valid registration, submission, and judging date windows.
+  - At least one category and required judging-round configuration before publication.
+- Commit point:
+  - Contest configuration passes publication validation and enters `PUBLISHED`.
+- Failure containment:
+  - Invalid configuration remains within Contest Management and does not expose a publishable contest to downstream modules.
+- Downstream handoff:
+  - Registration and Submission Management may consume the published contest configuration.
+- Audit evidence:
+  - Publication and lifecycle-changing actions are attributable to the Organizer.
+
+### 15.2 F02 / UC-02 Registration Boundary
+
+- Primary actor:
+  - Participant.
+- Decision actor:
+  - Organizer for eligibility review.
+- Entry condition:
+  - Contest registration window is open and Participant account is active.
+- Owning module:
+  - Registration.
+- Read dependencies:
+  - Contest Management for contest state and deadline.
+  - Identity & Access for participant identity.
+- Write responsibility:
+  - Registration status and eligibility state.
+- Control points:
+  - Duplicate registration prevention.
+  - Registration deadline validation.
+  - Eligibility decision persistence.
+- Commit point:
+  - Registration reaches an explicit `APPROVED`, `REJECTED`, or `WITHDRAWN` outcome.
+- Failure containment:
+  - Invalid or duplicate requests do not create an approved registration.
+- Downstream handoff:
+  - Submission Management consumes only approved and eligible registration context.
+- Audit evidence:
+  - Eligibility decisions and registration state changes are recorded.
+
+### 15.3 F03 / UC-03 Film Asset Boundary
+
+- Primary actor:
+  - Participant.
+- Entry condition:
+  - Participant profile exists.
+- Owning module:
+  - Film Asset Management.
+- Read dependencies:
+  - Identity & Access for ownership context.
+  - Reference data for film stock, camera, lens, and lab.
+- Write responsibility:
+  - FilmRoll and FilmFrame.
+- Control points:
+  - Every frame belongs to exactly one roll.
+  - Frame number uniqueness is enforced within a roll.
+  - Incomplete assets remain in `DRAFT`.
+- Commit point:
+  - Complete roll and frame records reach `READY`.
+- Failure containment:
+  - Invalid or incomplete assets remain inside Film Asset Management and cannot enter submission processing.
+- Downstream handoff:
+  - Submission Management receives an owned `READY` frame reference.
+- Audit evidence:
+  - Important asset lifecycle changes remain attributable to the Participant.
+
+### 15.4 F04 / UC-04 Submission Boundary
+
+- Primary actor:
+  - Participant.
+- Entry condition:
+  - Registration is `APPROVED`, eligibility is `ELIGIBLE`, frame is owned by the Participant, and submission window is open.
+- Owning module:
+  - Submission Management.
+- Read dependencies:
+  - Registration for eligibility.
+  - Film Asset Management for frame ownership and provenance.
+  - Contest Management for category and deadline context.
+- Write responsibility:
+  - Submission.
+- Control points:
+  - Submission deadline validation.
+  - Registration ownership validation.
+  - Frame ownership validation.
+  - Same frame cannot be submitted twice within the same contest.
+- Commit point:
+  - Valid submission is persisted as `PENDING_VERIFICATION`.
+- Failure containment:
+  - Failed validation creates no valid submission and does not modify an existing valid submission.
+- Downstream handoff:
+  - Verification receives the pending submission.
+- Audit evidence:
+  - Submission creation and important status changes are recorded.
+
+### 15.5 F05 / UC-05 Verification Boundary
+
+- Primary actor:
+  - Organizer.
+- Supporting actor:
+  - AI Analysis Service.
+- Entry condition:
+  - Submission is `PENDING_VERIFICATION` or requires clarification.
+- Owning module:
+  - Verification.
+- Read dependencies:
+  - Submission Management for submission evidence.
+  - Contest Management for relevant contest policy.
+- Advisory dependency:
+  - AI & Analytics may provide flags, similarity evidence, or analysis results.
+- Write responsibility:
+  - VerificationCase and verification-related AIAnalysisResult records.
+- Control points:
+  - AI output remains advisory.
+  - Human Organizer owns the final verification decision.
+  - Missing or suspicious evidence may produce `NEEDS_CLARIFICATION`.
+- Commit point:
+  - Human decision is recorded as `VERIFIED`, `REJECTED`, or `NEEDS_CLARIFICATION`.
+- Failure containment:
+  - AI output alone cannot advance the submission into a verified terminal state.
+- Downstream handoff:
+  - Judging receives only submissions eligible for judging after verification.
+- Audit evidence:
+  - Human verification decision and actor identity are recorded.
+
+### 15.6 F06 / UC-06 Judging Boundary
+
+- Primary actor:
+  - Judge.
+- Entry condition:
+  - Judge is assigned to the judging round and the submission is verified.
+- Owning module:
+  - Judging.
+- Read dependencies:
+  - Verification for verified submission state.
+  - Contest Management for round and scoring criteria.
+  - Identity & Access for Judge identity.
+- Write responsibility:
+  - JudgeAssignment state, Evaluation, and EvaluationScore.
+- Control points:
+  - Judge may evaluate only assigned workload.
+  - Duplicate evaluation within the same round is blocked.
+  - Criterion scores must remain within configured ranges.
+  - Required scoring must be complete before submission.
+- Commit point:
+  - Evaluation reaches `SUBMITTED`.
+- Failure containment:
+  - Invalid scoring or unauthorized workload access does not replace a valid evaluation.
+- Downstream handoff:
+  - Result & Award consumes completed evaluation records.
+- Audit evidence:
+  - Evaluation submission and relevant score lifecycle actions are attributable to the Judge.
+
+### 15.7 F07 / UC-07 Result and Award Boundary
+
+- Primary actor:
+  - Organizer.
+- Entry condition:
+  - Required final-round evaluations are complete.
+- Owning module:
+  - Result & Award.
+- Read dependencies:
+  - Judging for submitted evaluations and totals.
+  - Contest Management for category and award configuration.
+  - Verification for eligible submission context when required.
+- Write responsibility:
+  - Result and AwardAssignment.
+- Control points:
+  - Incomplete judging blocks finalization.
+  - Ranking consistency is validated before finalization.
+  - Award category must match the finalized result context.
+  - Post-finalization intervention requires controlled administrative and audit handling.
+- Commit point:
+  - Result reaches `FINALIZED`, then may be published as `PUBLISHED`.
+- Failure containment:
+  - Invalid ranking or award assignment leaves result data unfinalized.
+- Downstream handoff:
+  - Digital Archive consumes finalized result context.
+- Audit evidence:
+  - Finalization, award assignment, and publication actions are recorded.
+
+### 15.8 F08 / UC-08 Archive Boundary
+
+- Primary actor:
+  - Organizer.
+- Entry condition:
+  - Selected result is finalized.
+- Owning module:
+  - Digital Archive.
+- Read dependencies:
+  - Result & Award for finalized outcome.
+  - Submission Management and Film Asset Management context through approved read paths when building the snapshot.
+- Write responsibility:
+  - ArchiveItem.
+- Control points:
+  - Non-finalized results cannot be archived.
+  - Duplicate archive creation is blocked.
+  - Archive content is snapshot-oriented rather than dependent only on mutable live references.
+- Commit point:
+  - Immutable ArchiveItem is persisted as `ARCHIVED`.
+- Failure containment:
+  - Failed archive creation does not alter finalized result or submission history.
+- Downstream handoff:
+  - Reporting and archive search consume the stable historical snapshot.
+- Audit evidence:
+  - Archive creation and any exceptional administrative intervention are recorded.
+
+## 16. Cross-Module Handoff Rules
+
+| Handoff | Source State | Target Module | Required Validation | Failure Behavior |
+| --- | --- | --- | --- | --- |
+| Contest -> Registration | Contest published and registration open | Registration | Contest state and registration deadline | Registration request rejected |
+| Registration -> Submission | Registration `APPROVED`, eligibility `ELIGIBLE` | Submission Management | Participant ownership and contest eligibility | Submission creation blocked |
+| Film Asset -> Submission | Frame `READY` and owned by participant | Submission Management | Frame ownership, roll provenance, uniqueness | Submission creation blocked |
+| Submission -> Verification | Submission `PENDING_VERIFICATION` | Verification | Submission completeness and existence | Verification case not finalized |
+| Verification -> Judging | Submission `VERIFIED` | Judging | Verification state and judge assignment | Evaluation access blocked |
+| Judging -> Result | Required evaluations `SUBMITTED` | Result & Award | Evaluation completeness and scoring consistency | Finalization blocked |
+| Result -> Archive | Result `FINALIZED` | Digital Archive | Result state and archive uniqueness | Archive creation blocked |
+
+## 17. Architecture Write-Ownership Rules
+
+To preserve module boundaries, write access follows these rules:
+
+1. Contest Management is the only module responsible for contest configuration state.
+2. Registration owns registration and eligibility lifecycle state.
+3. Film Asset Management owns film roll and frame provenance records.
+4. Submission Management owns submission creation and submission lifecycle state except where an approved verification operation synchronizes the verification outcome.
+5. Verification owns VerificationCase decisions and stores AI evidence separately from the human decision.
+6. Judging owns judge assignments, evaluations, and criterion-level scoring records.
+7. Result & Award owns persisted ranking, finalization, publication, and award-assignment state.
+8. Digital Archive owns archive snapshot creation and archive lifecycle state.
+9. Audit & Reporting records cross-cutting evidence but does not become the transactional owner of the source business entity.
+10. A module may read another module's data when required by a documented dependency, but must not bypass the owning module's business rules for writes.
+
+## 18. Process Architecture Review Conclusion
+
+The F01-F08 process lifecycle and UC-01-UC-08 use-case baseline are aligned with the current modular architecture.
+
+The review confirms that:
+
+- every core flow has one primary owning module;
+- actor authority is separated from supporting service behavior;
+- write ownership is explicit at module boundaries;
+- downstream handoffs depend on controlled lifecycle states;
+- invalid upstream state is contained before the next module accepts the transaction;
+- AI remains advisory within verification;
+- result and archive integrity are protected through controlled finalization and snapshot rules;
+- audit evidence remains cross-cutting without replacing transactional ownership.
+
+Any future change to a core flow, use case, lifecycle state, or business rule should trigger a review of the corresponding module dependency, write boundary, handoff condition, and audit requirement.
