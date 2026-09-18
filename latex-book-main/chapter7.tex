@@ -1,6 +1,6 @@
 % Chương 7: Tổng kết Đề tài và Định hướng Phát triển
 
-Chương này tổng kết toàn diện các kết quả đạt được của đề tài trong việc nghiên cứu và hiện thực hóa cơ sở dữ liệu cho nền tảng quản lý cuộc thi nhiếp ảnh phim tích hợp trí tuệ nhân tạo. Đồng thời, chương trình bày nhật ký các quyết định thiết kế cốt lõi (\textit{Design Decision Log}), hệ thống hóa 15 luận điểm phản biện then chốt nhằm bảo vệ giải pháp trước hội đồng chuyên môn, và phân tích các hạn chế thực tế cùng định hướng phát triển công nghệ trong tương lai.
+Chương này tổng kết toàn diện các kết quả đạt được của đề tài trong việc nghiên cứu và hiện thực hóa cơ sở dữ liệu cho nền tảng quản lý cuộc thi nhiếp ảnh phim tích hợp trí tuệ nhân tạo. Đồng thời, chương hệ thống hóa nhật ký các quyết định thiết kế cốt lõi (\textit{Design Decision Log}), đúc kết các bài học kinh nghiệm kiến trúc và phân tích các hạn chế thực tế cùng định hướng phát triển công nghệ trong tương lai.
 
 % ----------------------------------------------------------------------
 \section{Tổng kết Kết quả Nghiên cứu và Hiện thực hóa Đề tài}
@@ -49,71 +49,9 @@ Qua quá trình thực thi các quyết định trên, nhóm nghiên cứu đã 
 \end{itemize}
 
 % ----------------------------------------------------------------------
-\section{Giải đáp 15 Câu hỏi Phản biện Thiết kế Chuyên sâu}
-\label{s:c7_defense_qa}
-
-Nhằm khẳng định tính vững chắc về mặt học thuật và thực tiễn của giải pháp, 15 vấn đề kỹ thuật then chốt được giải trình chuẩn mực như sau:
-
-\begin{enumerate}
-    \item \textbf{Thí sinh là thực thể riêng hay chỉ là User mang vai trò Participant?} \\
-    $\rightarrow$ \textit{Giải trình}: Thí sinh được thiết kế là một thực thể nghiệp vụ con (\texttt{ParticipantProfile}) có liên kết quan hệ 1:1 tùy chọn với tài khoản xác thực (\texttt{UserAccount}). Thiết kế này phân tách rạch ròi giữa dữ liệu định danh, đăng nhập hệ thống với thông tin hồ sơ nghệ thuật cá nhân, giúp tối ưu dung lượng và tuân thủ nguyên lý phân tách trách nhiệm.
-    
-    \item \textbf{Một người dùng có thể đồng thời nắm giữ nhiều vai trò trong hệ thống không?} \\
-    $\rightarrow$ \textit{Giải trình}: Hoàn toàn có thể. Hệ thống áp dụng bảng kết hợp \texttt{UserRole} ($N:M$), cho phép một người dùng vừa là Thí sinh ở cuộc thi này, vừa có thể được mời làm Giám khảo ở cuộc thi khác. Tuy nhiên, quy tắc kiểm tra xung đột lợi ích ở tầng ứng dụng sẽ ngăn chặn việc một người dùng làm giám khảo của chính cuộc thi mà họ tham gia dự thi.
-    
-    \item \textbf{Số thứ tự khung hình (Frame Number) là duy nhất trong phạm vi nào?} \\
-    $\rightarrow$ \textit{Giải trình}: Số thứ tự khung hình là duy nhất trong phạm vi của từng cuộn phim cụ thể thông qua ràng buộc \texttt{UQ (roll\_id, frame\_number)}. Thiết kế này phản ánh trung thực bản chất vật lý của cuộn phim (ví dụ: các khung hình từ 1 đến 36 trên một cuộn phim 135).
-    
-    \item \textbf{Một khung hình có được phép sử dụng cho nhiều cuộc thi khác nhau không?} \\
-    $\rightarrow$ \textit{Giải trình}: Được phép nộp cho các cuộc thi khác nhau ở các mốc thời gian khác nhau nhằm tôn trọng quyền sở hữu tác phẩm của tác giả; tuy nhiên, hệ thống thiết lập ràng buộc duy nhất \texttt{UQ (contest\_id, frame\_id)} trên bảng \texttt{Submission} để chặn đứng việc nộp trùng lặp một khung hình nhiều lần trong cùng một cuộc thi.
-    
-    \item \textbf{Dòng phim (Film Stock), Máy ảnh và Ống kính là dữ liệu tham chiếu hay chuỗi tự do?} \\
-    $\rightarrow$ \textit{Giải trình}: Toàn bộ được chuẩn hóa thành các bảng danh mục tham chiếu độc lập (\texttt{FilmStock}, \texttt{Camera}, \texttt{Lens}) trong schema \texttt{reference}. Điều này bảo đảm tính nhất quán của dữ liệu phục vụ thống kê, phân loại và loại bỏ sai sót do người dùng nhập tự do không theo chuẩn.
-    
-    \item \textbf{Tiêu chí chấm điểm (Scoring Criterion) thuộc về Cuộc thi, Hạng mục hay Vòng chấm?} \\
-    $\rightarrow$ \textit{Giải trình}: Thuộc về Vòng chấm (\texttt{JudgingRound}). Kiến trúc này cho phép mỗi vòng thi có bộ tiêu chí, trọng số và thang điểm hoàn toàn linh hoạt (ví dụ: Vòng Sơ khảo tập trung vào tiêu chí kỹ thuật và độ nét, trong khi Vòng Chung khảo đánh giá cao cảm xúc và tính nguyên bản nghệ thuật).
-    
-    \item \textbf{Phân công giám khảo (Judge Assignment) được gắn ở cấp độ nào?} \\
-    $\rightarrow$ \textit{Giải trình}: Gắn trực tiếp theo từng Vòng chấm cụ thể (\texttt{round\_id, judge\_user\_id}). Cơ chế này bảo đảm tính độc lập chuyên môn giữa các vòng và hỗ trợ việc thay đổi hội đồng giám khảo linh hoạt qua từng giai đoạn thi.
-    
-    \item \textbf{Điểm tổng hợp đánh giá được lưu cố định hay tính động?} \\
-    $\rightarrow$ \textit{Giải trình}: Trong giai đoạn chấm thi đang diễn ra, điểm số được cập nhật tự động bằng Trigger để hỗ trợ giám sát tiến độ theo thời gian thực. Khi vòng chấm kết thúc, thủ tục lưu trữ \texttt{usp\_finalize\_results\_for\_round} sẽ tính toán và lưu cố định điểm chung cuộc vào bảng \texttt{Result} để bảo toàn giá trị pháp lý không thể sửa đổi.
-    
-    \item \textbf{Kết quả xử lý AI được lưu trữ và kiểm soát như thế nào?} \\
-    $\rightarrow$ \textit{Giải trình}: Lưu trữ độc lập trong bảng \texttt{ai\_analysis\_results} kèm mã mô hình, phiên bản, chỉ số tin cậy toán học ($0.0000 - 1.0000$) và dữ liệu bằng chứng dạng JSON. Dữ liệu này hoàn toàn tách biệt khỏi các bảng giao dịch nghiệp vụ chính.
-    
-    \item \textbf{Mô hình AI có quyền tự động loại bỏ bài dự thi không?} \\
-    $\rightarrow$ \textit{Giải trình}: Tuyệt đối không. AI chỉ đóng vai trò phân tích cảnh báo (\textit{Flag}). Mọi quyết định thay đổi trạng thái bài thi thành \texttt{VERIFIED} hoặc \texttt{REJECTED} bắt buộc phải thông qua sự xem xét và phê duyệt có lưu vết của Ban tổ chức trong bảng \texttt{VerificationCase}.
-    
-    \item \textbf{Kho lưu trữ số (Digital Archive) lưu tham chiếu sống hay bản chụp lịch sử?} \\
-    $\rightarrow$ \textit{Giải trình}: Lưu trữ \textbf{Snapshot JSON bất biến}. Giải pháp này bảo đảm tính trung thực lịch sử của tác phẩm đạt giải ngay cả khi thông tin người dùng hay cấu hình cuộc thi gốc bị thay đổi hoặc xóa bỏ trong tương lai.
-    
-    \item \textbf{Hành vi xóa dữ liệu người dùng, cuộc thi hoặc bài thi có được CASCADE không?} \\
-    $\rightarrow$ \textit{Giải trình}: Tuyệt đối cấm thao tác CASCADE. Toàn bộ các khóa ngoại đều thiết lập \texttt{ON DELETE NO ACTION} nhằm ngăn chặn hiện tượng xóa nhầm phá hủy chuỗi dữ liệu lịch sử và kiểm toán.
-    
-    \item \textbf{Quy tắc nào được enforce bằng CSDL, quy tắc nào thuộc tầng ứng dụng?} \\
-    $\rightarrow$ \textit{Giải trình}: Các quy tắc về tính duy nhất, miền giá trị, toàn vẹn quan hệ và trạng thái tĩnh được thực thi tuyệt đối ở tầng CSDL (PK, FK, UNIQUE, CHECK, Triggers). Các quy tắc động về kiểm tra quyền hạn ngữ cảnh, điều hướng luồng giao diện và phân tích AI nâng cao được kiểm soát ở tầng dịch vụ ứng dụng.
-    
-    \item \textbf{Chiến lược đánh chỉ mục (Indexing) phục vụ thực tế như thế nào?} \\
-    $\rightarrow$ \textit{Giải trình}: Thiết kế chỉ mục phi cụm (Non-clustered Index) kết hợp kỹ thuật bao phủ cột (\texttt{INCLUDE}) bám sát các mẫu truy vấn tần suất cao: lọc bài thi theo trạng thái thẩm định, truy vấn hàng đợi chấm thi của giám khảo và tra cứu tác phẩm đoạt giải trong kho di sản.
-    
-    \item \textbf{Làm thế nào chứng minh các quan hệ chính đạt chuẩn 3NF?} \\
-    $\rightarrow$ \textit{Giải trình}: Tại Chương~\ref{c:conceptual_logical}, nhóm đã phân tích tường minh tập phụ thuộc hàm cho 4 quan hệ then chốt (\texttt{FilmFrame}, \texttt{Submission}, \texttt{EvaluationScore}, \texttt{Result}), chứng minh mọi thuộc tính không khóa đều phụ thuộc hàm đầy đủ vào khóa chính và không tồn tại phụ thuộc bắc cầu.
-\end{enumerate}
-
-% ----------------------------------------------------------------------
 \section{Hạn chế của Đề tài và Hướng Phát triển Mở rộng}
 \label{s:c7_limitations_future}
 
-Bên cạnh những kết quả đạt được, đề tài nhận thức rõ một số hạn chế mang tính phạm vi nghiên cứu:
-\begin{itemize}
-    \item Hệ thống hiện tập trung chủ yếu vào kiến trúc và hiện thực hóa cơ sở dữ liệu tầng lõi; các ứng dụng khách (Web/Mobile) và dịch vụ suy luận AI chuyên sâu mới dừng lại ở mức mô hình hóa giao diện và đặc tả hợp đồng dữ liệu.
-    \item Cơ chế lưu trữ tệp nhị phân hiện giả định kết nối dịch vụ Object Storage đám mây thông qua URI và chuỗi băm SHA-256 mà chưa tích hợp trực tiếp giao thức đồng bộ hóa khối phân tán.
-\end{itemize}
+Mặc dù đã đạt được những kết quả toàn diện về mặt kiến trúc và chuẩn hóa dữ liệu, đề tài vẫn ghi nhận một số hạn chế nhất định xuất phát từ phạm vi nghiên cứu của một đồ án chuyên sâu về Thiết kế Cơ sở Dữ liệu. Cụ thể, hệ thống hiện tập trung nguồn lực tối đa vào việc phân tích nghiệp vụ, mô hình hóa dữ liệu ba cấp độ và hiện thực hóa tầng cơ sở dữ liệu trên Microsoft SQL Server; do đó các ứng dụng phía máy khách (Web và Mobile) cùng các dịch vụ suy luận trí tuệ nhân tạo chuyên sâu mới dừng lại ở mức đặc tả kiến trúc tích hợp, giao diện tương tác và các hợp đồng dữ liệu chuẩn hóa. Bên cạnh đó, cơ chế lưu trữ tệp nhị phân hiện giả định kết nối với dịch vụ lưu trữ đối tượng đám mây thông qua đường dẫn URI tham chiếu và chuỗi băm kiểm tra tính toàn vẹn SHA-256, mà chưa trực tiếp cài đặt hạ tầng lưu trữ phân tán hoặc cơ chế đồng bộ hóa dữ liệu đa vùng địa lý trong giai đoạn hiện tại.
 
-Nhằm nâng cao giá trị ứng dụng thực tiễn và tính tiên phong công nghệ, hệ thống có thể tiếp tục mở rộng phát triển theo 3 hướng chiến lược:
-\begin{enumerate}
-    \item \textbf{Ứng dụng Công nghệ Blockchain và Hợp đồng Thông minh (Smart Contracts)}: Mở rộng tích hợp chứng thực số phi tập trung cho nguồn gốc tác phẩm ảnh phim. Mỗi khung hình âm bản vật lý gốc có thể được cấp một chứng chỉ số bất biến (Provenance Token) lưu trữ trên sổ cái Blockchain, bảo đảm tính xác thực vĩnh viễn và ngăn chặn triệt để hành vi giả mạo bản quyền tác phẩm.
-    \item \textbf{Không gian Triển lãm Thực tế ảo (VR / 3D Virtual Gallery)}: Khai thác trực tiếp siêu dữ liệu và tệp ảnh scan độ phân giải cao từ kho di sản số \texttt{Digital Archive} để xây dựng các phòng trưng bày nghệ thuật 3D tương tác đa chiều. Khách tham quan có thể trải nghiệm không gian triển lãm sống động, tra cứu thông số kỹ thuật cuộn phim và lắng nghe lời tựa nghệ thuật của tác giả theo thời gian thực.
-    \item \textbf{Mở rộng Nền tảng cho các Loại hình Nghệ thuật Thủ công Khác}: Dựa trên mô hình mẫu cuộc thi tái sử dụng (\textit{Contest Template Architecture}), nền tảng có thể dễ dàng cấu hình mở rộng để phục vụ các cuộc thi nghệ thuật đòi hỏi chứng thực xuất xứ vật lý nghiêm ngặt tương tự như tranh in khắc gỗ thủ công, thư pháp truyền thống và gốm sứ mỹ thuật.
-\end{enumerate}
+Nhằm hoàn thiện và nâng tầm ứng dụng của hệ thống trong thực tiễn công nghiệp, đề tài xác định ba hướng phát triển chiến lược có chiều sâu công nghệ trong tương lai. Trước hết, hệ thống có thể mở rộng tích hợp công nghệ chuỗi khối (\textit{Blockchain}) và hợp đồng thông minh (\textit{Smart Contracts}) để thiết lập cơ chế chứng thực xuất xứ số phi tập trung, trong đó mỗi khung hình âm bản vật lý gốc được cấp một chứng chỉ số bất biến (\textit{Provenance Token}) nhằm chống làm giả và bảo vệ quyền tác giả vĩnh viễn trên không gian mạng. Mặt khác, việc khai thác trực tiếp siêu dữ liệu kỹ thuật và tệp ảnh scan độ phân giải cao từ kho di sản số \texttt{Digital Archive} sẽ cho phép xây dựng không gian triển lãm thực tế ảo ba chiều (\textit{VR / 3D Virtual Gallery}), mang lại trải nghiệm thị giác tương tác sống động cho công chúng yêu nghệ thuật nhiếp ảnh phim. Cuối cùng, dựa trên kiến trúc mẫu cuộc thi tái sử dụng linh hoạt (\textit{Contest Template Architecture}), nền tảng có tiềm năng to lớn để mở rộng phục vụ các cuộc thi nghệ thuật thủ công truyền thống khác đòi hỏi quy trình chứng thực xuất xứ vật lý khắt khe tương tự như tranh in khắc gỗ, thư pháp cổ và gốm sứ mỹ thuật.

@@ -360,14 +360,14 @@ Bảng~\ref{tab:c4_data_dictionary} hệ thống hóa từ điển dữ liệu l
 \centering
 \caption{Từ điển dữ liệu logic cho các thực thể và thuộc tính trọng yếu}
 \label{tab:c4_data_dictionary}
-\footnotesize
-\begin{tabularx}{\textwidth}{>{\bfseries\raggedright\arraybackslash}p{4.2cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{2.8cm}}
+\scriptsize
+\renewcommand{\arraystretch}{0.92}
+\begin{tabularx}{\textwidth}{>{\bfseries\raggedright\arraybackslash}p{3.8cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{2.6cm}}
 \toprule
 \textbf{Thực thể.Thuộc tính} & \textbf{Ý nghĩa nghiệp vụ \& Ràng buộc logic} & \textbf{Miền giá trị / Quy ước} \\
 \midrule
 UserAccount.\allowbreak email & Địa chỉ email duy nhất dùng đăng nhập hệ thống & Duy nhất (UNIQUE), hợp lệ \\
 Role.\allowbreak role\_code & Mã vai trò kiểm soát truy cập (RBAC) & ADMIN, ORGANIZER, \allowbreak JUDGE, PARTICIPANT \\
-ParticipantProfile.\allowbreak status & Trạng thái hoạt động của hồ sơ thí sinh & ACTIVE, INACTIVE, \allowbreak SUSPENDED \\
 Contest.\allowbreak contest\_code & Mã định danh nghiệp vụ của cuộc thi & Duy nhất toàn hệ thống \\
 Contest.\allowbreak contest\_status & Vòng đời tổ chức của cuộc thi & DRAFT, PUBLISHED, \allowbreak OPEN, CLOSED, \allowbreak FINALIZED, ARCHIVED \\
 ContestCategory.\allowbreak category\_code & Mã hạng mục chuyên môn trong cuộc thi & Duy nhất trong phạm vi contest \\
@@ -378,13 +378,9 @@ Submission.\allowbreak submission\_status & Trạng thái xử lý bài thi qua 
 VerificationCase.\allowbreak final\_decision & Quyết định thẩm định chính thức của con người & VERIFIED, REJECTED, \allowbreak NEEDS\_CLARIFICATION \\
 AIAnalysisResult.\allowbreak confidence & Điểm số tin cậy do mô hình AI trả về & $0.0000 \leq \text{conf} \leq 1.0000$ \\
 JudgeAssignment.\allowbreak status & Tình trạng nhận việc của giám khảo trong vòng & ASSIGNED, IN\_PROGRESS, \allowbreak SUBMITTED, CANCELLED \\
-Evaluation.\allowbreak total\_score & Tổng điểm có trọng số của một giám khảo & Tổng điểm hợp lệ $\geq 0$ \\
 Result.\allowbreak final\_rank & Thứ hạng chung cuộc của bài thi trong hạng mục & Số nguyên dương $\geq 1$ \\
 ArchiveItem.\allowbreak contest\_snapshot & Bản chụp bất biến của cuộc thi tại thời điểm trao giải & Định dạng JSON cấu trúc \\
-AuditLog.\allowbreak action\_code & Mã định danh hành động nghiệp vụ cần kiểm toán & INSERT, UPDATE, \allowbreak STATUS\_CHANGE \\
-ContestTemplate.\allowbreak template\_code & Mã định danh duy nhất của mẫu cấu hình cuộc thi & Duy nhất (UNIQUE), hợp lệ \\
 AssetMetadata.\allowbreak checksum\_sha256 & Mã băm SHA-256 64 ký tự hex kiểm tra toàn vẹn tệp & Đúng 64 ký tự hex hợp lệ \\
-AssetMetadata.\allowbreak qc\_status & Kết quả kiểm tra chất lượng số hóa tệp ảnh scan & PASSED, FAILED, \allowbreak FLAGGED, PENDING \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -399,8 +395,9 @@ Sự vận hành của cơ sở dữ liệu được định hướng bởi các
 \centering
 \caption{Tổng hợp vòng đời trạng thái của các thực thể cốt lõi trong hệ thống}
 \label{tab:c4_lifecycles}
-\small
-\begin{tabularx}{\textwidth}{>{\bfseries}p{3.2cm}>{\raggedright\arraybackslash}X}
+\scriptsize
+\renewcommand{\arraystretch}{0.92}
+\begin{tabularx}{\textwidth}{>{\bfseries}p{3.0cm}>{\raggedright\arraybackslash}X}
 \toprule
 \textbf{Thực thể} & \textbf{Chuỗi chuyển đổi trạng thái vòng đời chuẩn} \\
 \midrule
@@ -408,8 +405,7 @@ Contest & \texttt{DRAFT} $\rightarrow$ \texttt{PUBLISHED} $\rightarrow$ \texttt{
 Registration & \texttt{PENDING} $\rightarrow$ \texttt{APPROVED} / \texttt{REJECTED} / \texttt{WITHDRAWN} \\
 FilmRoll & \texttt{DRAFT} $\rightarrow$ \texttt{READY} $\rightarrow$ \texttt{ARCHIVED} \\
 FilmFrame & \texttt{DRAFT} $\rightarrow$ \texttt{READY} $\rightarrow$ \texttt{SUBMITTED} $\rightarrow$ \texttt{ARCHIVED} \\
-Submission & \texttt{DRAFT} $\rightarrow$ \texttt{PENDING\_VERIFICATION} $\rightarrow$ \texttt{VERIFIED} / \texttt{REJECTED} / \\
- & \texttt{NEEDS\_CLARIFICATION} $\rightarrow$ \texttt{JUDGED} $\rightarrow$ \texttt{FINALIZED} $\rightarrow$ \texttt{ARCHIVED} \\
+Submission & \texttt{DRAFT} $\rightarrow$ \texttt{PENDING\_VERIFICATION} $\rightarrow$ \texttt{VERIFIED} / \texttt{REJECTED} / \texttt{NEEDS\_CLARIFICATION} $\rightarrow$ \texttt{JUDGED} $\rightarrow$ \texttt{FINALIZED} $\rightarrow$ \texttt{ARCHIVED} \\
 VerificationCase & \texttt{PENDING} $\rightarrow$ \texttt{UNDER\_REVIEW} $\rightarrow$ \texttt{VERIFIED} / \texttt{REJECTED} / \texttt{NEEDS\_CLARIFICATION} \\
 JudgeAssignment & \texttt{ASSIGNED} $\rightarrow$ \texttt{IN\_PROGRESS} $\rightarrow$ \texttt{SUBMITTED} / \texttt{CANCELLED} \\
 Evaluation & \texttt{DRAFT} $\rightarrow$ \texttt{SUBMITTED} $\rightarrow$ \texttt{LOCKED} \\

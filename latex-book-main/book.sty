@@ -137,12 +137,9 @@
 % Align all numbers
 \setlength{\cftsecindent}{0em}
 
-% Set entry indentations and prefixes
-\renewcommand{\cftchappresnum}{Chương }
-\renewcommand{\cftchapaftersnum}{:\ }
-\setlength{\cftchapnumwidth}{6.5em}
-\setlength{\cftsecindent}{6.5em}
-\setlength{\cftsecnumwidth}{3.2em}
+% Set entry indentations
+\setlength{\cftchapnumwidth}{3em}
+\setlength{\cftsecnumwidth}{4em}
 
 % ---- Format headings ----
 
@@ -225,6 +222,7 @@
 % Enhance table formatting
 \usepackage{booktabs}
 \usepackage{tabularx}
+\usepackage[section]{placeins}
 
 % Format verbatim font size
 \BeforeBeginEnvironment{verbatim}{\footnotesize}
@@ -317,10 +315,6 @@
     {\bfseries\huge}
     [\vskip 0.8ex]%
   \titlespacing*{\chapter}{0pt}{-15pt}{18pt}%
-  \addtocontents{toc}{\protect\renewcommand{\protect\cftchappresnum}{Phụ lục }}%
-  \addtocontents{toc}{\protect\renewcommand{\protect\cftchapaftersnum}{:\ }}%
-  \addtocontents{toc}{\protect\setlength{\protect\cftchapnumwidth}{6.8em}}%
-  \addtocontents{toc}{\protect\setlength{\protect\cftsecindent}{6.8em}}%
 }{}{}
 
 % ---- Format bibliography ----
