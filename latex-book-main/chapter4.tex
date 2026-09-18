@@ -1,4 +1,4 @@
-% Chapter 4: Thiết kế CSDL Cấp độ 1 & 2: Mô hình Ý niệm và Logic
+% Chương 4: Thiết kế CSDL Cấp độ 1 & 2: Mô hình Ý niệm và Logic
 
 Thiết kế cơ sở dữ liệu là trục trung tâm của đồ án. Để đạt được chất lượng học thuật và thực tiễn kỹ thuật ở mức xuất sắc nhất, quy trình thiết kế được phân tách rạch ròi thành 3 cấp độ trừu tượng: \textbf{Mô hình Ý niệm (Conceptual Design)} $\rightarrow$ \textbf{Mô hình Logic (Logical Design)} $\rightarrow$ \textbf{Mô hình Vật lý (Physical Design)}. Chương này trình bày chi tiết hai cấp độ đầu tiên: từ các khái niệm nghiệp vụ thuần túy đến mô hình quan hệ được chuẩn hóa chặt chẽ theo dạng chuẩn 3 (3NF).
 
@@ -6,11 +6,8 @@ Thiết kế cơ sở dữ liệu là trục trung tâm của đồ án. Để �
 \section{Phương pháp luận và Phân định 3 Cấp độ Trừu tượng}
 \label{s:c4_methodology}
 
-\paragraph{Artifact Synchronization}
-The Markdown specification and this LaTeX chapter describe the same conceptual
-contract. Canonical entity names, relationship cardinalities, business rules,
-and decision boundaries must remain identical across both artifacts; LaTeX may
-add presentation structure but must not introduce a different model.
+\paragraph{Đồng bộ hóa Tài liệu và Tính Nhất quán Khái niệm}
+Bản tài liệu đặc tả kiến trúc và nội dung Chương này cùng thống nhất chia sẻ một hợp đồng ý niệm cốt lõi. Cụ thể, các tên thực thể chuẩn hóa, bản số quan hệ, quy tắc nghiệp vụ và ranh giới quyết định thiết kế được duy trì đồng nhất tuyệt đối trên toàn bộ các tài liệu của dự án; qua đó bản báo cáo mở rộng cấu trúc trình bày học thuật nhưng tuyệt đối không đưa ra một mô hình dị biệt.
 
 Một trong những sai lầm phổ biến nhất trong thiết kế cơ sở dữ liệu là ``vẽ 3 sơ đồ ERD gần giống nhau'', làm mất đi bản chất của từng giai đoạn. Dự án phân định rạch ròi ranh giới trừu tượng như sau:
 
@@ -349,12 +346,9 @@ Mô hình quan hệ logic đạt chuẩn 3NF sau khi giải quyết các quan h�
 \section{Chiến lược Phi Chuẩn hóa có Kiểm soát cho Kho Lưu trữ Số}
 \label{s:c4_archive_denormalization}
 
-Quan hệ \texttt{ArchiveItem} là trường hợp ngoại lệ duy nhất được cố tình thiết kế theo hướng \textbf{Phi chuẩn hóa có kiểm soát (\textit{Controlled Denormalization})}:
+Trong toàn bộ kiến trúc cơ sở dữ liệu của hệ thống, quan hệ \texttt{ArchiveItem} là trường hợp ngoại lệ duy nhất được cố tình thiết kế theo chiến lược \textbf{Phi chuẩn hóa có kiểm soát (\textit{Controlled Denormalization})}. Cụ thể, thay vì chỉ lưu trữ các khóa ngoại sống (\texttt{result\_id}, \texttt{submission\_id}) tham chiếu động về các bảng giao dịch đang vận hành, thực thể \texttt{ArchiveItem} được cấu trúc hóa để lưu trữ trực tiếp các bản chụp JSON bất biến bao gồm: \texttt{contest\_snapshot}, \texttt{category\_snapshot}, \texttt{participant\_snapshot}, \texttt{technical\_snapshot} và \texttt{judging\_snapshot}.
 
-\begin{itemize}
-    \item Thay vì chỉ lưu trữ các khóa ngoại sống (\texttt{result\_id}, \texttt{submission\_id}) trỏ về các bảng giao dịch, \texttt{ArchiveItem} lưu trữ các bản chụp JSON bất biến: \texttt{contest\_snapshot}, \texttt{category\_snapshot}, \texttt{participant\_snapshot}, \texttt{technical\_snapshot}, \texttt{judging\_snapshot}.
-    \item \textbf{Căn cứ lý thuyết \& Thực tiễn}: Kho lưu trữ di sản số có mục đích bảo tồn nguyên trạng giá trị lịch sử tại thời điểm trao giải. Nếu trong tương lai tài khoản thí sinh đổi tên, hoặc cấu hình cuộc thi gốc bị điều chỉnh/ẩn đi, tác phẩm trong kho lưu trữ di sản vẫn giữ nguyên 100\% thông tin trung thực của thời điểm đoạt giải mà không bị sai lệch.
-\end{itemize}
+Quyết định thiết kế này bắt nguồn từ bản chất nghiệp vụ và yêu cầu bảo tồn di sản số trong thế giới thực. Mục tiêu tối thượng của kho lưu trữ di sản không phải là tối ưu hóa thao tác cập nhật thường xuyên, mà là bảo tồn nguyên vẹn giá trị lịch sử và bằng chứng nghệ thuật tại chính xác thời điểm tác phẩm được vinh danh trao giải. Nếu hệ thống áp dụng chuẩn hóa thuần túy bằng việc trỏ khóa ngoại sống, thì trong tương lai khi tài khoản thí sinh thay đổi thông tin cá nhân, hoặc cấu hình cuộc thi gốc bị điều chỉnh, đóng lại hay ẩn đi, dữ liệu của tác phẩm đoạt giải sẽ bị biến dạng theo. Do đó, việc đóng băng toàn bộ ngữ cảnh tại thời điểm trao giải thành các bản chụp JSON độc lập là giải pháp kỹ thuật tối ưu nhất, vừa bảo đảm tính trung thực lịch sử tuyệt đối cho công tác triển lãm và nghiên cứu, vừa ngăn ngừa hoàn toàn các tác động tiêu cực từ các thao tác cập nhật dữ liệu sống trong tương lai.
 
 % ----------------------------------------------------------------------
 \section{Từ điển Dữ liệu Logic (Logical Data Dictionary)}

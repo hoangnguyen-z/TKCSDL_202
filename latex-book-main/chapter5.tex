@@ -1,4 +1,4 @@
-% Chapter 5: Thiết kế CSDL Cấp độ 3: Mô hình Vật lý và Lập trình CSDL
+% Chương 5: Thiết kế CSDL Cấp độ 3: Mô hình Vật lý và Lập trình CSDL
 
 Chương này trình bày chi tiết cấp độ thiết kế vật lý (\textit{Physical Database Design}) và hiện thực hóa lập trình cơ sở dữ liệu trên hệ quản trị Microsoft SQL Server. Toàn bộ lược đồ vật lý được cấu trúc hóa theo các schema nghiệp vụ, thiết lập hệ thống ràng buộc toàn vẹn nghiêm ngặt, chiến lược đánh chỉ mục (\textit{Indexing}) tối ưu theo các mẫu truy vấn thực tế, cùng hệ thống Views, Stored Procedures và Triggers bảo đảm an toàn giao dịch.
 
@@ -7,12 +7,7 @@ Chương này trình bày chi tiết cấp độ thiết kế vật lý (\textit
 \label{s:c5_dbms_naming}
 
 \subsection{Căn cứ Lựa chọn Microsoft SQL Server}
-Hệ quản trị cơ sở dữ liệu Microsoft SQL Server (bản 2022+ chạy trên Linux Container) được lựa chọn chính thức dựa trên các căn cứ kỹ thuật:
-\begin{enumerate}
-    \item \textbf{Cơ chế thực thi ràng buộc toàn vẹn mạnh mẽ}: Hỗ trợ đầy đủ các ràng buộc phức tạp (\texttt{CHECK}, \texttt{UNIQUE}, \texttt{FOREIGN KEY}) với độ tin cậy giao dịch ACID tuyệt đối.
-    \item \textbf{Khả năng mở rộng và lập trình T-SQL phong phú}: Ngôn ngữ T-SQL hỗ trợ mạnh mẽ việc đóng gói logic nghiệp vụ vào Stored Procedures và Triggers.
-    \item \textbf{Tương thích hoàn hảo với công cụ quản trị}: Khả năng kết nối, giám sát và kiểm thử trực quan thông qua SQL Server Management Studio (SSMS 22).
-\end{enumerate}
+Hệ quản trị cơ sở dữ liệu Microsoft SQL Server (phiên bản 2022+ triển khai trên nền tảng Linux Container) được lựa chọn chính thức cho đề tài dựa trên sự kết hợp của ba căn cứ kỹ thuật then chốt. Trước hết, SQL Server cung cấp cơ chế thực thi ràng buộc toàn vẹn dữ liệu mạnh mẽ hàng đầu hiện nay, hỗ trợ toàn diện các ràng buộc phức tạp như \texttt{CHECK}, \texttt{UNIQUE} và \texttt{FOREIGN KEY} cùng cơ chế khóa giao dịch ACID tuyệt đối, bảo đảm an toàn dữ liệu trong các tình huống chấm thi đồng thời. Mặt khác, ngôn ngữ lập trình T-SQL phong phú cho phép đóng gói logic nghiệp vụ sâu vào các thủ tục lưu trữ (\textit{Stored Procedures}) và \textit{Triggers}, qua đó giảm thiểu độ trễ mạng và ngăn chặn tình trạng thao tác dữ liệu trái phép từ tầng ứng dụng. Bên cạnh đó, khả năng tương thích hoàn hảo và giám sát trực quan thông qua công cụ chuyên nghiệp SQL Server Management Studio (SSMS 22) tạo điều kiện thuận lợi tối đa cho quá trình bảo trì, phân tích kế hoạch thực thi truy vấn (\textit{Execution Plan}) và kiểm thử tự động.
 
 \subsection{Quy ước Đặt tên Đối tượng Vật lý (Naming Conventions)}
 Để đảm bảo tính chuyên nghiệp và đồng bộ, toàn bộ đối tượng CSDL tuân thủ quy tắc đặt tên tại Bảng~\ref{tab:c5_naming}:
@@ -105,11 +100,7 @@ Bản chụp Snapshot & \texttt{NVARCHAR(MAX)} & Lưu trữ cấu trúc JSON b�
 \label{s:c5_constraints}
 
 \paragraph{Chính sách Khóa ngoại và Hành vi Xóa (Referential Action Policy)}
-Trong hệ thống quản lý cuộc thi và lưu trữ di sản nghệ thuật, việc bảo toàn dữ liệu lịch sử là yêu cầu sống còn. Do đó, hệ thống áp dụng nguyên tắc:
-\begin{itemize}
-    \item \textbf{Tuyệt đối không sử dụng \texttt{ON DELETE CASCADE}} đối với các bảng giao dịch trọng yếu (\texttt{Submission}, \texttt{Evaluation}, \texttt{Result}, \texttt{ArchiveItem}). Mọi liên kết khóa ngoại đều thiết lập \texttt{ON DELETE NO ACTION} (mặc định của SQL Server) để ngăn chặn việc vô tình xóa dây chuyền phá hủy dữ liệu lịch sử cuộc thi.
-    \item Mọi hoạt động chấm dứt hoặc đóng cuộc thi đều thực hiện thông qua \textbf{chuyển đổi trạng thái nghiệp vụ (\textit{Soft Status Transition})}, không xóa vật lý bản ghi.
-\end{itemize}
+Trong hệ thống quản lý cuộc thi và lưu trữ di sản nghệ thuật, việc bảo toàn toàn vẹn dữ liệu lịch sử và phục vụ kiểm toán là yêu cầu sống còn. Do đó, hệ thống thiết lập nguyên tắc kiến trúc nghiêm ngặt: tuyệt đối không sử dụng hành vi \texttt{ON DELETE CASCADE} đối với bất kỳ bảng giao dịch nghiệp vụ trọng yếu nào (\texttt{Submission}, \texttt{Evaluation}, \texttt{Result}, \texttt{ArchiveItem}). Toàn bộ các liên kết khóa ngoại đều được thiết lập tường minh là \texttt{ON DELETE NO ACTION} (cơ chế bảo vệ mặc định của Microsoft SQL Server) nhằm ngăn chặn hiện tượng vô tình xóa dây chuyền phá hủy chuỗi dữ liệu lịch sử cuộc thi. Mọi hoạt động kết thúc, hủy bỏ hoặc đóng cuộc thi đều được xử lý thông qua cơ chế chuyển đổi trạng thái nghiệp vụ có lưu vết (\textit{Soft Status Transition}), bảo đảm không có bất kỳ bản ghi lịch sử nào bị xóa vật lý khỏi cơ sở dữ liệu.
 
 \paragraph{Ràng buộc Miền giá trị (Check Constraints)}
 Hệ thống cài đặt các ràng buộc kiểm tra giá trị toán học, logic thời gian và định dạng kỹ thuật:

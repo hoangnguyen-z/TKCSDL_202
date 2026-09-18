@@ -1,4 +1,4 @@
-% Chapter 1: Bối cảnh, Vấn đề và Mục tiêu Đề tài
+% Chương 1: Bối cảnh, Vấn đề và Mục tiêu Đề tài
 
 Nhiếp ảnh phim (\textit{analog photography}) đã và đang có một sự hồi sinh mạnh mẽ trên toàn cầu cũng như tại Việt Nam. Không chỉ thu hút giới trẻ tìm kiếm trải nghiệm nghệ thuật hoài niệm, trào lưu này còn quy tụ đông đảo các nhiếp ảnh gia kỳ cựu, các phòng tráng phim độc lập (\textit{film labs}), các câu lạc bộ nhiếp ảnh và các tổ chức văn hóa nghệ thuật. Cùng với xu thế này, các cuộc thi nhiếp ảnh phim đóng vai trò hạt nhân nhằm gìn giữ di sản văn hóa thị giác, tôn vinh kỹ thuật thủ công truyền thống và tạo sân chơi sáng tạo cho cộng đồng.
 
@@ -17,13 +17,7 @@ Khác với nhiếp ảnh kỹ thuật số nơi thông số EXIF được tự 
     \item \textbf{Xác thực bản gốc}: Trong nhiều trường hợp tranh chấp hoặc yêu cầu thẩm định chuyên sâu, ban tổ chức cần kiểm tra phim âm bản gốc (\textit{negative film}) hoặc bảng in tiếp xúc (\textit{contact sheet}).
 \end{enumerate}
 
-Hiện nay, phần lớn các đơn vị tổ chức cuộc thi nhiếp ảnh phim vẫn đang vận hành thông qua sự kết hợp của các công cụ thủ công và phân tán:
-\begin{itemize}
-    \item \textbf{Thông báo và Tiếp nhận}: Sử dụng biểu mẫu trực tuyến (Google Forms, Microsoft Forms) kết hợp mạng xã hội (Facebook, Instagram).
-    \item \textbf{Lưu trữ bài dự thi}: Sử dụng các dịch vụ lưu trữ đám mây phân mảnh (Google Drive, Dropbox, OneDrive) hoặc tiếp nhận qua Email.
-    \item \textbf{Quản lý và Thẩm định}: Dữ liệu thí sinh và thông số kỹ thuật được tổng hợp thủ công trên các bảng tính (Microsoft Excel, Google Sheets).
-    \item \textbf{Chấm thi và Đánh giá}: Gửi danh sách ảnh và bảng điểm rời rạc cho giám khảo qua file Excel, sau đó tổng hợp điểm thủ công.
-\end{itemize}
+Hiện nay, phần lớn các đơn vị tổ chức cuộc thi nhiếp ảnh phim vẫn đang vận hành thông qua sự kết hợp của các công cụ thủ công và phân tán. Cụ thể, khâu thông báo thể lệ và tiếp nhận đơn đăng ký thường dựa vào các biểu mẫu trực tuyến tự tạo như Google Forms hay Microsoft Forms kết hợp bài đăng trên mạng xã hội Facebook và Instagram. Về mặt lưu trữ, tệp ảnh bài dự thi bị phân tán rải rác trên nhiều dịch vụ đám mây cá nhân như Google Drive, Dropbox, OneDrive hoặc tiếp nhận đính kèm qua thư điện tử. Bên cạnh đó, toàn bộ dữ liệu quản lý thí sinh, thông số kỹ thuật cuộn phim và kết quả thẩm định đều được tổng hợp thủ công trên các bảng tính Microsoft Excel hoặc Google Sheets. Đến giai đoạn đánh giá, ban tổ chức phải sao chép danh sách ảnh thành các tệp bảng tính rời rạc để gửi email cho từng giám khảo, sau đó tổng hợp điểm số bằng các công thức tính toán thủ công, dẫn đến nguy cơ sai lệch số liệu và tiêu tốn hàng trăm giờ lao động hành chính.
 
 % ----------------------------------------------------------------------
 \section{Phân tích các Điểm nghẽn Nghiệp vụ (Pain Points)}
@@ -95,11 +89,7 @@ Tập trung toàn bộ nguồn lực vào thiết kế kiến trúc và mô hìn
 \end{table}
 
 \paragraph{Giả định thiết kế cốt lõi}
-\begin{enumerate}
-    \item Hệ quản trị cơ sở dữ liệu mục tiêu chính thức là \textbf{Microsoft SQL Server (2022+)}.
-    \item Mọi kết quả xử lý từ trí tuệ nhân tạo (AI) đều mang tính chất tư vấn (\textit{advisory}), hệ thống không tự động loại bài thi nếu chưa có sự phê duyệt từ Ban tổ chức.
-    \item Kiến trúc đích giả định tệp nhị phân của hình ảnh được lưu trữ tại dịch vụ lưu trữ đối tượng (\textit{Object Storage}); trong phase này chưa triển khai dịch vụ đó, cơ sở dữ liệu chỉ lưu trữ đường dẫn (\textit{URI/Path}), mã băm kiểm tra toàn vẹn (\textit{SHA-256 hash}) và siêu dữ liệu kỹ thuật.
-\end{enumerate}
+Nhằm định hình rõ ranh giới nghiên cứu và đảm bảo tính khả thi kỹ thuật cao nhất, thiết kế của đề tài được xây dựng trên các giả định cốt lõi: Trước hết, hệ quản trị cơ sở dữ liệu mục tiêu được chuẩn hóa duy nhất là Microsoft SQL Server 2022+ vận hành trên môi trường Linux Container. Mặt khác, nhằm bảo đảm tính nhân văn và khách quan trong đánh giá nghệ thuật, mọi kết quả xử lý từ trí tuệ nhân tạo (AI) đều được định vị mang tính chất tư vấn hỗ trợ quyết định (\textit{advisory}); qua đó hệ thống tuyệt đối không tự động loại bỏ bài thi nếu chưa có sự phê duyệt chính thức từ Ban tổ chức. Cuối cùng, kiến trúc giả định các tệp nhị phân hình ảnh scan dung lượng cao được lưu trữ tại dịch vụ lưu trữ đối tượng chuyên dụng (\textit{Object Storage}), do đó cơ sở dữ liệu chỉ tập trung quản lý đường dẫn URI tham chiếu, mã băm toàn vẹn SHA-256 cùng các siêu dữ liệu kỹ thuật có cấu trúc.
 
 % ----------------------------------------------------------------------
 \section{Bảng Chú giải Thuật ngữ Miền (Domain Glossary)}
@@ -173,8 +163,4 @@ Báo cáo tình trạng hệ thống, nhật ký truy cập và thay đổi tr�
 \end{table}
 
 \paragraph{Mô hình Phân quyền Vai trò (RBAC Model)}
-Hệ thống áp dụng mô hình phân quyền dựa trên vai trò (\textit{Role-Based Access Control}):
-\begin{itemize}
-    \item Một tài khoản người dùng (\texttt{Users}) có thể nắm giữ một hoặc nhiều vai trò (\texttt{Roles}) đồng thời (ví dụ: một người dùng vừa là Thí sinh trong cuộc thi A, vừa là Giám khảo trong cuộc thi B).
-    \item Tuy nhiên, các hành vi nghiệp vụ cụ thể trong từng ngữ cảnh cuộc thi phải tuân thủ nghiêm ngặt nguyên tắc xung đột lợi ích: \textit{Một người dùng đã đăng ký dự thi trong một cuộc thi thì không thể được phân công làm Giám khảo hoặc Ban tổ chức của chính cuộc thi đó}.
-\end{itemize}
+Hệ thống áp dụng mô hình phân quyền truy cập dựa trên vai trò (\textit{Role-Based Access Control - RBAC}), trong đó một tài khoản người dùng (\texttt{UserAccount}) có thể nắm giữ một hoặc nhiều vai trò (\texttt{Role}) đồng thời thông qua bảng kết hợp \texttt{UserRole}, cụ thể như một người dùng vừa là Thí sinh trong cuộc thi này, vừa có thể đảm nhiệm vai trò Giám khảo tại cuộc thi khác. Tuy nhiên, nhằm triệt tiêu hoàn toàn hiện tượng xung đột lợi ích (\textit{Conflict of Interest}), các hành vi nghiệp vụ trong từng ngữ cảnh cuộc thi phải tuân thủ nghiêm ngặt quy tắc: một người dùng đã đăng ký dự thi trong một cuộc thi cụ thể thì tuyệt đối không thể được phân công làm Giám khảo hoặc thành viên Ban tổ chức của chính cuộc thi đó.

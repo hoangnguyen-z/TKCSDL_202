@@ -1,4 +1,4 @@
-% Chapter 2: Quy trình Nghiệp vụ và Đặc tả Yêu cầu
+% Chương 2: Quy trình Nghiệp vụ và Đặc tả Yêu cầu
 
 Chương này trình bày chi tiết kết quả phân tích quy trình nghiệp vụ và đặc tả toàn diện các yêu cầu hệ thống. Việc mô hình hóa tường minh từ quy trình hiện tại (\textit{AS-IS}) sang quy trình mục tiêu (\textit{TO-BE}), kết hợp với danh mục yêu cầu chức năng (\textit{FR}), yêu cầu phi chức năng (\textit{NFR}), quy tắc nghiệp vụ (\textit{Business Rules}) và đặc tả các trường hợp sử dụng (\textit{Use Case Specifications}) là cơ sở pháp lý và kỹ thuật vững chắc để định hình kiến trúc hệ thống và cơ sở dữ liệu ở các phần tiếp theo.
 
@@ -6,16 +6,9 @@ Chương này trình bày chi tiết kết quả phân tích quy trình nghiệp
 \section{Mô hình hóa Quy trình Hiện tại (AS-IS) và Điểm nghẽn}
 \label{s:c2_asis}
 
-Trong thực tế tổ chức các cuộc thi nhiếp ảnh phim truyền thống, quy trình vận hành được thực hiện thủ công qua nhiều công cụ trung gian rời rạc:
-\begin{enumerate}
-    \item \textbf{Tiếp nhận đăng ký}: Ban tổ chức mở biểu mẫu trực tuyến (Google Forms). Thí sinh điền thông tin và đính kèm đường dẫn lưu trữ đám mây (Google Drive/Dropbox).
-    \item \textbf{Thu thập bài thi \& siêu dữ liệu}: Dữ liệu đăng ký đổ về bảng tính Excel. Ban tổ chức phải tải ảnh về máy tính cục bộ, kiểm tra từng đường dẫn và đối soát thông tin máy ảnh, cuộn phim, phòng lab tráng phim.
-    \item \textbf{Thẩm định sơ bộ}: Ban tổ chức kiểm tra thủ công bằng mắt thường để phát hiện các bài thi thiếu thông số hoặc có dấu hiệu can thiệp kỹ thuật số quá mức.
-    \item \textbf{Phân phối chấm thi}: Tạo các bản sao bảng tính Excel chứa danh sách ảnh và gửi email riêng cho từng giám khảo.
-    \item \textbf{Tổng hợp điểm \& Công bố}: Giám khảo gửi lại file Excel điểm. Ban tổ chức sử dụng các hàm tính toán thủ công trên Excel để xếp hạng, giải quyết các trường hợp bằng điểm và soạn thảo bài viết công bố giải thưởng lên mạng xã hội.
-\end{enumerate}
+Trong thực tế tổ chức các cuộc thi nhiếp ảnh phim truyền thống, quy trình vận hành chủ yếu được thực hiện thủ công thông qua một chuỗi các công cụ trung gian rời rạc. Cụ thể, quy trình bắt đầu từ khâu tiếp nhận đăng ký khi ban tổ chức phát hành các biểu mẫu trực tuyến như Google Forms để thí sinh tự khai báo thông tin cá nhân và đính kèm đường dẫn lưu trữ đám mây. Dữ liệu sau đó đổ về các bảng tính Excel, buộc ban tổ chức phải tải ảnh về máy tính cục bộ, kiểm tra từng đường dẫn và đối soát thông số thiết bị chụp, cuộn phim cùng phòng lab tráng phim. Tại khâu thẩm định sơ bộ, việc phát hiện các bài thi thiếu siêu dữ liệu hoặc có dấu hiệu can thiệp kỹ thuật số quá mức chỉ được thực hiện bằng mắt thường, dẫn đến tính chủ quan và rủi ro bỏ lọt vi phạm rất lớn. Tiếp đó, ban tổ chức phải cắt nhỏ danh sách ảnh thành các bản sao bảng tính riêng lẻ để gửi email cho từng giám khảo; sau khi nhận lại các tệp điểm rời rạc, ban tổ chức mới tiến hành tổng hợp bằng các hàm tính toán thủ công trên Excel để xếp hạng và soạn bài công bố lên mạng xã hội.
 
-\paragraph{Hạn chế của mô hình AS-IS} Quy trình này bộc lộ những rủi ro chí mạng: (1) Khả năng mất mát dữ liệu cao do phân tán trên nhiều drive cá nhân; (2) Không thể kiểm tra sự trùng lặp của khung hình giữa các cuộc thi; (3) Dễ xảy ra sai sót khi giám khảo nhập điểm trên file Excel độc lập; (4) Thiếu cơ chế kiểm toán vết thay đổi (\textit{Audit Trail}) để bảo vệ tính khách quan của cuộc thi.
+Quy trình AS-IS phân tán này bộc lộ những rủi ro chí mạng đối với tính toàn vẹn và uy tín của cuộc thi. Cụ thể, nguy cơ mất mát dữ liệu là rất cao do tệp ảnh và thông tin bị phân tán trên nhiều tài khoản đám mây cá nhân. Mặt khác, ban tổ chức hoàn toàn thiếu công cụ để phát hiện việc một khung hình phim bị nộp trùng lặp giữa các cuộc thi khác nhau hoặc phát hiện ảnh giả lập phim bằng AI. Bên cạnh đó, việc giám khảo nhập điểm trên các tệp bảng tính độc lập rất dễ dẫn đến sai sót số học, ghi đè nhầm lẫn hoặc thiên vị cá nhân; đồng thời việc thiếu vắng một cơ chế kiểm toán vết thay đổi (\textit{Audit Trail}) tập trung khiến ban tổ chức không thể giải trình minh bạch khi xảy ra khiếu nại hoặc tranh chấp giải thưởng.
 
 % ----------------------------------------------------------------------
 \section{Mô hình hóa Quy trình Mục tiêu (TO-BE) và 8 Luồng Nghiệp vụ Cốt lõi}

@@ -1,4 +1,4 @@
-% Chapter 3: Kiến trúc Tổng thể, Phân rã Module và Thiết kế AI
+% Chương 3: Kiến trúc Tổng thể, Phân rã Module và Thiết kế AI
 
 Chương này trình bày toàn diện kiến trúc hệ thống của nền tảng quản lý cuộc thi nhiếp ảnh phim tích hợp trí tuệ nhân tạo. Kiến trúc được xây dựng dựa trên nguyên lý hướng module (\textit{Modular Architecture}), phân định rạch ròi ranh giới dữ liệu (\textit{Data Ownership}) và tuân thủ chặt chẽ mô hình quản trị AI có con người kiểm duyệt (\textit{Human-in-the-loop}). Đây là cầu nối chiến lược chuyển hóa các yêu cầu nghiệp vụ thành cấu trúc cơ sở dữ liệu quan hệ tối ưu.
 
@@ -6,29 +6,11 @@ Chương này trình bày toàn diện kiến trúc hệ thống của nền t�
 \section{Ranh giới và Sơ đồ Ngữ cảnh Hệ thống (System Boundary \& Context)}
 \label{s:c3_context}
 
-Hệ thống được thiết lập với ranh giới rõ ràng giữa các phân hệ nội bộ và các dịch vụ bên ngoài:
+Hệ thống được thiết lập với ranh giới phân định rõ ràng giữa các năng lực nghiệp vụ nội bộ và các dịch vụ bên ngoài nhằm đảm bảo tính độc lập và khả năng bảo trì cao.
 
-\begin{itemize}
-    \item \textbf{Phạm vi bên trong hệ thống}:
-    \begin{itemize}
-        \item Quản trị tài khoản, danh tính và phân quyền vai trò (\textit{Identity \& Access}).
-        \item Cấu hình cuộc thi, hạng mục, lịch trình, vòng chấm và tiêu chí.
-        \item Quản lý đơn đăng ký tham gia và xét duyệt điều kiện của thí sinh.
-        \item Quản lý xuất xứ và siêu dữ liệu cuộn phim, khung hình phim.
-        \item Tiếp nhận bài thi, quản lý vòng đời bài dự thi.
-        \item Quy trình thẩm định bài thi và tiếp nhận cảnh báo từ AI.
-        \item Phân công giám khảo, quản lý tiến độ chấm thi và thu nhận phiếu điểm.
-        \item Tổng hợp điểm có trọng số, xếp hạng, gán giải thưởng và công bố kết quả.
-        \item Lưu trữ snapshot bất biến cho các tác phẩm đạt giải (\textit{Digital Archive}).
-        \item Ghi nhận nhật ký kiểm toán và cung cấp các góc nhìn báo cáo.
-    \end{itemize}
-    \item \textbf{Giao diện với các hệ thống bên ngoài}:
-    \begin{itemize}
-        \item \textbf{Dịch vụ Lưu trữ Đối tượng (Object Storage)}: Tiếp nhận và lưu trữ các tệp ảnh scan độ phân giải cao; trả về URI tham chiếu cho CSDL.
-        \item \textbf{Dịch vụ Trí tuệ Nhân tạo (AI Analysis Service)}: Tiếp nhận ảnh bài thi, thực hiện tính toán độ tương đồng và phát hiện ảnh AI; trả về bản ghi phân tích kèm độ tin cậy.
-        \item \textbf{Khách hàng Quản trị (SSMS 22)}: Kết nối trực tiếp vào SQL Server phục vụ công tác quản trị, bảo trì và kiểm thử.
-    \end{itemize}
-\end{itemize}
+Về phạm vi nội bộ, nền tảng chịu trách nhiệm quản trị toàn bộ chu trình dữ liệu lõi bao gồm: xác thực danh tính và phân quyền vai trò (\textit{Identity \& Access}); quản lý cấu hình thể lệ cuộc thi, các hạng mục, vòng thi và tiêu chí chấm điểm; tiếp nhận và xét duyệt đơn đăng ký tham gia; quản lý xuất xứ vật lý cuộn phim và từng khung hình; tiếp nhận và điều phối vòng đời bài dự thi; thẩm định bài thi kết hợp tiếp nhận kết quả tư vấn AI; phân công giám khảo và thu nhận phiếu điểm; tổng hợp xếp hạng, gán giải thưởng và khóa kết quả; bảo tồn vĩnh viễn các tác phẩm đoạt giải trong kho lưu trữ di sản số (\textit{Digital Archive}); đồng thời ghi nhận nhật ký kiểm toán và cung cấp các góc nhìn báo cáo phân tích tổng hợp.
+
+Về mặt tương tác ngoại vi, hệ thống thiết lập giao tiếp có kiểm soát với ba thành phần bên ngoài. Cụ thể, dịch vụ lưu trữ đối tượng đám mây (\textit{Cloud Object Storage}) đóng vai trò tiếp nhận và lưu trữ các tệp ảnh scan nhị phân có độ phân giải cao, sau đó phản hồi đường dẫn URI tham chiếu cùng mã băm SHA-256 để cơ sở dữ liệu quản lý. Dịch vụ trí tuệ nhân tạo (\textit{AI Analysis Service}) tiếp nhận ảnh bài thi từ hàng đợi, thực hiện thuật toán tính toán độ tương đồng và phát hiện dấu hiệu can thiệp tạo sinh, qua đó trả về bản ghi phân tích kèm độ tin cậy toán học. Cuối cùng, công cụ quản trị SQL Server Management Studio (SSMS 22) kết nối trực tiếp vào máy chủ cơ sở dữ liệu thông qua cổng bảo mật phục vụ công tác giám sát, bảo trì hệ thống và thực thi các kịch bản kiểm thử tự động.
 
 Mối quan hệ tương tác giữa hệ thống và các thực thể ngoại vi được thể hiện qua Sơ đồ Ngữ cảnh trong Hình~\ref{fig:c3_system_context}:
 
@@ -133,12 +115,7 @@ Hệ thống được tổ chức theo mô hình kiến trúc phân tầng chu�
 \end{enumerate}
 
 \subsection{Kiến trúc Triển khai Mục tiêu (Target Deployment View)}
-Hệ thống được đóng gói để triển khai độc lập và nhất quán trên nền tảng container:
-\begin{itemize}
-    \item \textbf{Máy chủ Host}: Chạy Docker Engine và công cụ quản trị SQL Server Management Studio (SSMS 22).
-    \item \textbf{SQL Server Container}: Chạy image chính thức \texttt{mcr.microsoft.com/mssql/\allowbreak server:\allowbreak 2022-CU24-ubuntu-22.04}, kết nối qua cổng TCP 1433 với ổ đĩa gắn ngoài (\textit{Persistent Volume}) đảm bảo an toàn dữ liệu khi khởi động lại container.
-    \item \textbf{Dịch vụ Đám mây Ngoại vi}: Cloud Object Storage (lưu trữ tệp ảnh nhị phân) và AI Analysis Engine (cung cấp API thẩm định).
-\end{itemize}
+Hệ thống được đóng gói để triển khai độc lập, tái lặp và nhất quán trên nền tảng công nghệ container hóa hiện đại. Cụ thể, trên môi trường máy chủ lưu trữ (\textit{Host Server}), hệ thống vận hành nền tảng Docker Engine song song với công cụ quản trị chuyên dụng SQL Server Management Studio (SSMS 22). Dịch vụ cơ sở dữ liệu được đóng gói chuẩn mực bên trong một SQL Server Container sử dụng image chính thức \texttt{mcr.microsoft.com/mssql/\allowbreak server:\allowbreak 2022-CU24-ubuntu-22.04}, mở cổng giao tiếp TCP 1433 và ánh xạ dữ liệu trực tiếp vào phân vùng ổ đĩa gắn ngoài (\textit{Persistent Volume}), qua đó loại trừ hoàn toàn nguy cơ thất thoát dữ liệu khi container khởi động lại hoặc nâng cấp. Ngoài ra, máy chủ cơ sở dữ liệu kết nối mạng an toàn với các dịch vụ đám mây ngoại vi bao gồm Cloud Object Storage nhằm lưu trữ tệp ảnh nhị phân và AI Analysis Engine nhằm cung cấp các giao diện API thẩm định thông minh.
 
 Mô hình kiến trúc tổng thể đa tầng và cơ chế tương tác với phân hệ AI được minh họa trong Hình~\ref{fig:c3_system_architecture}:
 
