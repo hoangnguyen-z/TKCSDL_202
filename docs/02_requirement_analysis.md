@@ -505,15 +505,16 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Configure a complete contest structure that is valid for publication and later operational flows.
 - Flow Mapping:
   - F01 Contest Planning and Configuration.
-- Trigger: Organizer initiates a new contest setup.
+- Trigger:
+  - Organizer initiates a new contest setup.
 - Preconditions:
+  - Actor has Organizer role.
+  - Contest code is available.
 - Authorization Constraint:
   - Only an actor operating in the Organizer role may create, configure, publish, open, close, or finalize a contest.
 - Key Business Invariants:
   - A contest cannot be published without at least one category and one judging round per category.
   - Scoring criteria remain scoped to their judging rounds and category context.
-  - Actor has Organizer role.
-  - Contest code is available.
 - Main Flow:
   1. Create contest in `DRAFT`.
   2. Add categories, judging rounds, criteria, and awards.
@@ -523,6 +524,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Duplicate contest code or invalid date windows block creation or update.
   - Missing category or judging round blocks publication.
 - Output:
+  - Published contest configuration.
 - Success Postconditions:
   - Contest configuration is persisted with categories, rounds, criteria, and awards.
   - The contest reaches a valid published lifecycle state.
@@ -530,13 +532,13 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Invalid schedules or incomplete configuration do not advance the contest into a publishable state.
 - Completion Criterion:
   - The use case completes when a valid contest configuration is published and available to downstream registration and asset-preparation flows.
-  - Published contest configuration.
 - Status Transition:
   - Contest: `DRAFT -> PUBLISHED -> OPEN -> CLOSED -> FINALIZED -> ARCHIVED`.
 - Data Affected:
   - Contest, Category, Judging Round, Scoring Criterion, Award Definition, Audit Log.
-- Related BR:
+- Related FR:
   - FR-001, FR-002, FR-003, FR-004, FR-005.
+- Related BR:
   - BR-O-001, BR-O-002, BR-P-007, BR-P-008.
 
 ### UC-02 Register For Contest
@@ -546,15 +548,16 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Establish one traceable participant registration and eligibility decision for a contest.
 - Flow Mapping:
   - F02 Participant Registration.
-- Trigger: Participant chooses a published contest.
+- Trigger:
+  - Participant chooses a published contest.
 - Preconditions:
+  - Contest registration is open.
+  - Participant account is active.
 - Authorization Constraint:
   - The Participant submits the registration; the Organizer owns the eligibility review decision.
 - Key Business Invariants:
   - A participant cannot hold duplicate active registrations for the same contest.
   - Registration actions must occur within the configured registration window.
-  - Contest registration is open.
-  - Participant account is active.
 - Main Flow:
   1. Participant submits registration.
   2. System records registration and eligibility as `PENDING`.
@@ -563,6 +566,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Duplicate registration, inactive account, or closed registration window blocks the request.
   - Ineligible registration is recorded as `REJECTED` with eligibility `INELIGIBLE`.
 - Output:
+  - Registration decision with `APPROVED`, `REJECTED`, or `WITHDRAWN` status.
 - Success Postconditions:
   - Registration status and eligibility status are explicitly persisted.
   - An approved and eligible registration becomes available to the submission flow.
@@ -570,16 +574,15 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Duplicate, late, inactive-account, or ineligible requests cannot produce an approved eligible registration.
 - Completion Criterion:
   - The use case completes when the registration reaches an explicit approved, rejected, or withdrawn outcome.
-  - Registration decision with `APPROVED`, `REJECTED`, or `WITHDRAWN` status.
 - Status Transition:
   - Registration: `PENDING -> APPROVED / REJECTED / WITHDRAWN`.
   - Eligibility: `PENDING -> ELIGIBLE / INELIGIBLE`.
 - Data Affected:
   - Registration, Audit Log.
+- Related FR:
+  - FR-007, FR-008, FR-009.
 - Related BR:
   - BR-O-003, BR-P-002, BR-P-003.
-  - BR-O-003, BR-P-002, BR-P-003
-  - FR-007, FR-008, FR-009.
 
 ### UC-03 Manage Film Assets
 
@@ -588,23 +591,15 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Build reusable and traceable film-roll and frame metadata before contest submission.
 - Flow Mapping:
   - F03 Film Roll and Frame Management.
+- Trigger:
+  - Participant prepares film metadata.
+- Preconditions:
+  - Participant profile exists.
 - Authorization Constraint:
   - Participants may create and maintain only film assets associated with their own participant profile.
 - Key Business Invariants:
   - Each film frame belongs to exactly one film roll.
   - Frame numbers are unique within a roll, while incomplete assets remain non-submittable.
-- Success Postconditions:
-  - Complete film rolls and frames are persisted in `READY` state.
-  - Film provenance remains traceable through roll, frame, technical reference data, and participant ownership.
-- Failure Guarantee:
-  - Duplicate frame numbering is blocked and incomplete assets remain in `DRAFT`.
-- Completion Criterion:
-  - The use case completes when at least one valid frame is ready for a future submission.
-- Related FR:
-  - FR-010, FR-011, FR-012.
-- Trigger: Participant prepares film metadata.
-- Preconditions:
-  - Participant profile exists.
 - Main Flow:
   1. Create a film roll in `DRAFT` with film stock, lab, format, and ISO metadata.
   2. Add frames under the roll and attach camera, lens, and scan references.
@@ -614,11 +609,20 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Incomplete metadata remains in `DRAFT` and cannot be submitted.
 - Output:
   - Reusable film roll and frame records in `READY` state.
+- Success Postconditions:
+  - Complete film rolls and frames are persisted in `READY` state.
+  - Film provenance remains traceable through roll, frame, technical reference data, and participant ownership.
+- Failure Guarantee:
+  - Duplicate frame numbering is blocked and incomplete assets remain in `DRAFT`.
+- Completion Criterion:
+  - The use case completes when at least one valid frame is ready for a future submission.
 - Status Transition:
   - Film Roll: `DRAFT -> READY -> ARCHIVED`.
   - Film Frame: `DRAFT -> READY -> SUBMITTED -> ARCHIVED`.
 - Data Affected:
   - Film Roll, Film Frame, reference data, Audit Log.
+- Related FR:
+  - FR-010, FR-011, FR-012.
 - Related BR:
   - BR-O-004, BR-P-004, BR-P-005.
 
@@ -629,11 +633,28 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Submit one eligible participant-owned frame to a contest category while preserving provenance and submission uniqueness.
 - Flow Mapping:
   - F04 Film Submission.
+- Trigger:
+  - Participant submits a frame to a category.
+- Preconditions:
+  - Registration is `APPROVED`.
+  - Eligibility is `ELIGIBLE`.
+  - Submission window is open.
 - Authorization Constraint:
   - A Participant may submit only through their own approved registration and may select only a frame they own.
 - Key Business Invariants:
   - One submission binds one approved registration, one frame, one contest, and one category.
   - The same frame cannot be submitted more than once within the same contest.
+- Main Flow:
+  1. Select contest, category, and frame.
+  2. Upload scanned image reference and statement.
+  3. Validate ownership, contest timing, category membership, and uniqueness.
+  4. Save submission as `PENDING_VERIFICATION`.
+- Alternative / Exception Flow:
+  - Frame already submitted to the same contest.
+  - Submission deadline has passed.
+  - Frame does not belong to the registered participant.
+- Output:
+  - Submission at `PENDING_VERIFICATION`.
 - Success Postconditions:
   - A valid submission is persisted at `PENDING_VERIFICATION`.
   - Registration, frame ownership, category, and contest provenance remain traceable from the submission.
@@ -641,73 +662,59 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Late, duplicate, ownership-mismatched, or otherwise invalid attempts do not create a valid submission.
 - Completion Criterion:
   - The use case completes when the submission enters the verification queue.
-- Related FR:
-  - FR-013, FR-014, FR-015, FR-016.
-- Trigger: Participant submits a frame to a category.
-- Preconditions:
-  - Registration `APPROVED` and eligibility `ELIGIBLE`.
-  - Submission window open.
-- Main Flow:
-  1. Select contest, category, frame.
-  2. Upload scanned image reference and statement.
-  3. Validate ownership, contest timing, category membership, and uniqueness.
-  4. Save submission as `PENDING_VERIFICATION`.
-- Alternative / Exception:
-  - Frame already submitted to same contest.
-  - Submission deadline passed.
-  - Frame does not belong to the registered participant.
-- Output:
-  - Submission at `PENDING_VERIFICATION`.
 - Status Transition:
   - Submission: `DRAFT -> PENDING_VERIFICATION`.
 - Data Affected:
   - Submission, Film Frame, Audit Log.
+- Related FR:
+  - FR-013, FR-014, FR-015, FR-016.
 - Related BR:
-  - BR-O-003, BR-O-005, BR-P-006, BR-P-009
+  - BR-O-003, BR-O-005, BR-P-006, BR-P-009.
 
 ### UC-05 Verify Submission
 
 - Primary Actor: Organizer
+- Supporting Actor: AI Analysis Service
 - Goal:
   - Produce a human-owned verification decision using submission evidence and advisory AI analysis.
 - Flow Mapping:
   - F05 Submission Verification.
+- Trigger:
+  - Submission enters the verification queue.
+- Preconditions:
+  - Submission status is `PENDING_VERIFICATION` or `NEEDS_CLARIFICATION`.
 - Authorization Constraint:
   - The Organizer owns the final verification decision; AI analysis has advisory authority only.
 - Key Business Invariants:
   - AI output cannot independently produce a terminal verification decision.
   - Verification must resolve to `VERIFIED`, `REJECTED`, or `NEEDS_CLARIFICATION`.
-- Success Postconditions:
-  - The Verification Case and Submission expose the same resolved verification outcome.
-  - AI evidence remains stored separately from the human decision.
-- Failure Guarantee:
-  - Missing evidence or suspicious conditions remain under clarification/manual review rather than being silently approved.
-- Completion Criterion:
-  - The use case completes when an Organizer records an explicit verification outcome.
-- Related FR:
-  - FR-017, FR-018, FR-019.
-- Supporting Actor: AI Analysis Service
-- Trigger: Submission enters verification queue.
-- Preconditions:
-  - Submission status is `PENDING_VERIFICATION` or `NEEDS_CLARIFICATION`.
 - Main Flow:
   1. Review completeness and technical checks.
   2. Record and review advisory AI analysis results.
   3. Organizer resolves the case as `VERIFIED`, `REJECTED`, or `NEEDS_CLARIFICATION`.
   4. Synchronize the submission status and audit the human decision.
-- Alternative / Exception:
-  - Suspicious case remains under manual review.
-  - Missing or incomplete technical metadata results in a clarification request before verification can be completed.
+- Alternative / Exception Flow:
+  - Suspicious cases remain under manual review.
+  - Missing or incomplete technical metadata results in a clarification request.
   - AI output alone cannot change the verification decision.
 - Output:
   - Verification decision and updated submission status.
+- Success Postconditions:
+  - Verification Case and Submission expose the same resolved verification outcome.
+  - AI evidence remains stored separately from the human decision.
+- Failure Guarantee:
+  - Missing evidence or suspicious conditions remain under clarification or manual review rather than being silently approved.
+- Completion Criterion:
+  - The use case completes when an Organizer records an explicit verification outcome.
 - Status Transition:
   - Verification Case: `PENDING -> UNDER_REVIEW -> VERIFIED / REJECTED / NEEDS_CLARIFICATION`.
   - Submission: `PENDING_VERIFICATION -> VERIFIED / REJECTED / NEEDS_CLARIFICATION`.
 - Data Affected:
-  - Verification Case, AI Analysis Result, Submission, Audit Log
+  - Verification Case, AI Analysis Result, Submission, Audit Log.
+- Related FR:
+  - FR-017, FR-018, FR-019.
 - Related BR:
-  - BR-O-006, BR-O-007, BR-P-010, BR-P-011
+  - BR-O-006, BR-O-007, BR-P-010, BR-P-011.
 
 ### UC-06 Evaluate Submission
 
@@ -716,11 +723,27 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Capture one judge's criterion-level evaluation for an assigned verified submission in a judging round.
 - Flow Mapping:
   - F06 Judge Assignment and Evaluation.
+- Trigger:
+  - Judge opens assigned round workload.
+- Preconditions:
+  - Judge is assigned to the round.
+  - Submission is verified.
 - Authorization Constraint:
   - A Judge may evaluate only submissions available through their assigned round workload.
 - Key Business Invariants:
   - A Judge cannot evaluate the same submission more than once in the same round.
   - A submitted evaluation must contain valid criterion-level scoring and a consistent total score.
+- Main Flow:
+  1. Open assigned submission.
+  2. Enter criterion-level scores and comments.
+  3. Submit evaluation; the database persists criterion scores and recalculates the total.
+  4. Mark assignment and evaluation as `SUBMITTED`; lock the evaluation when required.
+- Alternative / Exception Flow:
+  - Duplicate evaluation in the same round is blocked.
+  - Late round submission is blocked.
+  - Submission outside the judge's assigned workload is blocked.
+- Output:
+  - Evaluation with score breakdown at `SUBMITTED`.
 - Success Postconditions:
   - Criterion scores and evaluation total are persisted.
   - Assignment and evaluation lifecycle state reflect successful submission.
@@ -728,30 +751,15 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Duplicate, late, or out-of-scope evaluations are blocked without replacing an existing valid evaluation.
 - Completion Criterion:
   - The use case completes when the evaluation reaches `SUBMITTED` and is available to result aggregation.
-- Related FR:
-  - FR-020, FR-021, FR-022, FR-023, FR-024.
-- Trigger: Judge opens assigned round workload.
-- Preconditions:
-  - Judge is assigned to the round.
-  - Submission is verified.
-- Main Flow:
-  1. Open assigned submission.
-  2. Enter criterion-level scores and comments.
-  3. Submit evaluation; the database persists criterion scores and recalculates the total.
-  4. Mark assignment and evaluation as `SUBMITTED`; lock the evaluation when required.
-- Alternative / Exception:
-  - Duplicate evaluation in same round is blocked.
-  - Late round submission blocked.
-  - Submission outside the judge's assigned workload is blocked.
-- Output:
-  - Evaluation with score breakdown at `SUBMITTED`.
 - Status Transition:
   - Judge Assignment: `ASSIGNED -> IN_PROGRESS -> SUBMITTED / CANCELLED`.
   - Evaluation: `DRAFT -> SUBMITTED -> LOCKED`.
 - Data Affected:
-  - Evaluation, Evaluation Score, Audit Log
+  - Evaluation, Evaluation Score, Audit Log.
+- Related FR:
+  - FR-020, FR-021, FR-022, FR-023, FR-024.
 - Related BR:
-  - BR-O-008, BR-O-009, BR-P-012, BR-P-013
+  - BR-O-008, BR-O-009, BR-P-012, BR-P-013.
 
 ### UC-07 Finalize Results
 
@@ -760,11 +768,26 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Convert completed judging evidence into controlled final rankings, awards, and published results.
 - Flow Mapping:
   - F07 Ranking and Result Finalization.
+- Trigger:
+  - Final-round judging is complete.
+- Preconditions:
+  - Required evaluations are submitted.
 - Authorization Constraint:
   - The Organizer controls result finalization and publication; post-finalization intervention follows the approved administrative and audit path.
 - Key Business Invariants:
   - Results cannot be finalized before required final-round evaluations are complete.
   - Award assignments must remain consistent with finalized result and contest-category scope.
+- Main Flow:
+  1. Review score aggregation.
+  2. Resolve ties if needed.
+  3. Create or update results in `DRAFT`.
+  4. Finalize results as `FINALIZED`, assign awards, and publish as `PUBLISHED`.
+- Alternative / Exception Flow:
+  - Missing evaluations block finalization.
+  - Invalid ranking or award/category mismatch blocks finalization.
+  - A finalized result requires the approved administrative and audit path for any intervention.
+- Output:
+  - Final results and awards at `FINALIZED`, followed by `PUBLISHED`.
 - Success Postconditions:
   - Ranked results reach `FINALIZED` and may subsequently reach `PUBLISHED`.
   - Valid award assignments are linked to the corresponding finalized results.
@@ -772,28 +795,14 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Missing evaluations, unresolved ranking conflicts, or invalid award mappings leave results unfinalized.
 - Completion Criterion:
   - The use case completes when final results and awards are approved and published.
-- Related FR:
-  - FR-025, FR-026, FR-027.
-- Trigger: Final round judging is complete.
-- Preconditions:
-  - Required evaluations are submitted.
-- Main Flow:
-  1. Review score aggregation.
-  2. Resolve ties if needed.
-  3. Create or update results in `DRAFT`.
-  4. Finalize results as `FINALIZED`, assign awards, and publish as `PUBLISHED`.
-- Alternative / Exception:
-  - Missing evaluations block finalization.
-  - Invalid ranking or award/category mismatch blocks finalization.
-  - A finalized result requires the approved administrative and audit path for any intervention.
-- Output:
-  - Final results and awards at `FINALIZED`, followed by `PUBLISHED`.
 - Status Transition:
   - Result: `DRAFT -> FINALIZED -> PUBLISHED`.
 - Data Affected:
-  - Result, Award Assignment, Audit Log
+  - Result, Award Assignment, Audit Log.
+- Related FR:
+  - FR-025, FR-026, FR-027.
 - Related BR:
-  - BR-O-010, BR-P-014, BR-P-015, BR-P-016
+  - BR-O-010, BR-P-014, BR-P-015, BR-P-016.
 
 ### UC-08 Archive Winning Work
 
@@ -802,11 +811,25 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Preserve finalized winning or selected work as a stable historical snapshot for long-term reuse.
 - Flow Mapping:
   - F08 Digital Archive.
+- Trigger:
+  - Published result is selected for archive.
+- Preconditions:
+  - Result is finalized.
 - Authorization Constraint:
   - The Organizer may archive only work backed by a finalized result.
 - Key Business Invariants:
   - Archive items cannot be created from non-finalized results.
   - Historical snapshot data remains protected from destructive upstream changes.
+- Main Flow:
+  1. Select finalized result.
+  2. Snapshot metadata and judging context.
+  3. Store the immutable archive item as `ARCHIVED`.
+- Alternative / Exception Flow:
+  - Archive creation is blocked if the result is not finalized.
+  - Duplicate archive item blocks creation.
+  - Archived historical data is not hard-deleted through routine operations.
+- Output:
+  - Immutable archive item at `ARCHIVED`.
 - Success Postconditions:
   - An immutable archive item is created in `ARCHIVED` state.
   - Historical contest, participant, technical, and judging context remains available for future lookup.
@@ -814,26 +837,14 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Premature, duplicate, or destructive archive operations are blocked.
 - Completion Criterion:
   - The use case completes when the stable archive snapshot is available for search and historical reuse.
-- Related FR:
-  - FR-028, FR-029.
-- Trigger: Published result is selected for archive.
-- Preconditions:
-  - Result is finalized.
-- Main Flow:
-  1. Select finalized result.
-  2. Snapshot metadata and judging context.
-  3. Store the immutable archive item as `ARCHIVED`.
-- Alternative / Exception:
-  - Archive blocked if result is not finalized.
-  - Duplicate archive item blocks creation; archived data is not updated or hard-deleted.
-- Output:
-  - Immutable archive item at `ARCHIVED`.
 - Status Transition:
   - Archive Item: `ARCHIVED -> RETIRED`.
 - Data Affected:
-  - Archive Item, Audit Log
+  - Archive Item, Audit Log.
+- Related FR:
+  - FR-028, FR-029.
 - Related BR:
-  - BR-O-011, BR-P-017, BR-P-018
+  - BR-O-011, BR-P-017, BR-P-018.
 
 ## 13. Requirement Quality Review
 
