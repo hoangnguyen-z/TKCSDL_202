@@ -18,7 +18,9 @@ BEGIN
         @contest_id INT,
         @category_contest_id INT,
         @participant_id INT,
+        @actor_user_id INT,
         @frame_owner_participant_id INT,
+        @frame_status NVARCHAR(20),
         @registration_status NVARCHAR(20),
         @eligibility_status NVARCHAR(20),
         @submission_open_at DATETIME2(0),
@@ -44,6 +46,10 @@ BEGIN
     IF @registration_status <> N'APPROVED' OR @eligibility_status <> N'ELIGIBLE'
         THROW 51001, 'Registration is not approved and eligible for submission.', 1;
 
+    SELECT @actor_user_id = user_id
+    FROM participant.ParticipantProfile
+    WHERE participant_id = @participant_id;
+
     IF @now < @submission_open_at OR @now > @submission_close_at
         THROW 51002, 'Submission is outside the contest submission window.', 1;
 
@@ -57,7 +63,9 @@ BEGIN
     IF @category_contest_id <> @contest_id
         THROW 51004, 'Contest category does not belong to the registration contest.', 1;
 
-    SELECT @frame_owner_participant_id = fr.participant_id
+    SELECT
+        @frame_owner_participant_id = fr.participant_id,
+        @frame_status = ff.frame_status
     FROM film.FilmFrame AS ff
     INNER JOIN film.FilmRoll AS fr
         ON fr.roll_id = ff.roll_id
@@ -68,6 +76,9 @@ BEGIN
 
     IF @frame_owner_participant_id <> @participant_id
         THROW 51006, 'Film frame does not belong to the participant registration owner.', 1;
+
+    IF @frame_status <> N'READY'
+        THROW 51008, 'Film frame must be READY before it can be submitted.', 1;
 
     IF EXISTS (
         SELECT 1
@@ -152,7 +163,7 @@ BEGIN
         N'submission.Submission',
         @submission_id,
         N'CREATE_SUBMISSION',
-        NULL,
+        @actor_user_id,
         @now,
         N'Submission created and placed into verification queue.',
         CONCAT(N'{"registration_id":', @registration_id, N',"category_id":', @category_id, N',"frame_id":', @frame_id, N'}')

@@ -3,7 +3,7 @@ GO
 
 CREATE OR ALTER TRIGGER judging.TR_EvaluationScore_AIU_RecalcEvaluation
 ON judging.EvaluationScore
-AFTER INSERT, UPDATE
+AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -27,6 +27,8 @@ BEGIN
     ;WITH affected AS
     (
         SELECT evaluation_id FROM inserted
+        UNION
+        SELECT evaluation_id FROM deleted
     )
     UPDATE e
     SET
@@ -36,11 +38,15 @@ BEGIN
     INNER JOIN
     (
         SELECT
-            es.evaluation_id,
-            CAST(SUM(es.score_value) AS DECIMAL(6,2)) AS total_score
-        FROM judging.EvaluationScore AS es
-        WHERE es.evaluation_id IN (SELECT evaluation_id FROM affected)
-        GROUP BY es.evaluation_id
+            e.evaluation_id,
+            CAST(COALESCE(SUM(es.score_value * c.weight_percent / 100.0), 0) AS DECIMAL(6,2)) AS total_score
+        FROM judging.Evaluation AS e
+        LEFT JOIN judging.EvaluationScore AS es
+            ON es.evaluation_id = e.evaluation_id
+        LEFT JOIN contest.ScoringCriterion AS c
+            ON c.criterion_id = es.criterion_id
+        WHERE e.evaluation_id IN (SELECT evaluation_id FROM affected)
+        GROUP BY e.evaluation_id
     ) AS src
         ON src.evaluation_id = e.evaluation_id;
 END;

@@ -10,7 +10,7 @@ AS
 BEGIN
     DECLARE @max_total DECIMAL(6,2);
 
-    SELECT @max_total = COALESCE(SUM(score_max_value), 0)
+    SELECT @max_total = COALESCE(SUM(score_max_value * weight_percent / 100.0), 0)
     FROM contest.ScoringCriterion
     WHERE round_id = @round_id
       AND criterion_status = N'ACTIVE';
