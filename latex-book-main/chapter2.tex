@@ -2,6 +2,8 @@
 
 Chương này trình bày chi tiết kết quả phân tích quy trình nghiệp vụ và đặc tả toàn diện các yêu cầu hệ thống. Việc mô hình hóa tường minh từ quy trình hiện tại (\textit{AS-IS}) sang quy trình mục tiêu (\textit{TO-BE}), kết hợp với danh mục yêu cầu chức năng (\textit{FR}), yêu cầu phi chức năng (\textit{NFR}), quy tắc nghiệp vụ (\textit{Business Rules}) và đặc tả các trường hợp sử dụng (\textit{Use Case Specifications}) là cơ sở pháp lý và kỹ thuật vững chắc để định hình kiến trúc hệ thống và cơ sở dữ liệu ở các phần tiếp theo.
 
+\paragraph{Quy ước trạng thái và ranh giới thực thi} Trong chương này, các giá trị trạng thái có dấu gạch dưới như \texttt{PENDING\_VERIFICATION} và \texttt{NEEDS\_CLARIFICATION} là giá trị được lưu trong SQL Server; giao diện có thể hiển thị dưới dạng ``Pending Verification'' hoặc ``Needs Clarification''. Các kiểm tra quyền, phạm vi thao tác và tích hợp dịch vụ ngoài thuộc application/workflow layer; các kiểm tra toàn vẹn dữ liệu, điểm số và giao dịch được thực thi ở SQL Server khi phù hợp.
+
 % ----------------------------------------------------------------------
 \section{Mô hình hóa Quy trình Hiện tại (AS-IS) và Điểm nghẽn}
 \label{s:c2_asis}
@@ -27,11 +29,11 @@ Hệ thống mục tiêu (\textit{TO-BE Platform}) hợp nhất toàn bộ vòng
     \item \textbf{F01 -- Lập kế hoạch \& Cấu hình Cuộc thi (Contest Planning \& Configuration)}: Ban tổ chức thiết lập thông tin cuộc thi, các hạng mục (\textit{categories}), các vòng chấm (\textit{judging rounds}), tiêu chí và trọng số chấm điểm (\textit{criteria \& weights}), cơ cấu giải thưởng và lịch trình.
     \item \textbf{F02 -- Đăng ký Tham gia (Participant Registration)}: Thí sinh đăng ký tham gia cuộc thi trong thời hạn mở đăng ký. Hệ thống tự động kiểm tra điều kiện tiên quyết và ghi nhận trạng thái (\texttt{PENDING} $\rightarrow$ \texttt{APPROVED}/\texttt{REJECTED}).
     \item \textbf{F03 -- Quản lý Tài sản Phim (Film Roll \& Frame Management)}: Thí sinh tạo hồ sơ cuộn phim (chọn loại film stock, ISO, phòng lab, máy ảnh, ống kính) và định nghĩa các khung hình (\textit{frames}) đánh số thứ tự từ cuộn phim.
-    \item \textbf{F04 -- Nộp Bài Dự thi (Film Submission)}: Thí sinh chọn khung hình hợp lệ nộp vào hạng mục cuộc thi kèm theo tệp ảnh scan chất lượng cao và lời tựa nghệ thuật trước thời hạn quy định.
+    \item \textbf{F04 -- Nộp Bài Dự thi (Film Submission)}: Thí sinh chọn khung hình ở trạng thái \texttt{READY}, thuộc đúng participant, nộp vào hạng mục cuộc thi kèm URI tham chiếu tới tệp ảnh scan và lời tựa nghệ thuật trước thời hạn quy định.
     \item \textbf{F05 -- Xác minh Bài thi \& Hỗ trợ AI (Submission Verification)}: Hệ thống kiểm tra tính đầy đủ của thông số kỹ thuật, đồng thời tiếp nhận kết quả advisory từ module AI phân tích độ tương đồng ảnh (\textit{Similarity}) và nhận diện ảnh AI (\textit{AI-generated}). Ban tổ chức dựa trên kết quả và cảnh báo để ra quyết định \texttt{VERIFIED}, \texttt{REJECTED} hoặc \texttt{NEEDS\_CLARIFICATION}.
     \item \textbf{F06 -- Phân công Giám khảo \& Chấm thi (Judge Assignment \& Evaluation)}: Ban tổ chức phân công giám khảo vào từng vòng chấm. Giám khảo truy cập danh sách bài thi được phân công, chấm điểm chi tiết theo từng tiêu chí, ghi nhận xét chuyên môn và nộp phiếu chấm.
-    \item \textbf{F07 -- Tổng hợp Điểm, Xếp hạng \& Trao giải (Ranking \& Result Finalization)}: Hệ thống tự động tính toán tổng điểm có trọng số, lập danh sách xếp hạng theo hạng mục. Ban tổ chức duyệt kết quả, gán giải thưởng và công bố chính thức.
-    \item \textbf{F08 -- Lưu trữ Di sản Số (Digital Archive)}: Các tác phẩm đoạt giải được hệ thống tự động chụp bản sao lịch sử (\textit{snapshot}) đầy đủ siêu dữ liệu kỹ thuật và kết quả đánh giá để bảo tồn vĩnh viễn trong kho lưu trữ số phục vụ triển lãm và nghiên cứu.
+    \item \textbf{F07 -- Tổng hợp Điểm, Xếp hạng \& Trao giải (Ranking \& Result Finalization)}: Hệ thống tính toán tổng điểm có trọng số và lập danh sách xếp hạng theo hạng mục. Thủ tục finalization tạo kết quả đã khóa; Ban tổ chức thực hiện gán giải và công bố qua các bước workflow riêng.
+    \item \textbf{F08 -- Lưu trữ Di sản Số (Digital Archive)}: Sau khi kết quả được finalise, workflow được ủy quyền chụp bản sao lịch sử (\textit{snapshot}) đầy đủ siêu dữ liệu kỹ thuật và kết quả đánh giá để bảo tồn trong kho lưu trữ số. CSDL lưu snapshot và URI tham chiếu; object storage thực tế nằm ngoài scope hiện tại.
 \end{enumerate}
 
 \begin{figure}[htbp]
@@ -102,11 +104,20 @@ Hệ thống được thiết kế với 31 yêu cầu chức năng (\textit{FR}
     \item \textbf{NFR-004 (Toàn vẹn Dữ liệu)}: Ràng buộc toàn vẹn dữ liệu (\textit{Data Integrity}) phải được thực thi ở mức tối đa bằng khóa chính (PK), khóa ngoại (FK), ràng buộc duy nhất (UNIQUE) và ràng buộc miền giá trị (CHECK).
     \item \textbf{NFR-005 (An toàn \& Phân quyền)}: Phân định rạch ròi quyền hạn giữa các vai trò người dùng, ngăn chặn truy cập trái phép vào các bài thi hoặc bảng điểm chưa công bố.
     \item \textbf{NFR-006 (Khả năng Kiểm toán)}: Mọi giao dịch quan trọng (duyệt bài, nộp điểm, khóa kết quả) phải lưu vết thời gian (\texttt{created\_at}, \texttt{updated\_at}) và người thực hiện (\texttt{actor\_user\_id}).
-    \item \textbf{NFR-007 (Xử lý Đồng thời)}: Hệ thống hỗ trợ nhiều cuộc thi diễn ra đồng thời và hàng chục giám khảo chấm điểm đồng thời mà không xảy ra xung đột khóa chết (\textit{deadlock}).
+    \item \textbf{NFR-007 (Xử lý Đồng thời)}: Hệ thống hỗ trợ nhiều cuộc thi diễn ra đồng thời và hàng chục giám khảo chấm điểm đồng thời, bảo toàn tính toàn vẹn giao dịch và giảm thiểu rủi ro xung đột khóa chết (\textit{deadlock}).
     \item \textbf{NFR-008 (Nguyên tắc AI Minh bạch)}: Dữ liệu AI sinh ra phải lưu kèm mã định danh mô hình, phiên bản, độ tin cậy và hoàn toàn tách biệt khỏi quyết định nghiệp vụ của con người.
     \item \textbf{NFR-009 (Chuẩn hóa \& Dễ bảo trì)}: CSDL đạt chuẩn hóa 3NF ở mô hình logic, có từ điển dữ liệu chi tiết và ma trận truy vết yêu cầu rõ ràng.
-    \item \textbf{NFR-010 (Lưu trữ Hình ảnh Hiệu quả)}: CSDL chỉ lưu trữ chuỗi đường dẫn URI/URL và mã băm SHA-256 của tệp ảnh, không lưu trực tiếp dữ liệu nhị phân ảnh lớn trong bảng giao dịch.
+    \item \textbf{NFR-010 (Lưu trữ Hình ảnh Hiệu quả)}: CSDL chỉ lưu trữ chuỗi đường dẫn URI/URL và mã băm SHA-256 khi có dữ liệu băm, không lưu trực tiếp dữ liệu nhị phân ảnh lớn trong bảng giao dịch.
+    \item \textbf{NFR-011 (Khả năng lặp lại)}: Quy trình khởi tạo và kiểm thử phải có thể lặp lại cho mục đích đánh giá học thuật và demo.
+    \item \textbf{NFR-012 (Tính nhất quán tài liệu)}: Requirement, architecture, database artifact và test phải duy trì cùng hệ mã, status và traceability.
 \end{itemize}
+
+\paragraph{Định nghĩa công thức tính điểm có trọng số}
+Với điểm thành phần và trọng số phần trăm của từng tiêu chí, tổng điểm của một phiếu chấm được xác định bởi:
+\[
+\text{Total Score} = \sum_{i=1}^{n}\frac{\text{score}_i \times \text{weight}_i}{100}
+\]
+Khi nhiều giám khảo chấm cùng một bài ở vòng chung kết, điểm cuối cùng là trung bình của các tổng điểm đã nộp. Trường hợp bằng điểm được xử lý bằng quyết định minh bạch của Ban tổ chức theo chính sách cuộc thi.
 
 % ----------------------------------------------------------------------
 \section{Danh mục Quy tắc Nghiệp vụ (Business Rules Catalog)}
@@ -189,11 +200,11 @@ Dưới đây là đặc tả chi tiết 4 trường hợp sử dụng trung tâ
 \subsection{UC-04: Nộp Bài Dự thi Ảnh Phim (Submit Film Entry)}
 \begin{itemize}
     \item \textbf{Tác nhân chính}: Thí sinh (Participant).
-    \item \textbf{Điều kiện tiên quyết}: Thí sinh có đơn đăng ký \texttt{APPROVED} và eligibility \texttt{ELIGIBLE}; thời gian nộp bài đang mở; khung hình phim ở trạng thái \texttt{READY}.
+    \item \textbf{Điều kiện tiên quyết}: Thí sinh có đơn đăng ký \texttt{APPROVED} và eligibility \texttt{ELIGIBLE}; thời gian nộp bài đang mở; khung hình phim ở trạng thái \texttt{READY} và thuộc đúng thí sinh.
     \item \textbf{Luồng sự kiện chính}:
     \begin{enumerate}
         \item Thí sinh chọn cuộc thi, hạng mục và chọn khung hình phim (\textit{Film Frame}) từ cuộn phim của mình.
-        \item Tải lên tệp ảnh scan độ phân giải cao và nhập lời tựa nghệ thuật (\textit{Statement}).
+        \item Lưu URI tham chiếu tới tệp ảnh scan độ phân giải cao và nhập lời tựa nghệ thuật (\textit{Statement}).
         \item Hệ thống kiểm tra thời hạn (BR-O-003) và kiểm tra tính duy nhất của khung hình trong cuộc thi (BR-P-006).
         \item Hệ thống lưu bài thi ở trạng thái \texttt{PENDING\_VERIFICATION} và ghi nhật ký kiểm toán.
     \end{enumerate}
@@ -216,7 +227,7 @@ Dưới đây là đặc tả chi tiết 4 trường hợp sử dụng trung tâ
 \subsection{UC-06: Chấm điểm Bài thi (Evaluate Submission)}
 \begin{itemize}
     \item \textbf{Tác nhân chính}: Giám khảo (Judge).
-    \item \textbf{Điều kiện tiên quyết}: Giám khảo đã được phân công vào vòng chấm thi; bài thi ở trạng thái \texttt{VERIFIED}; vòng chấm đang trong thời gian hoạt động.
+    \item \textbf{Điều kiện tiên quyết}: Giám khảo đã được phân công vào vòng chấm thi; bài thi ở trạng thái \texttt{VERIFIED}; vòng chấm đang trong thời gian hoạt động và yêu cầu nằm trong evaluation window.
     \item \textbf{Luồng sự kiện chính}:
     \begin{enumerate}
         \item Giám khảo mở danh sách bài thi được phân công trong vòng.
@@ -225,6 +236,7 @@ Dưới đây là đặc tả chi tiết 4 trường hợp sử dụng trung tâ
         \item Nộp phiếu chấm (\texttt{Submit Evaluation}). Hệ thống kiểm tra tính hợp lệ của điểm số và tính toán tổng điểm có trọng số.
     \end{enumerate}
     \item \textbf{Luồng ngoại lệ}: Giám khảo không thể tạo phiếu chấm thứ hai cho cùng một bài thi trong cùng một vòng chấm (BR-O-009).
+    \item \textbf{Ranh giới thực thi}: Application/workflow layer kiểm tra role, assignment scope và evaluation window; SQL Server kiểm tra score completeness, score range và tính tổng điểm.
 \end{itemize}
 
 \subsection{Baseline đầy đủ cho UC-01 đến UC-08}
@@ -240,10 +252,10 @@ Dưới đây là đặc tả chi tiết 4 trường hợp sử dụng trung tâ
 \textbf{UC-01} & Organizer cấu hình cuộc thi & Tài khoản active, có role Organizer & Tạo cấu hình, category, round, criterion, award; thiếu cấu hình hoặc sai date thì chặn publish & Cấu hình cuộc thi; \texttt{DRAFT -> PUBLISHED -> OPEN}; Contest, Category, Round, Criterion, Award; BR-O-001, BR-O-002 \\
 \textbf{UC-02} & Participant đăng ký & Account active, registration window mở & Gửi registration, Organizer xét duyệt; trùng hoặc quá hạn thì chặn & Registration; \texttt{PENDING -> APPROVED/REJECTED/WITHDRAWN}; Registration, AuditLog; BR-O-003, BR-P-002, BR-P-003 \\
 \textbf{UC-03} & Participant quản lý film asset & ParticipantProfile tồn tại & Tạo roll, frame và metadata; trùng frame hoặc thiếu metadata thì giữ \texttt{DRAFT} & Film asset sẵn sàng; \texttt{DRAFT -> READY -> SUBMITTED/ARCHIVED}; FilmRoll, FilmFrame; BR-O-004, BR-P-004, BR-P-005 \\
-\textbf{UC-04} & Participant nộp frame & Registration \texttt{APPROVED}/\texttt{ELIGIBLE}, frame \texttt{READY}, submission window mở & Chọn category, lưu URI scan và statement; quá hạn, sai ownership hoặc trùng frame thì rollback & Submission; \texttt{DRAFT -> PENDING\_VERIFICATION}; Submission, AuditLog; BR-O-003, BR-O-005, BR-P-006, BR-P-009 \\
+\textbf{UC-04} & Participant nộp frame & Registration \texttt{APPROVED}/\texttt{ELIGIBLE}, frame \texttt{READY} thuộc participant, submission window mở & Chọn category, lưu URI scan và statement; quá hạn, sai ownership hoặc trùng frame thì rollback & Submission; \texttt{PENDING\_VERIFICATION}; Submission, AuditLog; BR-O-003, BR-O-005, BR-P-006, BR-P-009 \\
 \textbf{UC-05} & Organizer xác minh submission & Submission \texttt{PENDING\_VERIFICATION} hoặc \texttt{NEEDS\_CLARIFICATION} & Kiểm tra metadata, xem AI advisory và quyết định thủ công; thiếu dữ liệu thì yêu cầu clarification & Verification decision; \texttt{PENDING -> UNDER\_REVIEW -> VERIFIED/REJECTED/NEEDS\_CLARIFICATION}; VerificationCase, AIAnalysisResult, Submission; BR-O-006, BR-O-007, BR-P-010, BR-P-011 \\
 \textbf{UC-06} & Judge đánh giá & Assignment hợp lệ, submission \texttt{VERIFIED}, round mở & Nhập criterion scores và comment; ngoài workload, trùng evaluation hoặc quá hạn thì chặn & Evaluation; \texttt{DRAFT -> SUBMITTED -> LOCKED}; JudgeAssignment, Evaluation, EvaluationScore, AuditLog; BR-O-008, BR-O-009, BR-P-012, BR-P-013 \\
-\textbf{UC-07} & Organizer finalize result & Final round đủ evaluation \texttt{SUBMITTED}/\texttt{LOCKED} & Aggregate score, xử lý tie, gán award và publish; thiếu evaluation thì chặn & Result; \texttt{DRAFT -> FINALIZED -> PUBLISHED}; Result, AwardAssignment, AuditLog; BR-O-010, BR-P-014, BR-P-015, BR-P-016 \\
+\textbf{UC-07} & Organizer finalize result & Final round đủ evaluation \texttt{SUBMITTED}/\texttt{LOCKED} & Procedure aggregate/finalize result; workflow xử lý tie, gán award và publish; thiếu evaluation thì chặn & Result; \texttt{FINALIZED -> PUBLISHED}; Result, AwardAssignment, AuditLog; BR-O-010, BR-P-014, BR-P-015, BR-P-016 \\
 \textbf{UC-08} & Organizer archive result & Result \texttt{FINALIZED} và đủ điều kiện archive & Snapshot metadata và judging context; chưa finalized thì chặn, snapshot không sửa & Archive item; \texttt{ARCHIVED -> RETIRED}; ArchiveItem, AuditLog; BR-O-011, BR-P-017, BR-P-018 \\
 \bottomrule
 \end{tabular}

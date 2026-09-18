@@ -144,6 +144,8 @@ The future-state system centralizes contest planning, participant registration, 
 
 Each flow below includes trigger, precondition, main flow, alternatives, outputs, status transitions, data affected, and related business rules.
 
+Status values are shown in SQL Server form when they name stored values, for example `PENDING_VERIFICATION` and `NEEDS_CLARIFICATION`. Application screens may render the same values as `Pending Verification` and `Needs Clarification`.
+
 ### F01. Contest Planning and Configuration
 
 - Trigger: Organizer starts a new contest cycle.
@@ -270,6 +272,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Preconditions:
   - Contest and round are active.
   - Submissions are verified.
+  - The evaluation request is within the round evaluation window.
 - Main Flow:
   1. Organizer assigns judges to a round.
   2. Judge opens assigned queue.
@@ -279,6 +282,9 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Alternative / Exception Flow:
   - Judge cannot evaluate a submission twice in the same round.
   - Evaluation outside round deadline is blocked.
+- Enforcement boundary:
+  - The application/workflow layer checks the judge's role, assignment scope, and evaluation window before calling the submission procedure.
+  - SQL Server validates assignment existence, active criteria, criterion scores, and the derived total before submission.
 - Output:
   - Persisted evaluations and score breakdowns.
 - Status Transition:
@@ -297,9 +303,8 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Main Flow:
   1. System aggregates final round scores.
   2. Organizer reviews ranking and tie-breaking evidence.
-  3. Organizer finalizes category results.
-  4. Organizer assigns awards.
-  5. Organizer publishes results.
+  3. Organizer finalizes category results through the result finalization procedure.
+  4. Organizer assigns awards and publishes results through the result workflow.
 - Alternative / Exception Flow:
   - Missing evaluations block finalization.
   - Ties require explicit organizer decision or rule-based tie-break.
@@ -309,6 +314,9 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Result: `DRAFT -> FINALIZED -> PUBLISHED`
 - Data Affected:
   - Result, Award Assignment, Audit Log
+- Enforcement boundary:
+  - `result.usp_finalize_results_for_round` creates finalized ranking rows only after the final-round completeness checks pass.
+  - Award assignment and public publication remain separate workflow operations so they can be authorized and audited independently.
 - Related BR:
   - BR-O-010, BR-P-014, BR-P-015, BR-P-016
 
@@ -319,7 +327,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Result is finalized.
 - Main Flow:
   1. Organizer selects eligible result(s) for archival.
-  2. System snapshots key contest, participant, technical, and judging metadata.
+  2. The archive workflow snapshots key contest, participant, technical, and judging metadata.
   3. Archive item becomes searchable for future reuse.
 - Alternative / Exception Flow:
   - Archive creation is blocked before result finalization.
@@ -330,6 +338,9 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Archive Item: `ARCHIVED -> RETIRED`
 - Data Affected:
   - Archive Item, Audit Log
+- Enforcement boundary:
+  - Archive creation must be performed by an authorized archive workflow and must verify that the source result is `FINALIZED`.
+  - Object storage and real AI services are external architectural boundaries; the database stores their references and advisory outputs.
 - Related BR:
   - BR-O-011, BR-P-017, BR-P-018
 
@@ -379,12 +390,20 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 | NFR-004 | The design shall enforce data integrity through keys, constraints, and controlled referential actions where feasible. |
 | NFR-005 | The design shall support role-based access control at the application and operational model level. |
 | NFR-006 | The design shall preserve auditability for key lifecycle changes. |
-| NFR-007 | The design shall support concurrent contest operations and multiple active judging activities. |
+| NFR-007 | The solution shall support concurrent contest operations and multiple active judging activities while preserving transaction integrity and minimizing deadlock risk. |
 | NFR-008 | The design shall separate advisory AI outputs from final human business decisions. |
 | NFR-009 | The database design shall remain understandable, normalized, and traceable to requirements. |
 | NFR-010 | External image binaries shall not be stored directly in the database by default; URI or storage references shall be stored instead. |
 | NFR-011 | The setup and initialization process shall be repeatable for academic review and demo purposes. |
 | NFR-012 | The project documentation shall remain consistent across requirement, architecture, database, and implementation artifacts. |
+
+### Weighted scoring definition
+
+For criterion scores and percentage weights, the persisted evaluation total is defined as:
+
+`Total Score = SUM(score_value * weight_percent / 100)`
+
+When several judges evaluate the same submission in the final round, the final score is the average of the submitted evaluation totals. Tie resolution remains an explicit organizer decision according to the approved contest policy.
 
 ## 11. Business Rules
 
@@ -530,6 +549,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Preconditions:
   - Registration `APPROVED` and eligibility `ELIGIBLE`.
   - Submission window open.
+  - Frame is `READY` and belongs to the registered participant.
 - Main Flow:
   1. Select contest, category, frame.
   2. Upload scanned image reference and statement.
@@ -542,7 +562,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Output:
   - Submission at `PENDING_VERIFICATION`.
 - Status Transition:
-  - Submission: `DRAFT -> PENDING_VERIFICATION`.
+  - Submission: `PENDING_VERIFICATION` after successful creation.
 - Data Affected:
   - Submission, Film Frame, Audit Log.
 - Related BR:
@@ -581,6 +601,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 - Preconditions:
   - Judge is assigned to the round.
   - Submission is verified.
+  - The round is open and the evaluation request is within its evaluation window.
 - Main Flow:
   1. Open assigned submission.
   2. Enter criterion-level scores and comments.
@@ -590,6 +611,9 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
   - Duplicate evaluation in same round is blocked.
   - Late round submission blocked.
   - Submission outside the judge's assigned workload is blocked.
+- Enforcement boundary:
+  - Role, assignment scope, and evaluation window are checked by the application/workflow layer.
+  - Score completeness, score range, and total calculation are checked by SQL Server.
 - Output:
   - Evaluation with score breakdown at `SUBMITTED`.
 - Status Transition:
