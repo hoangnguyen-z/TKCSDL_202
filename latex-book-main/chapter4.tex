@@ -37,8 +37,12 @@ Mô hình ý niệm bao phủ trọn vẹn chuỗi giá trị từ tài khoản 
 \end{split}
 \end{equation*}
 
-\begin{table}[htbp]
+Danh mục chi tiết 32 thực thể ý niệm và vai trò tương ứng được tổng hợp trong Bảng~\ref{tab:c4_entity_inventory}:
+
+\begin{table}[!ht]
 \centering
+\caption{Danh mục 32 thực thể ý niệm và logic trong hệ thống}
+\label{tab:c4_entity_inventory}
 \scriptsize
 \begin{tabularx}{\textwidth}{>{\bfseries}p{3.2cm}p{4.8cm}>{\raggedright\arraybackslash}X}
 \toprule
@@ -78,8 +82,6 @@ Mô hình ý niệm bao phủ trọn vẹn chuỗi giá trị từ tài khoản 
 \textbf{AssetMetadata} & Siêu dữ liệu số hóa có cấu trúc và bằng chứng QC. & Quản lý MIME, kích thước, SHA-256, máy scan và QC. \\
 \bottomrule
 \end{tabularx}
-\caption{Danh mục 32 thực thể ý niệm và logic trong hệ thống}
-\label{tab:c4_entity_inventory}
 \end{table}
 
 \subsection{Kiểm tra Độ đầy đủ Danh mục Thực thể}
@@ -95,7 +97,9 @@ thêm thực thể Judge trùng với tài khoản người dùng:
     \item \textbf{Kết quả và bảo tồn lịch sử}: \texttt{Result}, \texttt{AwardAssignment}, \texttt{ArchiveItem}, \texttt{AuditLog}.
 \end{itemize}
 
-\begin{figure}[htbp]
+Mối quan hệ tổng thể giữa 32 thực thể được biểu diễn trực quan qua Sơ đồ Thực thể Liên kết Ý niệm trong Hình~\ref{fig:c4_conceptual_erd}:
+
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=\textwidth,keepaspectratio]{figures/fig_conceptual_erd.png}
     \caption{Sơ đồ Thực thể Liên kết Ý niệm (Conceptual ERD) chuẩn hóa 32 thực thể}
@@ -161,8 +165,12 @@ Mỗi mối quan hệ được xác lập bằng bản số chuẩn (\textit{Car
 \end{itemize}
 
 \subsection{Bảng Đối soát Độ phủ Quan hệ}
-\begin{table}[htbp]
+Sự phân bổ bản số và đối soát độ phủ quan hệ giữa các luồng nghiệp vụ được trình bày trong Bảng~\ref{tab:c4_relationship_coverage}:
+
+\begin{table}[!ht]
 \centering
+\caption{Đối soát độ phủ quan hệ giữa luồng nghiệp vụ và mô hình ý niệm}
+\label{tab:c4_relationship_coverage}
 \small
 \begin{tabularx}{\textwidth}{p{2.2cm}p{4.6cm}>{\raggedright\arraybackslash}X}
 \toprule
@@ -176,8 +184,6 @@ Chấm thi & \texttt{JudgingRound}--\texttt{JudgeAssignment}--\texttt{Evaluation
 Kết quả & \texttt{Submission}--\texttt{Result}--\texttt{ArchiveItem} & Result và archive chỉ phát sinh khi đủ điều kiện cuối vòng. \\
 \bottomrule
 \end{tabularx}
-\caption{Đối soát độ phủ quan hệ giữa luồng nghiệp vụ và mô hình ý niệm}
-\label{tab:c4_relationship_coverage}
 \end{table}
 
 % ----------------------------------------------------------------------
@@ -185,8 +191,12 @@ Kết quả & \texttt{Submission}--\texttt{Result}--\texttt{ArchiveItem} & Resul
 \label{s:c4_logical_model}
 
 \subsection{Phân loại Quy tắc và Ranh giới Quyết định}
-\begin{table}[htbp]
+Ranh giới quyết định giữa các quy tắc chính thức và quy tắc đề xuất được phân loại trong Bảng~\ref{tab:c4_rule_boundary}:
+
+\begin{table}[!ht]
 \centering
+\caption{Phân loại business rule và ranh giới quyết định trong mô hình ý niệm}
+\label{tab:c4_rule_boundary}
 \small
 \begin{tabularx}{\textwidth}{p{2.2cm}>{\raggedright\arraybackslash}Xp{3.2cm}}
 \toprule
@@ -199,16 +209,16 @@ Chính thức & Result và ArchiveItem phản ánh kết quả đã hoàn tất 
 Đề xuất & User có thể giữ nhiều role nhưng vẫn chịu quy tắc xung đột lợi ích. & Nhóm thiết kế / chính sách \\
 \bottomrule
 \end{tabularx}
-\caption{Phân loại business rule và ranh giới quyết định trong mô hình ý niệm}
-\label{tab:c4_rule_boundary}
 \end{table}
 
 Các chi tiết datatype, constraint, index, procedure và trigger không thuộc mô hình ý niệm; chúng được chuyển sang các cấp độ thiết kế sau.
 
-Khi chuyển đổi từ mô hình ý niệm sang mô hình quan hệ logic, các quan hệ Nhiều-Nhiều ($N:M$) được giải quyết triệt để thông qua các quan hệ kết hợp (\textit{Associative Relations}):
+Khi chuyển đổi từ mô hình ý niệm sang mô hình quan hệ logic, các quan hệ Nhiều-Nhiều ($N:M$) được giải quyết triệt để thông qua các quan hệ kết hợp (\textit{Associative Relations}) được tổng hợp trong Bảng~\ref{tab:c4_nm_resolution}:
 
-\begin{table}[htbp]
+\begin{table}[!ht]
 \centering
+\caption{Giải quyết các quan hệ Nhiều-Nhiều trong mô hình logic}
+\label{tab:c4_nm_resolution}
 \scriptsize
 \begin{tabularx}{\textwidth}{p{3.8cm}p{3.2cm}>{\raggedright\arraybackslash}X}
 \toprule
@@ -220,8 +230,6 @@ Evaluation $\leftrightarrow$ ScoringCriterion & \texttt{EvaluationScore} & \text
 Result $\leftrightarrow$ AwardDefinition & \texttt{AwardAssignment} & \texttt{result\_id}, \texttt{award\_definition\_id}, \texttt{assigned\_at} \\
 \bottomrule
 \end{tabularx}
-\caption{Giải quyết các quan hệ Nhiều-Nhiều trong mô hình logic}
-\label{tab:c4_nm_resolution}
 \end{table}
 
 \paragraph{Danh mục Khóa Dự tuyển và Khóa Thay thế (Candidate \& Alternate Keys)}
@@ -246,7 +254,9 @@ Mỗi quan hệ logic sử dụng khóa thay thế nhân tạo (\textit{Surrogat
     \item \texttt{AssetMetadata}: \texttt{submission\_id} (UNIQUE Composite -- 1:1), \texttt{checksum\_sha256} (INDEX).
 \end{itemize}
 
-\begin{figure}[htbp]
+Mô hình quan hệ logic đạt chuẩn 3NF sau khi giải quyết các quan hệ Nhiều-Nhiều được thể hiện chi tiết trong Hình~\ref{fig:c4_logical_erd}:
+
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=\textwidth,keepaspectratio]{figures/fig_logical_erd.png}
     \caption{Sơ đồ Lớp / Mô hình Quan hệ Logic (Logical Schema / UML Class Diagram) đạt chuẩn 3NF}
@@ -352,8 +362,10 @@ Quan hệ \texttt{ArchiveItem} là trường hợp ngoại lệ duy nhất đư�
 
 Bảng~\ref{tab:c4_data_dictionary} hệ thống hóa từ điển dữ liệu logic cho các thuộc tính nghiệp vụ cốt lõi, xác lập rõ ranh giới ngữ nghĩa và vòng đời dữ liệu giữa các phân hệ:
 
-\begin{table}[htbp]
+\begin{table}[!ht]
 \centering
+\caption{Từ điển dữ liệu logic cho các thực thể và thuộc tính trọng yếu}
+\label{tab:c4_data_dictionary}
 \footnotesize
 \begin{tabularx}{\textwidth}{>{\bfseries\raggedright\arraybackslash}p{4.2cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{2.8cm}}
 \toprule
@@ -381,8 +393,6 @@ AssetMetadata.\allowbreak checksum\_sha256 & Mã băm SHA-256 64 ký tự hex ki
 AssetMetadata.\allowbreak qc\_status & Kết quả kiểm tra chất lượng số hóa tệp ảnh scan & PASSED, FAILED, \allowbreak FLAGGED, PENDING \\
 \bottomrule
 \end{tabularx}
-\caption{Từ điển dữ liệu logic cho các thực thể và thuộc tính trọng yếu}
-\label{tab:c4_data_dictionary}
 \end{table}
 
 % ----------------------------------------------------------------------
@@ -391,8 +401,10 @@ AssetMetadata.\allowbreak qc\_status & Kết quả kiểm tra chất lượng s�
 
 Sự vận hành của cơ sở dữ liệu được định hướng bởi các máy trạng thái hữu hạn (\textit{Finite State Machines}) chặt chẽ. Bảng~\ref{tab:c4_lifecycles} tổng kết chuỗi chuyển đổi trạng thái hợp lệ của các thực thể trung tâm:
 
-\begin{table}[htbp]
+\begin{table}[!ht]
 \centering
+\caption{Tổng hợp vòng đời trạng thái của các thực thể cốt lõi trong hệ thống}
+\label{tab:c4_lifecycles}
 \small
 \begin{tabularx}{\textwidth}{>{\bfseries}p{3.2cm}>{\raggedright\arraybackslash}X}
 \toprule
@@ -411,6 +423,4 @@ Result & \texttt{DRAFT} $\rightarrow$ \texttt{FINALIZED} $\rightarrow$ \texttt{P
 ArchiveItem & \texttt{PENDING\_ARCHIVE} $\rightarrow$ \texttt{ARCHIVED} $\rightarrow$ \texttt{RETIRED} \\
 \bottomrule
 \end{tabularx}
-\caption{Tổng hợp vòng đời trạng thái của các thực thể cốt lõi trong hệ thống}
-\label{tab:c4_lifecycles}
 \end{table}

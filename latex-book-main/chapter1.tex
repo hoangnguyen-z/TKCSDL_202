@@ -64,10 +64,12 @@ Phương thức quản lý thủ công, phân tán bộc lộ 5 điểm nghẽn 
 \section{Phạm vi Dự án và Giả định Thiết kế}
 \label{s:c1_scope}
 
-Để đảm bảo tính tập trung và chiều sâu học thuật của một đồ án Thiết kế Cơ sở Dữ liệu chuyên sâu, phạm vi dự án được phân định rạch ròi:
+Để đảm bảo tính tập trung và chiều sâu học thuật của một đồ án Thiết kế Cơ sở Dữ liệu chuyên sâu, phạm vi dự án được phân định rạch ròi như thể hiện trong Bảng~\ref{tab:c1_scope}:
 
-\begin{table}[htbp]
+\begin{table}[!ht]
 \centering
+\caption{Phạm vi dự án Thiết kế Cơ sở Dữ liệu}
+\label{tab:c1_scope}
 \small
 \begin{tabularx}{\textwidth}{p{3.0cm}p{6.0cm}>{\raggedright\arraybackslash}X}
 \toprule
@@ -90,8 +92,6 @@ $\bullet$ Triển khai object storage đám mây thực tế; CSDL chỉ lưu UR
 Tập trung toàn bộ nguồn lực vào thiết kế kiến trúc và mô hình hóa dữ liệu chuyên sâu. \\
 \bottomrule
 \end{tabularx}
-\caption{Phạm vi dự án Thiết kế Cơ sở Dữ liệu}
-\label{tab:c1_scope}
 \end{table}
 
 \paragraph{Giả định thiết kế cốt lõi}
@@ -107,9 +107,12 @@ Tập trung toàn bộ nguồn lực vào thiết kế kiến trúc và mô hìn
 
 Nhằm đảm bảo sự nhất quán tuyệt đối về ngữ nghĩa trong toàn bộ tài liệu thiết kế, Bảng~\ref{tab:c1_glossary} định nghĩa các thuật ngữ chuẩn của miền nghiệp vụ nhiếp ảnh phim:
 
-\begin{table}[htbp]
+\begin{table}[!ht]
 \centering
-\small
+\caption{Bảng chú giải thuật ngữ miền nghiệp vụ}
+\label{tab:c1_glossary}
+\footnotesize
+\renewcommand{\arraystretch}{1.05}
 \begin{tabularx}{\textwidth}{>{\bfseries}p{3.5cm}>{\raggedright\arraybackslash}X}
 \toprule
 \textbf{Thuật ngữ} & \textbf{Định nghĩa chuẩn hóa} \\
@@ -133,8 +136,6 @@ Evaluation & Phiếu đánh giá và cho điểm của một giám khảo đối
 Digital Archive & Kho lưu trữ số độc lập, bảo tồn nguyên vẹn siêu dữ liệu và hình ảnh của các tác phẩm đoạt giải. \\
 \bottomrule
 \end{tabularx}
-\caption{Bảng chú giải thuật ngữ miền nghiệp vụ}
-\label{tab:c1_glossary}
 \end{table}
 
 % ----------------------------------------------------------------------
@@ -143,8 +144,10 @@ Digital Archive & Kho lưu trữ số độc lập, bảo tồn nguyên vẹn si
 
 Kiến trúc đích phục vụ 4 nhóm tác nhân người dùng chính cùng các bên liên quan bên ngoài. Bảng~\ref{tab:c1_stakeholders} tổng hợp trách nhiệm và nhu cầu thông tin của từng tác nhân; các client Web/Mobile và Backend runtime để hiện thực tương tác này chưa thuộc deliverable của phase cơ sở dữ liệu:
 
-\begin{table}[htbp]
+\begin{table}[!ht]
 \centering
+\caption{Phân tích Stakeholders và ma trận trách nhiệm}
+\label{tab:c1_stakeholders}
 \small
 \begin{tabularx}{\textwidth}{p{2.8cm}p{4.2cm}>{\raggedright\arraybackslash}X}
 \toprule
@@ -167,8 +170,6 @@ Quản trị tài khoản và phân quyền người dùng; cấu hình tham s�
 Báo cáo tình trạng hệ thống, nhật ký truy cập và thay đổi trạng thái, danh mục thiết bị (máy ảnh, ống kính, film stock). \\
 \bottomrule
 \end{tabularx}
-\caption{Phân tích Stakeholders và ma trận trách nhiệm}
-\label{tab:c1_stakeholders}
 \end{table}
 
 \paragraph{Mô hình Phân quyền Vai trò (RBAC Model)}

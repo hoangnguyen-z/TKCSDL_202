@@ -30,7 +30,9 @@ Hệ thống được thiết lập với ranh giới rõ ràng giữa các phâ
     \end{itemize}
 \end{itemize}
 
-\begin{figure}[htbp]
+Mối quan hệ tương tác giữa hệ thống và các thực thể ngoại vi được thể hiện qua Sơ đồ Ngữ cảnh trong Hình~\ref{fig:c3_system_context}:
+
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=\textwidth,keepaspectratio]{figures/fig_system_context.png}
     \caption{Sơ đồ Ngữ cảnh Hệ thống (System Context Diagram) thể hiện ranh giới và các tương tác ngoại vi}
@@ -41,10 +43,12 @@ Hệ thống được thiết lập với ranh giới rõ ràng giữa các phâ
 \section{Các Nguyên lý Kiến trúc Cốt lõi (Architectural Principles)}
 \label{s:c3_principles}
 
-Kiến trúc hệ thống tuân thủ nghiêm ngặt 8 nguyên lý chỉ đạo:
+Kiến trúc hệ thống tuân thủ nghiêm ngặt 8 nguyên lý chỉ đạo được tổng hợp tại Bảng~\ref{tab:c3_principles}:
 
-\begin{table}[htbp]
+\begin{table}[!ht]
 \centering
+\caption{Các nguyên lý kiến trúc cốt lõi}
+\label{tab:c3_principles}
 \small
 \begin{tabularx}{\textwidth}{p{3.2cm}p{5.5cm}>{\raggedright\arraybackslash}X}
 \toprule
@@ -83,18 +87,18 @@ Mọi thao tác dữ liệu phải được phân quyền theo vai trò (RBAC) v
 Tích hợp bảng User-Role, cột \texttt{actor\_user\_id} và bảng \texttt{audit\_logs}. \\
 \bottomrule
 \end{tabularx}
-\caption{Các nguyên lý kiến trúc cốt lõi}
-\label{tab:c3_principles}
 \end{table}
 
 % ----------------------------------------------------------------------
 \section{Phân rã Module Hệ thống và Quyền Sở hữu Dữ liệu}
 \label{s:c3_modules}
 
-Toàn bộ hệ thống được phân rã thành 11 phân hệ chức năng (\textit{Modules}) với quyền sở hữu dữ liệu (\textit{Data Ownership}) độc quyền:
+Toàn bộ hệ thống được phân rã thành 11 phân hệ chức năng (\textit{Modules}) với quyền sở hữu dữ liệu (\textit{Data Ownership}) độc quyền được chi tiết trong Bảng~\ref{tab:c3_modules}:
 
-\begin{table}[htbp]
+\begin{table}[!ht]
 \centering
+\caption{Phân rã 11 phân hệ module và ma trận sở hữu dữ liệu}
+\label{tab:c3_modules}
 \scriptsize
 \begin{tabularx}{\textwidth}{p{2.6cm}p{4.2cm}p{3.6cm}>{\raggedright\arraybackslash}X}
 \toprule
@@ -113,8 +117,6 @@ Toàn bộ hệ thống được phân rã thành 11 phân hệ chức năng (\t
 \textbf{11. Audit \& Reporting} & Ghi nhật ký kiểm toán và cung cấp góc nhìn báo cáo hiệu năng. & \texttt{audit\_logs}, \texttt{reporting\_views} & Toàn bộ các bảng trong CSDL \\
 \bottomrule
 \end{tabularx}
-\caption{Phân rã 11 phân hệ module và ma trận sở hữu dữ liệu}
-\label{tab:c3_modules}
 \end{table}
 
 % ----------------------------------------------------------------------
@@ -138,7 +140,9 @@ Hệ thống được đóng gói để triển khai độc lập và nhất qu�
     \item \textbf{Dịch vụ Đám mây Ngoại vi}: Cloud Object Storage (lưu trữ tệp ảnh nhị phân) và AI Analysis Engine (cung cấp API thẩm định).
 \end{itemize}
 
-\begin{figure}[htbp]
+Mô hình kiến trúc tổng thể đa tầng và cơ chế tương tác với phân hệ AI được minh họa trong Hình~\ref{fig:c3_system_architecture}:
+
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=\textwidth,keepaspectratio]{figures/fig_system_architecture.png}
     \caption{Sơ đồ Kiến trúc Hệ thống Tổng thể (System Architecture Diagram) phân tầng và luồng xử lý AI}

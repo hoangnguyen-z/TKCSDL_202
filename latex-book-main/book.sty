@@ -41,7 +41,7 @@
 
 % ---- Adjust page layout ----
 
-\usepackage[top=1in, left=1.3in, right=1.3in, bottom=1.2in, footskip=0.7in]{geometry}
+\usepackage[top=2.2cm, bottom=2.2cm, left=2.8cm, right=2cm, footskip=0.8cm]{geometry}
 
 % ---- Adjust spacing ----
 
@@ -98,19 +98,29 @@
 % Customize table of contents
 \usepackage{tocloft}
 
-% Remove "Table of contents"
-\renewcommand{\contentsname}{}
+% Set title names
+\renewcommand{\contentsname}{Mục lục}
+\renewcommand{\listtablename}{Danh sách bảng}
+\renewcommand{\listfigurename}{Danh sách hình vẽ}
 
 % Include only parts, chapters, and sections
 \setcounter{tocdepth}{1}
 
+% Set title formatting in TOC, LOT, LOF to bold centered uppercase
+\renewcommand{\cfttoctitlefont}{\hfill\bfseries\huge\MakeUppercase}
+\renewcommand{\cftaftertoctitle}{\hfill}
+\renewcommand{\cftlottitlefont}{\hfill\bfseries\huge\MakeUppercase}
+\renewcommand{\cftafterlottitle}{\hfill}
+\renewcommand{\cftloftitlefont}{\hfill\bfseries\huge\MakeUppercase}
+\renewcommand{\cftafterloftitle}{\hfill}
+
 % Set entry fonts
 \renewcommand{\cftpartfont}{\bfseries}
-\renewcommand{\cftchapfont}{\scshape}
+\renewcommand{\cftchapfont}{\bfseries}
 \renewcommand{\cftsecfont}{\normalfont}
 
 % Set page fonts
-\renewcommand{\cftchappagefont}{\normalfont}
+\renewcommand{\cftchappagefont}{\bfseries}
 \renewcommand{\cftsecpagefont}{\normalfont}
 
 % Remove dots for chapters
@@ -121,7 +131,7 @@
 
 % Set vertical spaces
 \setlength{\cftbeforepartskip}{1em}
-\setlength{\cftbeforechapskip}{1em}
+\setlength{\cftbeforechapskip}{0.8em}
 \setlength{\cftbeforesecskip}{0em}
 
 % Align all numbers
@@ -137,10 +147,28 @@
 \usepackage{titlesec}
 
 % Format part headings
-\titleformat{\part}[display]{\Huge\bfseries\centering}{\textsc{part}~\thepart.}{2cm}{}[]
+\titleformat{\part}[display]{\Huge\bfseries\centering}{\MakeUppercase{Phần \thepart}}{0.8cm}{}[]
+\titlespacing*{\part}{0pt}{0pt}{20pt}
 
-% Format chapter headings
-\titleformat{\chapter}[display]{\huge\bfseries}{\textsc{chapter}~\thechapter.}{0.8cm}{}[\vskip0.8cm]
+% Format chapter headings (Chương 1, Chương 2,...)
+\titleformat{\chapter}[display]
+  {\bfseries\huge}
+  {\bfseries\Large\MakeUppercase{Chương \thechapter}}
+  {0.3ex}
+  {\bfseries\huge}
+  [\vskip 0.8ex]
+
+% Format unnumbered chapter headings (Lời cảm ơn, Danh sách thành viên, Lời nói đầu,...)
+\titleformat{name=\chapter,numberless}[block]
+  {\bfseries\huge\centering}
+  {}
+  {0pt}
+  {\bfseries\huge}
+  [\vskip 1.2ex]
+
+% Adjust chapter spacing (tighten top gap at the beginning of pages)
+\titlespacing*{\chapter}{0pt}{-15pt}{18pt}
+\titlespacing*{name=\chapter,numberless}{0pt}{-15pt}{18pt}
 
 % Format section headings
 \titleformat*{\section}{\large\bfseries}
@@ -208,46 +236,47 @@
 \usepackage{multirow}
 
 % Float parameters for better placement and packing
-\renewcommand{\topfraction}{0.85}
-\renewcommand{\bottomfraction}{0.75}
-\renewcommand{\textfraction}{0.15}
-\renewcommand{\floatpagefraction}{0.75}
-\setcounter{topnumber}{3}
-\setcounter{bottomnumber}{2}
-\setcounter{totalnumber}{4}
+\renewcommand{\topfraction}{0.95}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\floatpagefraction}{0.90}
+\setcounter{topnumber}{4}
+\setcounter{bottomnumber}{3}
+\setcounter{totalnumber}{6}
 
 % Tighten spacing between floats and surrounding text
-\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
-\setlength{\intextsep}{8pt plus 2pt minus 2pt}
-\setlength{\floatsep}{8pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{10pt plus 2pt minus 2pt}
+\setlength{\intextsep}{10pt plus 2pt minus 2pt}
+\setlength{\floatsep}{10pt plus 2pt minus 2pt}
 
 % Center figures and tables
 \makeatletter\g@addto@macro\@floatboxreset\centering\makeatother 
 
 % Adjust spacing in tables
-\renewcommand{\arraystretch}{1.2}
+\renewcommand{\arraystretch}{1.15}
 
 % Set font size in tables
 \BeforeBeginEnvironment{tabular*}{\footnotesize}
 
-% Write "table" and "figure" in small caps 
-\renewcommand{\tablename}{\textsc{table}}
-\renewcommand{\figurename}{\textsc{figure}}
+% Write "Bảng" and "Hình" in bold
+\renewcommand{\tablename}{\textbf{Bảng}}
+\renewcommand{\figurename}{\textbf{Hình}}
 
 % Customize captions
 \usepackage{caption, subcaption}
 
 % Format label separator
-\DeclareCaptionLabelSeparator{periodem}{.\hspace{1em}}
+\DeclareCaptionLabelSeparator{colonsep}{: }
 
-% Format captions with tighter spacing to figure/table
-\captionsetup{labelsep=periodem, skip=4pt}
+% Format captions with standard academic style
+\captionsetup{labelsep=colonsep, labelfont=bf, font=small, skip=6pt}
 
 % Place table captions above table
 \captionsetup[table]{position=top}
+\captionsetup[figure]{position=bottom}
 
 % Format subcaptions
-\captionsetup[sub]{labelformat=simple, labelsep=periodem, size=footnotesize}
+\captionsetup[sub]{labelformat=simple, labelsep=colonsep, size=footnotesize}
 
 % Use capitals for figure sublabels
 \renewcommand{\thesubfigure}{\Alph{subfigure}}
@@ -278,7 +307,13 @@
 % ---- Format appendix ----
 
 \apptocmd{\appendix}{%
-\titleformat{\chapter}[display]{\huge\bfseries}{\textsc{appendix}~\thechapter.}{0.8cm}{}[\vskip0.8cm]%
+  \titleformat{\chapter}[display]
+    {\bfseries\huge}
+    {\bfseries\Large\MakeUppercase{Phụ lục \thechapter}}
+    {0.3ex}
+    {\bfseries\huge}
+    [\vskip 0.8ex]%
+  \titlespacing*{\chapter}{0pt}{-15pt}{18pt}%
 }{}{}
 
 % ---- Format bibliography ----

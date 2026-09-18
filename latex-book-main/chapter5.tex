@@ -17,8 +17,10 @@ Hệ quản trị cơ sở dữ liệu Microsoft SQL Server (bản 2022+ chạy 
 \subsection{Quy ước Đặt tên Đối tượng Vật lý (Naming Conventions)}
 Để đảm bảo tính chuyên nghiệp và đồng bộ, toàn bộ đối tượng CSDL tuân thủ quy tắc đặt tên tại Bảng~\ref{tab:c5_naming}:
 
-\begin{table}[htbp]
+\begin{table}[!ht]
 \centering
+\caption{Quy ước đặt tên đối tượng cơ sở dữ liệu vật lý}
+\label{tab:c5_naming}
 \footnotesize
 \begin{tabularx}{\textwidth}{>{\bfseries}p{3.0cm}p{4.2cm}>{\raggedright\arraybackslash}X}
 \toprule
@@ -38,8 +40,6 @@ Stored Procedure & Schema module, tiền tố \texttt{usp\_} & \texttt{submissio
 Trigger & \texttt{TR\_<Schema>\_<Table>\_<Event>} & \texttt{TR\_judging\_EvaluationScore\_AIU} \\
 \bottomrule
 \end{tabularx}
-\caption{Quy ước đặt tên đối tượng cơ sở dữ liệu vật lý}
-\label{tab:c5_naming}
 \end{table}
 
 % ----------------------------------------------------------------------
@@ -62,7 +62,9 @@ Cơ sở dữ liệu được phân chia thành 12 Schema chuyên biệt nhằm 
     \item \texttt{reporting}: Chứa 5 khung nhìn báo cáo (\textit{Views}).
 \end{itemize}
 
-\begin{figure}[htbp]
+Cấu trúc vật lý của toàn bộ 32 bảng cơ sở dữ liệu trên SQL Server được mô tả qua Sơ đồ Vật lý trong Hình~\ref{fig:c5_physical_pdm}:
+
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=\textwidth,keepaspectratio]{figures/fig_physical_pdm.png}
     \caption{Sơ đồ Vật lý Cơ sở Dữ liệu (Physical Database Diagram - PDM) trên Microsoft SQL Server 2022 gồm 32 bảng quan hệ}
@@ -73,10 +75,12 @@ Cơ sở dữ liệu được phân chia thành 12 Schema chuyên biệt nhằm 
 \section{Chiến lược Kiểu Dữ liệu Vật lý (Physical Datatype Strategy)}
 \label{s:c5_datatypes}
 
-Hệ thống tránh việc sử dụng tùy tiện kiểu \texttt{VARCHAR(255)} cho mọi cột, thay vào đó áp dụng chiến lược lựa chọn kiểu dữ liệu tối ưu cho bộ nhớ và tính chính xác:
+Hệ thống tránh việc sử dụng tùy tiện kiểu \texttt{VARCHAR(255)} cho mọi cột, thay vào đó áp dụng chiến lược lựa chọn kiểu dữ liệu tối ưu cho bộ nhớ và tính chính xác như tổng hợp tại Bảng~\ref{tab:c5_datatypes}:
 
-\begin{table}[htbp]
+\begin{table}[!ht]
 \centering
+\caption{Chiến lược ánh xạ kiểu dữ liệu trên Microsoft SQL Server}
+\label{tab:c5_datatypes}
 \small
 \begin{tabularx}{\textwidth}{p{3.2cm}p{3.6cm}>{\raggedright\arraybackslash}X}
 \toprule
@@ -94,8 +98,6 @@ Thời gian giao dịch & \texttt{DATETIME2(0)} & Tiết kiệm dung lượng (6
 Bản chụp Snapshot & \texttt{NVARCHAR(MAX)} & Lưu trữ cấu trúc JSON bản chụp lịch sử di sản số. \\
 \bottomrule
 \end{tabularx}
-\caption{Chiến lược ánh xạ kiểu dữ liệu trên Microsoft SQL Server}
-\label{tab:c5_datatypes}
 \end{table}
 
 % ----------------------------------------------------------------------
@@ -126,10 +128,12 @@ Hệ thống cài đặt các ràng buộc kiểm tra giá trị toán học, lo
 \section{Chiến lược Đánh Chỉ mục Hiệu năng (Indexing Strategy)}
 \label{s:c5_indexes}
 
-Các chỉ mục phi cụm (\textit{Non-clustered Indexes}) được thiết kế có chọn lọc, gắn liền với các mẫu truy vấn (\textit{Query Access Patterns}) tần suất cao trong thực tế:
+Các chỉ mục phi cụm (\textit{Non-clustered Indexes}) được thiết kế có chọn lọc, gắn liền với các mẫu truy vấn (\textit{Query Access Patterns}) tần suất cao trong thực tế như thể hiện trong Bảng~\ref{tab:c5_indexes}:
 
-\begin{table}[htbp]
+\begin{table}[!ht]
 \centering
+\caption{Chiến lược chỉ mục tối ưu hóa hiệu năng truy vấn}
+\label{tab:c5_indexes}
 \scriptsize
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.8cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}X}
 \toprule
@@ -143,8 +147,6 @@ Các chỉ mục phi cụm (\textit{Non-clustered Indexes}) được thiết k�
 \texttt{IX\_archive\_ArchiveItem\_search} & \texttt{archive\_status}, \texttt{archived\_at} & \texttt{result\_id}, \texttt{submission\_id} & Tìm kiếm và triển lãm tác phẩm trong kho di sản số. \\
 \bottomrule
 \end{tabularx}
-\caption{Chiến lược chỉ mục tối ưu hóa hiệu năng truy vấn}
-\label{tab:c5_indexes}
 \end{table}
 
 % ----------------------------------------------------------------------

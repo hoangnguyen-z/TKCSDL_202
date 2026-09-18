@@ -34,7 +34,9 @@ Hệ thống mục tiêu (\textit{TO-BE Platform}) hợp nhất toàn bộ vòng
     \item \textbf{F08 -- Lưu trữ Di sản Số (Digital Archive)}: Các tác phẩm đoạt giải được hệ thống tự động chụp bản sao lịch sử (\textit{snapshot}) đầy đủ siêu dữ liệu kỹ thuật và kết quả đánh giá để bảo tồn vĩnh viễn trong kho lưu trữ số phục vụ triển lãm và nghiên cứu.
 \end{enumerate}
 
-\begin{figure}[htbp]
+Quy trình tương tác tuần tự giữa các tác nhân và hệ thống được mô hình hóa trực quan trong Hình~\ref{fig:c2_activity_workflow}:
+
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=\textwidth,keepaspectratio]{figures/fig_activity_workflow.png}
     \caption{Sơ đồ Hoạt động (Activity Diagram) thể hiện 2 luồng nghiệp vụ cốt lõi của hệ thống}
@@ -45,10 +47,12 @@ Hệ thống mục tiêu (\textit{TO-BE Platform}) hợp nhất toàn bộ vòng
 \section{Danh mục Yêu cầu Chức năng (Functional Requirements)}
 \label{s:c2_fr}
 
-Hệ thống được thiết kế với 32 yêu cầu chức năng (\textit{FR}) chuẩn hóa, bao phủ trọn vẹn 11 phân hệ:
+Hệ thống được thiết kế với 32 yêu cầu chức năng (\textit{FR}) chuẩn hóa, bao phủ trọn vẹn 11 phân hệ như được tổng hợp chi tiết trong Bảng~\ref{tab:c2_fr}:
 
-\begin{table}[htbp]
+\begin{table}[!ht]
 \centering
+\caption{Danh mục 32 Yêu cầu Chức năng chuẩn hóa của hệ thống}
+\label{tab:c2_fr}
 \scriptsize
 \begin{tabularx}{\textwidth}{p{1.8cm}>{\raggedright\arraybackslash}X}
 \toprule
@@ -88,8 +92,6 @@ Hệ thống được thiết kế với 32 yêu cầu chức năng (\textit{FR}
 \textbf{FR-032} & Hệ thống quản lý siêu dữ liệu tài sản số có cấu trúc (MIME type, file size, độ phân giải, mã băm SHA-256, thiết bị/thông số scan và bằng chứng kiểm định chất lượng QC). \\
 \bottomrule
 \end{tabularx}
-\caption{Danh mục 32 Yêu cầu Chức năng chuẩn hóa}
-\label{tab:c2_fr}
 \end{table}
 
 % ----------------------------------------------------------------------
@@ -120,8 +122,13 @@ Các quy tắc được phân định rõ ràng giữa:
 (2) Quy trình nghiệp vụ kiểm soát tại tầng thủ tục lưu trữ (\textit{Stored Procedures});
 (3) Quy tắc thuộc về quyết định nghiệp vụ của con người hoặc giao diện ứng dụng (\textit{Application / Human Decision}). Toàn bộ các quy tắc bổ sung ngoài đề bài gốc đều được giữ nguyên nhãn Đề xuất (\textit{Proposed}) nhằm bảo toàn ranh giới yêu cầu cốt lõi.
 
-\begin{table}[htbp]
+Chi tiết 11 quy tắc bắt buộc từ đề bài được hệ thống hóa trong Bảng~\ref{tab:c2_br_mandatory}:
+
+\begin{table}[!ht]
 \centering
+\caption{Bảng quy tắc nghiệp vụ bắt buộc từ đề bài (BR-O-001 đến BR-O-011)}
+\label{tab:c2_br}
+\label{tab:c2_br_mandatory}
 \scriptsize
 \begin{tabularx}{\textwidth}{p{2.0cm}p{1.6cm}>{\raggedright\arraybackslash}Xp{3.8cm}}
 \toprule
@@ -140,13 +147,14 @@ Các quy tắc được phân định rõ ràng giữa:
 \textbf{BR-O-011} & Bắt buộc & Bản ghi lưu trữ di sản số chỉ được khởi tạo từ các bài thi đã có kết quả chung cuộc chính thức. & Stored Procedure / Logic \\
 \bottomrule
 \end{tabularx}
-\caption{Bảng quy tắc nghiệp vụ bắt buộc từ đề bài (BR-O-001 đến BR-O-011)}
-\label{tab:c2_br}
-\label{tab:c2_br_mandatory}
 \end{table}
 
-\begin{table}[htbp]
+Bên cạnh các quy tắc bắt buộc, 24 quy tắc nghiệp vụ đề xuất từ thiết kế hệ thống được chi tiết trong Bảng~\ref{tab:c2_br_proposed}:
+
+\begin{table}[!ht]
 \centering
+\caption{Bảng quy tắc nghiệp vụ đề xuất từ thiết kế hệ thống (BR-P-001 đến BR-P-024)}
+\label{tab:c2_br_proposed}
 \scriptsize
 \begin{tabularx}{\textwidth}{p{2.0cm}p{1.6cm}>{\raggedright\arraybackslash}Xp{3.8cm}}
 \toprule
@@ -178,15 +186,15 @@ Các quy tắc được phân định rõ ràng giữa:
 \textbf{BR-P-024} & Đề xuất & Giải thưởng chỉ được gán cho kết quả chung cuộc thuộc đúng hạng mục mà giải thưởng đó được định nghĩa. & CSDL (Trigger + Procedure) \\
 \bottomrule
 \end{tabularx}
-\caption{Bảng quy tắc nghiệp vụ đề xuất từ thiết kế hệ thống (BR-P-001 đến BR-P-024)}
-\label{tab:c2_br_proposed}
 \end{table}
 
 % ----------------------------------------------------------------------
 \section{Đặc tả các Trường hợp Sử dụng Trọng yếu (Use Case Specifications)}
 \label{s:c2_usecases}
 
-\begin{figure}[htbp]
+Cấu trúc tương tác phân rã giữa các tác nhân và các trường hợp sử dụng trọng yếu được thể hiện trực quan trong Hình~\ref{fig:c2_use_case}:
+
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=\textwidth,keepaspectratio]{figures/fig_use_case.png}
     \caption{Sơ đồ Use Case phân định các chức năng theo 4 vai trò người dùng trong hệ thống}
@@ -298,8 +306,10 @@ Dưới đây là đặc tả hợp đồng chi tiết (\textit{Detailed Use Cas
 \subsection{Baseline Đối soát Đầy đủ cho UC-01 đến UC-08}
 Để bảo đảm tính truy vết và thống nhất với 8 luồng nghiệp vụ, toàn bộ use case được đối soát chuẩn hóa qua ma trận Bảng~\ref{tab:c2_uc_baseline}:
 
-\begin{table}[htbp]
+\begin{table}[!ht]
 \centering
+\caption{Đối soát đầy đủ tám use case với flow, trạng thái, dữ liệu và business rules}
+\label{tab:c2_uc_baseline}
 \tiny
 \begin{tabularx}{\textwidth}{p{0.8cm}>{\raggedright\arraybackslash}p{1.6cm}>{\raggedright\arraybackslash}p{2.2cm}>{\raggedright\arraybackslash}p{2.8cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{2.6cm}}
 \toprule
@@ -315,6 +325,4 @@ Dưới đây là đặc tả hợp đồng chi tiết (\textit{Detailed Use Cas
 \textbf{UC-08} & Organizer archive result & Result \texttt{FINALIZED} và đủ điều kiện archive & Snapshot metadata và judging context; chưa finalized thì chặn, snapshot không sửa & Archive item; \texttt{ARCHIVED -> RETIRED} & ArchiveItem, AuditLog; BR-O-011, BR-P-017, BR-P-018 \\
 \bottomrule
 \end{tabularx}
-\caption{Đối soát đầy đủ tám use case với flow, trạng thái, dữ liệu và business rules}
-\label{tab:c2_uc_baseline}
 \end{table}

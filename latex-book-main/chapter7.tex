@@ -6,10 +6,12 @@ Chương này tổng kết toàn bộ nhật ký các quyết định thiết k�
 \section{Nhật ký Quyết định Thiết kế (Design Decision Log)}
 \label{s:c7_decision_log}
 
-Mọi quyết định kiến trúc và mô hình hóa CSDL đều được cân nhắc kỹ lưỡng giữa các phương án thay thế:
+Mọi quyết định kiến trúc và mô hình hóa CSDL đều được cân nhắc kỹ lưỡng giữa các phương án thay thế như tổng hợp trong Bảng~\ref{tab:c7_decision_log}:
 
-\begin{table}[htbp]
+\begin{table}[!ht]
 \centering
+\caption{Nhật ký quyết định thiết kế cốt lõi (Design Decision Log)}
+\label{tab:c7_decision_log}
 \scriptsize
 \begin{tabularx}{\textwidth}{p{1.5cm}p{3.2cm}p{3.6cm}>{\raggedright\arraybackslash}X}
 \toprule
@@ -25,8 +27,6 @@ Mọi quyết định kiến trúc và mô hình hóa CSDL đều được cân 
 \textbf{DD-008} & Chính sách Xóa dữ liệu & Cấm xóa vật lý (\texttt{NO ACTION}), sử dụng chuyển trạng thái nghiệp vụ & Bảo vệ toàn vẹn lịch sử chấm thi, tranh chấp và kiểm toán. \\
 \bottomrule
 \end{tabularx}
-\caption{Nhật ký quyết định thiết kế cốt lõi (Design Decision Log)}
-\label{tab:c7_decision_log}
 \end{table}
 
 % ----------------------------------------------------------------------
