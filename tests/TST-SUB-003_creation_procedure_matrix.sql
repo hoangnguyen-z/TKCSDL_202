@@ -78,6 +78,30 @@ INSERT INTO participant.Registration (contest_id, participant_id, registration_s
 VALUES (@contest_id, @bao_participant_id, N'PENDING', N'PENDING');
 SET @pending_registration_id = SCOPE_IDENTITY();
 
+INSERT INTO contest.Contest
+(
+    contest_code, contest_title, contest_theme, contest_summary,
+    registration_open_at, registration_close_at,
+    submission_open_at, submission_close_at,
+    contest_status, created_by_user_id
+)
+VALUES
+(
+    @expired_contest_code, N'Expired Submission Test', N'Test', N'Rollback-only fixture',
+    DATEADD(DAY, -10, SYSUTCDATETIME()), DATEADD(DAY, -5, SYSUTCDATETIME()),
+    DATEADD(DAY, -4, SYSUTCDATETIME()), DATEADD(DAY, -1, SYSUTCDATETIME()),
+    N'CLOSED', @organizer_user_id
+);
+SET @expired_contest_id = SCOPE_IDENTITY();
+
+INSERT INTO contest.ContestCategory (contest_id, category_code, category_name, category_status, created_by_user_id)
+VALUES (@expired_contest_id, N'EXPIRED', N'Expired Test', N'ACTIVE', @organizer_user_id);
+SET @expired_category_id = SCOPE_IDENTITY();
+
+INSERT INTO participant.Registration (contest_id, participant_id, registration_status, eligibility_status)
+VALUES (@expired_contest_id, @lan_participant_id, N'APPROVED', N'ELIGIBLE');
+SET @expired_registration_id = SCOPE_IDENTITY();
+
 DECLARE @created TABLE (submission_id INT);
 INSERT INTO @created
 EXEC submission.usp_create_submission
@@ -138,30 +162,6 @@ BEGIN CATCH
     SET @rejected_count += 1;
     PRINT 'PASS: duplicate frame in the same contest was rejected.';
 END CATCH;
-
-INSERT INTO contest.Contest
-(
-    contest_code, contest_title, contest_theme, contest_summary,
-    registration_open_at, registration_close_at,
-    submission_open_at, submission_close_at,
-    contest_status, created_by_user_id
-)
-VALUES
-(
-    @expired_contest_code, N'Expired Submission Test', N'Test', N'Rollback-only fixture',
-    DATEADD(DAY, -10, SYSUTCDATETIME()), DATEADD(DAY, -5, SYSUTCDATETIME()),
-    DATEADD(DAY, -4, SYSUTCDATETIME()), DATEADD(DAY, -1, SYSUTCDATETIME()),
-    N'CLOSED', @organizer_user_id
-);
-SET @expired_contest_id = SCOPE_IDENTITY();
-
-INSERT INTO contest.ContestCategory (contest_id, category_code, category_name, category_status, created_by_user_id)
-VALUES (@expired_contest_id, N'EXPIRED', N'Expired Test', N'ACTIVE', @organizer_user_id);
-SET @expired_category_id = SCOPE_IDENTITY();
-
-INSERT INTO participant.Registration (contest_id, participant_id, registration_status, eligibility_status)
-VALUES (@expired_contest_id, @lan_participant_id, N'APPROVED', N'ELIGIBLE');
-SET @expired_registration_id = SCOPE_IDENTITY();
 
 BEGIN TRY
     EXEC submission.usp_create_submission

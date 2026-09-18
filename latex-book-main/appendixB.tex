@@ -1,9 +1,9 @@
 % Appendix B: Bảng Tra cứu Yêu cầu Chức năng & Quy tắc Nghiệp vụ
 
-Phụ lục này cung cấp danh mục tra cứu nhanh toàn văn 31 Yêu cầu Chức năng (\textit{FR}) và 29 Quy tắc Nghiệp vụ (\textit{BR}) phục vụ công tác đối soát và phản biện đồ án.
+Phụ lục này cung cấp danh mục tra cứu nhanh toàn văn 32 Yêu cầu Chức năng (\textit{FR}) và 35 Quy tắc Nghiệp vụ (\textit{BR}) phục vụ công tác đối soát và phản biện đồ án.
 
 % ----------------------------------------------------------------------
-\section{Bảng Tra cứu 31 Yêu cầu Chức năng (FR)}
+\section{Bảng Tra cứu 32 Yêu cầu Chức năng (FR)}
 \label{a:fr_catalog}
 
 \begin{table}[htbp]
@@ -44,8 +44,74 @@ Phụ lục này cung cấp danh mục tra cứu nhanh toàn văn 31 Yêu cầu 
 \textbf{FR-029} & Audit & Duy trì nhật ký kiểm toán (Audit Log) cho các giao dịch thay đổi trạng thái. \\
 \textbf{FR-030} & Identity & Thực thi phân quyền truy cập theo vai trò (RBAC). \\
 \textbf{FR-031} & Reporting & Cung cấp các khung nhìn tra cứu hàng đợi duyệt bài, chấm thi và lưu trữ. \\
+\textbf{FR-032} & Digital Asset & Quản lý siêu dữ liệu tài sản số có cấu trúc (MIME, size, resolution, hash SHA-256, QC). \\
 \bottomrule
 \end{tabularx}
-\caption{Bảng tra cứu danh mục 31 Yêu cầu Chức năng}
+\caption{Bảng tra cứu danh mục 32 Yêu cầu Chức năng}
 \label{tab:a_fr_catalog}
+\end{table}
+
+% ----------------------------------------------------------------------
+\section{Bảng Tra cứu 35 Quy tắc Nghiệp vụ (BR)}
+\label{a:br_catalog}
+
+\begin{table}[htbp]
+\centering
+\scriptsize
+\begin{tabularx}{\textwidth}{p{1.8cm}p{1.6cm}>{\raggedright\arraybackslash}Xp{3.4cm}}
+\toprule
+\textbf{Mã BR} & \textbf{Loại} & \textbf{Tóm tắt quy tắc nghiệp vụ} & \textbf{Cơ chế thực thi} \\
+\midrule
+\textbf{BR-O-001} & Bắt buộc & Cuộc thi chỉ phát hành khi đủ category và judging round. & Stored Procedure \\
+\textbf{BR-O-002} & Bắt buộc & Tiêu chí chấm điểm gắn với vòng, có min/max và trọng số. & CSDL (CHECK, FK) \\
+\textbf{BR-O-003} & Bắt buộc & Đăng ký và nộp bài tuân thủ khung thời gian mở. & CSDL (CHECK / Proc) \\
+\textbf{BR-O-004} & Bắt buộc & Một khung hình thuộc duy nhất một cuộn phim. & CSDL (FK NOT NULL) \\
+\textbf{BR-O-005} & Bắt buộc & Bài thi liên kết 1 registration, 1 frame, 1 contest, 1 category. & CSDL (FK, UNIQUE) \\
+\textbf{BR-O-006} & Bắt buộc & Kết quả AI chỉ mang tính tư vấn, người duyệt quyết định. & Tầng ứng dụng / Workflow \\
+\textbf{BR-O-007} & Bắt buộc & Trạng thái thẩm định: VERIFIED, REJECTED, NEEDS\_CLARIFICATION. & CSDL (CHECK) \\
+\textbf{BR-O-008} & Bắt buộc & Phân công giám khảo gắn liền với vòng chấm cụ thể. & CSDL (FK, UNIQUE) \\
+\textbf{BR-O-009} & Bắt buộc & Một phiếu chấm cho đúng 1 giám khảo, 1 bài thi, 1 vòng. & CSDL (UNIQUE Composite) \\
+\textbf{BR-O-010} & Bắt buộc & Kết quả chỉ khóa khi vòng chung kết đủ phiếu chấm. & Stored Procedure \\
+\textbf{BR-O-011} & Bắt buộc & Lưu trữ di sản số chỉ tạo từ kết quả đã finalized. & Stored Procedure \\
+\bottomrule
+\end{tabularx}
+\caption{Bảng tra cứu 11 Quy tắc Nghiệp vụ Bắt buộc (BR-O-001 đến BR-O-011)}
+\label{tab:a_br_mandatory}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\scriptsize
+\begin{tabularx}{\textwidth}{p{1.8cm}p{1.6cm}>{\raggedright\arraybackslash}Xp{3.4cm}}
+\toprule
+\textbf{Mã BR} & \textbf{Loại} & \textbf{Tóm tắt quy tắc nghiệp vụ} & \textbf{Cơ chế thực thi} \\
+\midrule
+\textbf{BR-P-001} & Đề xuất & Một người dùng có thể sở hữu nhiều vai trò (UserRole N:M). & CSDL (Associative Table) \\
+\textbf{BR-P-002} & Đề xuất & Một thí sinh có tối đa 1 bản đăng ký hiệu lực / cuộc thi. & CSDL (UNIQUE Composite) \\
+\textbf{BR-P-003} & Đề xuất & Điều kiện tham gia biểu diễn qua xét duyệt đăng ký. & CSDL + Ứng dụng \\
+\textbf{BR-P-004} & Đề xuất & Film Stock, Camera, Lens, Lab quản lý danh mục dùng chung. & CSDL (Master Reference) \\
+\textbf{BR-P-005} & Đề xuất & Số thứ tự frame duy nhất trong phạm vi cuộn phim đó. & CSDL (UNIQUE Roll+Frame) \\
+\textbf{BR-P-006} & Đề xuất & Frame được dùng giữa các cuộc thi, nhưng $\leq 1$ lần / cuộc thi. & CSDL (UNIQUE Frame+Contest) \\
+\textbf{BR-P-007} & Đề xuất & Mã hạng mục duy nhất trong phạm vi cuộc thi đó. & CSDL (UNIQUE Contest+Code) \\
+\textbf{BR-P-008} & Đề xuất & Tiêu chí chấm điểm phân bản theo vòng chấm. & CSDL Design Decision \\
+\textbf{BR-P-009} & Đề xuất & Bài thi phải thuộc đăng ký của thí sinh sở hữu frame. & Stored Procedure \\
+\textbf{BR-P-010} & Đề xuất & Phân tích tương đồng có thể tham chiếu bài thi so sánh. & CSDL \\
+\textbf{BR-P-011} & Đề xuất & Kết quả AI dùng chung cấu trúc, phân loại theo type. & CSDL Design Decision \\
+\textbf{BR-P-012} & Đề xuất & Giám khảo chấm nhiều vòng, không phân công trùng trong 1 vòng. & CSDL (UNIQUE Judge+Round) \\
+\textbf{BR-P-013} & Đề xuất & Phiếu chấm có ít nhất 1 điểm tiêu chí; tổng không vượt max. & CSDL + Trigger / Proc \\
+\textbf{BR-P-014} & Đề xuất & Xử lý hòa điểm theo tổng điểm rồi đến ghi chú BTC duyệt. & Human / Application \\
+\textbf{BR-P-015} & Đề xuất & Chỉ gán giải cho kết quả đã khóa và cùng hạng mục. & Stored Procedure \\
+\textbf{BR-P-016} & Đề xuất & Kết quả đã khóa không thể sửa đổi nếu không có audit. & Ứng dụng + Audit \\
+\textbf{BR-P-017} & Đề xuất & Lưu trữ di sản số dùng bản chụp JSON (Snapshot). & CSDL Design Decision \\
+\textbf{BR-P-018} & Đề xuất & Cấm xóa vật lý đối với dữ liệu giao dịch cốt lõi. & CSDL (FK RESTRICT) \\
+\textbf{BR-P-019} & Đề xuất & Cấu hình cuộc thi có thể tạo từ template tái sử dụng. & CSDL + Stored Procedure \\
+\textbf{BR-P-020} & Đề xuất & Tài sản số hóa có siêu dữ liệu kỹ thuật có cấu trúc và QC. & CSDL (CHECK, FK) \\
+\textbf{BR-P-021} & Đề xuất & Bản ghi archive chỉ tạo từ kết quả FINALIZED / PUBLISHED. & Stored Procedure \\
+\textbf{BR-P-022} & Đề xuất & Kết quả và archive đã khóa/lưu trữ là bất biến. & CSDL (Triggers bất biến) \\
+\textbf{BR-P-023} & Đề xuất & Cuộc thi chỉ phát hành khi đủ category, round, criteria, award. & Stored Procedure \\
+\textbf{BR-P-024} & Đề xuất & Giải thưởng gán phải tương thích hạng mục của kết quả. & CSDL (Trigger + Proc) \\
+\bottomrule
+\end{tabularx}
+\caption{Bảng tra cứu 24 Quy tắc Nghiệp vụ Đề xuất (BR-P-001 đến BR-P-024)}
+\label{tab:a_br_proposed}
 \end{table}

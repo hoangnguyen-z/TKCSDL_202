@@ -70,9 +70,15 @@ Mô hình ý niệm bao phủ trọn vẹn chuỗi giá trị từ tài khoản 
 \textbf{AwardAssignment} & Gán giải cho kết quả chung cuộc. & Ghi nhận kết quả trao giải. \\
 \textbf{ArchiveItem} & Bản chụp bất biến của kết quả được lưu trữ. & Bảo toàn lịch sử khi dữ liệu sống thay đổi. \\
 \textbf{AuditLog} & Nhật ký thay đổi nghiệp vụ quan trọng. & Bảo đảm truy vết và trách nhiệm. \\
+\textbf{ContestTemplate} & Mẫu cấu hình cuộc thi tái sử dụng. & Cho phép nhân bản nhanh cấu hình cuộc thi mới. \\
+\textbf{TemplateCategory} & Hạng mục mẫu trong template. & Khung phân loại chuyên môn tái sử dụng. \\
+\textbf{TemplateJudgingRound} & Vòng chấm thi mẫu trong template. & Khung vòng chấm định nghĩa sẵn. \\
+\textbf{TemplateScoringCriterion} & Tiêu chí chấm điểm mẫu trong template. & Khung thang điểm và trọng số mẫu. \\
+\textbf{TemplateAwardDefinition} & Cơ cấu giải thưởng mẫu trong template. & Khung giải thưởng mẫu cho hạng mục. \\
+\textbf{AssetMetadata} & Siêu dữ liệu số hóa có cấu trúc và bằng chứng QC. & Quản lý MIME, kích thước, SHA-256, máy scan và QC. \\
 \bottomrule
 \end{tabularx}
-\caption{Danh mục 26 thực thể ý niệm cốt lõi và sự cần thiết ở mức nghiệp vụ}
+\caption{Danh mục 32 thực thể ý niệm và logic trong hệ thống}
 \label{tab:c4_entity_inventory}
 \end{table}
 
@@ -81,8 +87,9 @@ Danh mục thực thể bao phủ đầy đủ các năng lực nghiệp vụ c�
 thêm thực thể Judge trùng với tài khoản người dùng:
 \begin{itemize}
     \item \textbf{Danh tính và RBAC}: \texttt{UserAccount}, \texttt{Role}, \texttt{UserRole}, \texttt{ParticipantProfile}.
+    \item \textbf{Mẫu cấu hình tái sử dụng}: \texttt{ContestTemplate}, \texttt{TemplateCategory}, \texttt{TemplateJudgingRound}, \texttt{TemplateScoringCriterion}, \texttt{TemplateAwardDefinition}.
     \item \textbf{Cấu hình cuộc thi}: \texttt{Contest}, \texttt{ContestCategory}, \texttt{JudgingRound}, \\ \texttt{ScoringCriterion}, \texttt{AwardDefinition}.
-    \item \textbf{Đăng ký và xuất xứ}: \texttt{Registration}, \texttt{FilmStock}, \texttt{Camera}, \texttt{Lens}, \texttt{Lab}, \texttt{FilmRoll}, \texttt{FilmFrame}.
+    \item \textbf{Đăng ký và xuất xứ}: \texttt{Registration}, \texttt{FilmStock}, \texttt{Camera}, \texttt{Lens}, \texttt{Lab}, \texttt{FilmRoll}, \texttt{FilmFrame}, \texttt{AssetMetadata}.
     \item \textbf{Nộp bài và thẩm định}: \texttt{Submission}, \texttt{VerificationCase}, \\ \texttt{AIAnalysisResult}.
     \item \textbf{Chấm thi}: \texttt{JudgeAssignment}, \texttt{Evaluation}, \texttt{EvaluationScore}.
     \item \textbf{Kết quả và bảo tồn lịch sử}: \texttt{Result}, \texttt{AwardAssignment}, \texttt{ArchiveItem}, \texttt{AuditLog}.
@@ -91,7 +98,7 @@ thêm thực thể Judge trùng với tài khoản người dùng:
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth,keepaspectratio]{figures/fig_conceptual_erd.png}
-    \caption{Sơ đồ Thực thể Liên kết Ý niệm (Conceptual ERD) chuẩn hóa 26 thực thể}
+    \caption{Sơ đồ Thực thể Liên kết Ý niệm (Conceptual ERD) chuẩn hóa 32 thực thể}
     \label{fig:c4_conceptual_erd}
 \end{figure}
 
@@ -138,6 +145,18 @@ Mỗi mối quan hệ được xác lập bằng bản số chuẩn (\textit{Car
         \item $\text{Result } (1,1) \longleftrightarrow (0,N) \text{ AwardAssignment}$; \\
         $\text{AwardAssignment } (1,1) \longleftrightarrow (1,1) \text{ AwardDefinition}$: Gán giải thưởng cho kết quả chung cuộc.
         \item $\text{Result } (1,1) \longleftrightarrow (0,1) \text{ ArchiveItem}$: Chỉ bài thi có kết quả chung cuộc mới được chuyển vào kho lưu trữ số.
+    \end{itemize}
+    \item \textbf{Phân hệ Mẫu Cấu hình Cuộc thi (Reusable Contest Templates)}:
+    \begin{itemize}
+        \item $\text{ContestTemplate } (1,1) \longleftrightarrow (1,N) \text{ TemplateCategory}$: Một template chứa ít nhất một hạng mục mẫu.
+        \item $\text{TemplateCategory } (1,1) \longleftrightarrow (1,N) \text{ TemplateJudgingRound}$: Mỗi hạng mục mẫu có các vòng chấm mẫu.
+        \item $\text{TemplateJudgingRound } (1,1) \longleftrightarrow (1,N) \text{ TemplateScoringCriterion}$: Vòng chấm mẫu định nghĩa các tiêu chí mẫu.
+        \item $\text{TemplateCategory } (1,1) \longleftrightarrow (0,N) \text{ TemplateAwardDefinition}$: Định nghĩa cơ cấu giải mẫu theo hạng mục.
+        \item $\text{ContestTemplate } (0,1) \longleftrightarrow (0,N) \text{ Contest}$: Cuộc thi có thể được nhân bản tự động từ một template.
+    \end{itemize}
+    \item \textbf{Phân hệ Siêu dữ liệu Tài sản Số (Structured Digital Asset Metadata)}:
+    \begin{itemize}
+        \item $\text{Submission } (1,1) \longleftrightarrow (0,1) \text{ AssetMetadata}$: Mỗi bài thi liên kết bản ghi siêu dữ liệu kỹ thuật số hóa chi tiết và bằng chứng kiểm định chất lượng (QC).
     \end{itemize}
 \end{itemize}
 
@@ -219,6 +238,12 @@ Mỗi quan hệ logic sử dụng khóa thay thế nhân tạo (\textit{Surrogat
     \item \texttt{Evaluation}: \texttt{(round\_id, submission\_id, judge\_user\_id)} (UNIQUE Composite -- BR-O-009).
     \item \texttt{EvaluationScore}: \texttt{(evaluation\_id, criterion\_id)} (UNIQUE Composite).
     \item \texttt{Result}: \texttt{(category\_id, submission\_id)} (UNIQUE Composite).
+    \item \texttt{ContestTemplate}: \texttt{template\_code} (UNIQUE).
+    \item \texttt{TemplateCategory}: \texttt{(template\_id, category\_code)} (UNIQUE Composite).
+    \item \texttt{TemplateJudgingRound}: \texttt{(template\_category\_id, round\_number)} (UNIQUE Composite).
+    \item \texttt{TemplateScoringCriterion}: \texttt{(template\_round\_id, criterion\_code)} (UNIQUE Composite).
+    \item \texttt{TemplateAwardDefinition}: \texttt{(template\_category\_id, award\_code)} (UNIQUE Composite).
+    \item \texttt{AssetMetadata}: \texttt{submission\_id} (UNIQUE Composite -- 1:1), \texttt{checksum\_sha256} (INDEX).
 \end{itemize}
 
 \begin{figure}[htbp]
@@ -351,6 +376,9 @@ Evaluation.\allowbreak total\_score & Tổng điểm có trọng số của mộ
 Result.\allowbreak final\_rank & Thứ hạng chung cuộc của bài thi trong hạng mục & Số nguyên dương $\geq 1$ \\
 ArchiveItem.\allowbreak contest\_snapshot & Bản chụp bất biến của cuộc thi tại thời điểm trao giải & Định dạng JSON cấu trúc \\
 AuditLog.\allowbreak action\_code & Mã định danh hành động nghiệp vụ cần kiểm toán & INSERT, UPDATE, \allowbreak STATUS\_CHANGE \\
+ContestTemplate.\allowbreak template\_code & Mã định danh duy nhất của mẫu cấu hình cuộc thi & Duy nhất (UNIQUE), hợp lệ \\
+AssetMetadata.\allowbreak checksum\_sha256 & Mã băm SHA-256 64 ký tự hex kiểm tra toàn vẹn tệp & Đúng 64 ký tự hex hợp lệ \\
+AssetMetadata.\allowbreak qc\_status & Kết quả kiểm tra chất lượng số hóa tệp ảnh scan & PASSED, FAILED, \allowbreak FLAGGED, PENDING \\
 \bottomrule
 \end{tabularx}
 \caption{Từ điển dữ liệu logic cho các thực thể và thuộc tính trọng yếu}

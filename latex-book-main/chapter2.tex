@@ -45,7 +45,7 @@ Hệ thống mục tiêu (\textit{TO-BE Platform}) hợp nhất toàn bộ vòng
 \section{Danh mục Yêu cầu Chức năng (Functional Requirements)}
 \label{s:c2_fr}
 
-Hệ thống được thiết kế với 31 yêu cầu chức năng (\textit{FR}) chuẩn hóa, bao phủ trọn vẹn 11 phân hệ:
+Hệ thống được thiết kế với 32 yêu cầu chức năng (\textit{FR}) chuẩn hóa, bao phủ trọn vẹn 11 phân hệ:
 
 \begin{table}[htbp]
 \centering
@@ -85,9 +85,10 @@ Hệ thống được thiết kế với 31 yêu cầu chức năng (\textit{FR}
 \textbf{FR-029} & Hệ thống duy trì nhật ký kiểm toán (\textit{Audit Log}) cho mọi thao tác thay đổi trạng thái nghiệp vụ quan trọng. \\
 \textbf{FR-030} & Hệ thống thực thi phân quyền truy cập theo vai trò (\textit{RBAC}) cho Admin, Organizer, Judge và Participant. \\
 \textbf{FR-031} & Hệ thống cung cấp các giao diện báo cáo, tra cứu hàng đợi xác minh, tiến độ chấm thi và tìm kiếm kho lưu trữ. \\
+\textbf{FR-032} & Hệ thống quản lý siêu dữ liệu tài sản số có cấu trúc (MIME type, file size, độ phân giải, mã băm SHA-256, thiết bị/thông số scan và bằng chứng kiểm định chất lượng QC). \\
 \bottomrule
 \end{tabularx}
-\caption{Danh mục 31 Yêu cầu Chức năng chuẩn hóa}
+\caption{Danh mục 32 Yêu cầu Chức năng chuẩn hóa}
 \label{tab:c2_fr}
 \end{table}
 
@@ -112,7 +113,12 @@ Hệ thống được thiết kế với 31 yêu cầu chức năng (\textit{FR}
 \section{Danh mục Quy tắc Nghiệp vụ (Business Rules Catalog)}
 \label{s:c2_br}
 
-Để đảm bảo tính nghiêm ngặt của hệ thống, 29 quy tắc nghiệp vụ được định nghĩa và phân loại rõ ràng theo nguồn gốc: \textbf{Quy tắc Bắt buộc từ Đề bài (BR-O)} và \textbf{Quy tắc Đề xuất từ Thiết kế (BR-P)}:
+Để đảm bảo tính nghiêm ngặt của hệ thống, 35 quy tắc nghiệp vụ được định nghĩa và phân loại rõ ràng theo nguồn gốc: \textbf{Quy tắc Bắt buộc từ Đề bài (BR-O-001 đến BR-O-011)} và \textbf{Quy tắc Đề xuất từ Thiết kế (BR-P-001 đến BR-P-024)}.
+
+Các quy tắc được phân định rõ ràng giữa:
+(1) Ràng buộc thực thi trực tiếp tại tầng CSDL (\textit{Constraints, Unique Indexes, Triggers});
+(2) Quy trình nghiệp vụ kiểm soát tại tầng thủ tục lưu trữ (\textit{Stored Procedures});
+(3) Quy tắc thuộc về quyết định nghiệp vụ của con người hoặc giao diện ứng dụng (\textit{Application / Human Decision}). Toàn bộ các quy tắc bổ sung ngoài đề bài gốc đều được giữ nguyên nhãn Đề xuất (\textit{Proposed}) nhằm bảo toàn ranh giới yêu cầu cốt lõi.
 
 \begin{table}[htbp]
 \centering
@@ -164,9 +170,15 @@ Hệ thống được thiết kế với 31 yêu cầu chức năng (\textit{FR}
 \textbf{BR-P-016} & Đề xuất & Kết quả đã khóa không thể thay đổi ở cấp dữ liệu nếu không có can thiệp của Admin và nhật ký kiểm toán. & Tầng ứng dụng + Audit \\
 \textbf{BR-P-017} & Đề xuất & Kho lưu trữ di sản số lưu dữ liệu dạng bản chụp (Snapshot) thay vì chỉ giữ khóa ngoại sống. & CSDL Design Decision \\
 \textbf{BR-P-018} & Đề xuất & Cấm xóa vật lý (Hard Delete) đối với cuộc thi, bài thi, bảng điểm; sử dụng xóa mềm/khóa trạng thái. & CSDL (FK ON DELETE RESTRICT) \\
+\textbf{BR-P-019} & Đề xuất & Cấu hình cuộc thi có thể được tạo từ mô hình mẫu tái sử dụng (Template $\rightarrow$ Category, Round, Criterion, Award). & CSDL + Stored Procedure \\
+\textbf{BR-P-020} & Đề xuất & Tài sản số hóa phải có siêu dữ liệu kỹ thuật có cấu trúc (MIME, size, resolution, hash SHA-256 64 ký tự hex, bằng chứng QC). & CSDL (CHECK, FK) \\
+\textbf{BR-P-021} & Đề xuất & Bản ghi lưu trữ số chỉ được tạo lập từ kết quả đã khóa chính thức (FINALIZED hoặc PUBLISHED). & Stored Procedure (\texttt{usp\_create\_archive\_item}) \\
+\textbf{BR-P-022} & Đề xuất & Kết quả và bản ghi lưu trữ đã finalized/archived là bất biến; cấm sửa đổi điểm số/thứ hạng và cấm xóa vật lý. & CSDL (Triggers bất biến) \\
+\textbf{BR-P-023} & Đề xuất & Cuộc thi chỉ được phát hành khi đạt tính đầy đủ: có ít nhất 1 hạng mục, 1 vòng chấm, 1 tiêu chí và 1 cơ cấu giải. & Stored Procedure (\texttt{usp\_publish\_contest}) \\
+\textbf{BR-P-024} & Đề xuất & Giải thưởng chỉ được gán cho kết quả chung cuộc thuộc đúng hạng mục mà giải thưởng đó được định nghĩa. & CSDL (Trigger + Procedure) \\
 \bottomrule
 \end{tabularx}
-\caption{Bảng quy tắc nghiệp vụ đề xuất từ thiết kế hệ thống (BR-P-001 đến BR-P-018)}
+\caption{Bảng quy tắc nghiệp vụ đề xuất từ thiết kế hệ thống (BR-P-001 đến BR-P-024)}
 \label{tab:c2_br_proposed}
 \end{table}
 

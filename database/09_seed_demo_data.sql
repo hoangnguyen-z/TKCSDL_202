@@ -1,5 +1,9 @@
 USE FilmContestDB;
 GO
+SET ANSI_NULLS ON;
+GO
+SET QUOTED_IDENTIFIER ON;
+GO
 
 IF NOT EXISTS (SELECT 1 FROM iam.UserAccount WHERE email = N'admin@filmplatform.local')
     INSERT INTO iam.UserAccount (email, username, display_name)
@@ -93,6 +97,59 @@ DECLARE
     @participant_lan_id INT = (SELECT participant_id FROM participant.ParticipantProfile WHERE user_id = @participant_lan_user_id),
     @participant_bao_id INT = (SELECT participant_id FROM participant.ParticipantProfile WHERE user_id = @participant_bao_user_id);
 
+IF NOT EXISTS (SELECT 1 FROM contest.ContestTemplate WHERE template_code = N'TMPL_STANDARD_35MM')
+BEGIN
+    INSERT INTO contest.ContestTemplate
+    (
+        template_code, template_name, template_description, default_rules_markdown, template_status, created_by_user_id
+    )
+    VALUES
+    (
+        N'TMPL_STANDARD_35MM',
+        N'Standard 35mm Analog Contest Template',
+        N'Standard two-round competition template for 35mm film photography contests.',
+        N'# Contest Rules\n- 100% film capture required.\n- Lab development or home processing receipt/negative scan must be submitted.\n- No AI generation allowed.',
+        N'ACTIVE',
+        @organizer_user_id
+    );
+
+    DECLARE @tmpl_id INT = SCOPE_IDENTITY();
+
+    INSERT INTO contest.TemplateCategory (template_id, category_code, category_name, category_description, sort_order)
+    VALUES
+    (@tmpl_id, N'STREET', N'Street Photography', N'Candid moments of public life.', 1),
+    (@tmpl_id, N'LANDSCAPE', N'Landscape & Architecture', N'Natural scenery and built environments.', 2);
+
+    DECLARE @tmpl_cat_street INT = (SELECT template_category_id FROM contest.TemplateCategory WHERE template_id = @tmpl_id AND category_code = N'STREET');
+    DECLARE @tmpl_cat_land INT = (SELECT template_category_id FROM contest.TemplateCategory WHERE template_id = @tmpl_id AND category_code = N'LANDSCAPE');
+
+    INSERT INTO contest.TemplateJudgingRound (template_category_id, round_number, round_name, round_sequence, is_final_round)
+    VALUES
+    (@tmpl_cat_street, 1, N'Preliminary Screening', 1, 0),
+    (@tmpl_cat_street, 2, N'Grand Final', 2, 1),
+    (@tmpl_cat_land, 1, N'Preliminary Screening', 1, 0),
+    (@tmpl_cat_land, 2, N'Grand Final', 2, 1);
+
+    DECLARE @tmpl_rnd_street1 INT = (SELECT template_round_id FROM contest.TemplateJudgingRound WHERE template_category_id = @tmpl_cat_street AND round_number = 1);
+    DECLARE @tmpl_rnd_street2 INT = (SELECT template_round_id FROM contest.TemplateJudgingRound WHERE template_category_id = @tmpl_cat_street AND round_number = 2);
+
+    INSERT INTO contest.TemplateScoringCriterion (template_round_id, criterion_code, criterion_name, weight_percent, score_min_value, score_max_value, sort_order)
+    VALUES
+    (@tmpl_rnd_street1, N'COMPOSITION', N'Composition & Framing', 50.00, 0.00, 10.00, 1),
+    (@tmpl_rnd_street1, N'TIMING', N'Decisive Moment', 50.00, 0.00, 10.00, 2),
+    (@tmpl_rnd_street2, N'STORYTELLING', N'Visual Storytelling', 40.00, 0.00, 10.00, 1),
+    (@tmpl_rnd_street2, N'AESTHETICS', N'Analog Aesthetics', 30.00, 0.00, 10.00, 2),
+    (@tmpl_rnd_street2, N'TECHNICAL', N'Technical Execution', 30.00, 0.00, 10.00, 3);
+
+    INSERT INTO contest.TemplateAwardDefinition (template_category_id, award_code, award_name, rank_order, award_type, prize_description)
+    VALUES
+    (@tmpl_cat_street, N'FIRST', N'First Place', 1, N'MAJOR', N'Gold Medal + 50 rolls of film'),
+    (@tmpl_cat_street, N'SECOND', N'Second Place', 2, N'MAJOR', N'Silver Medal + 30 rolls of film'),
+    (@tmpl_cat_street, N'THIRD', N'Third Place', 3, N'MAJOR', N'Bronze Medal + 10 rolls of film'),
+    (@tmpl_cat_land, N'FIRST', N'First Place', 1, N'MAJOR', N'Gold Medal + 50 rolls of film'),
+    (@tmpl_cat_land, N'SECOND', N'Second Place', 2, N'MAJOR', N'Silver Medal + 30 rolls of film');
+END;
+
 IF NOT EXISTS (SELECT 1 FROM contest.Contest WHERE contest_code = N'FILM2026-FALL')
     INSERT INTO contest.Contest
     (
@@ -114,9 +171,9 @@ IF NOT EXISTS (SELECT 1 FROM contest.Contest WHERE contest_code = N'FILM2026-FAL
         N'Urban Memory',
         N'Open contest for film photography with a focus on analog storytelling and technical provenance.',
         '2026-08-01T00:00:00',
-        '2026-09-10T23:59:59',
+        '2026-11-15T23:59:59',
         '2026-08-05T00:00:00',
-        '2026-09-15T23:59:59',
+        '2026-11-30T23:59:59',
         N'OPEN',
         @organizer_user_id
     );
@@ -357,6 +414,45 @@ DECLARE
     @lan_frame5_id INT = (SELECT frame_id FROM film.FilmFrame WHERE roll_id = @lan_roll2_id AND frame_number = 5),
     @bao_frame1_id INT = (SELECT frame_id FROM film.FilmFrame WHERE roll_id = @bao_roll1_id AND frame_number = 1),
     @bao_frame7_id INT = (SELECT frame_id FROM film.FilmFrame WHERE roll_id = @bao_roll1_id AND frame_number = 7);
+
+IF NOT EXISTS (SELECT 1 FROM film.AssetMetadata WHERE frame_id = @lan_frame36_id AND asset_type_code = N'PRIMARY_SCAN')
+    INSERT INTO film.AssetMetadata
+    (
+        frame_id, asset_type_code, file_uri, file_extension, mime_type, file_size_bytes, width_px, height_px,
+        color_space, bit_depth, dpi, checksum_sha256, scanner_model, scan_software, qc_status, qc_checked_at, qc_checked_by_user_id, qc_notes
+    )
+    VALUES
+    (
+        @lan_frame36_id, N'PRIMARY_SCAN', N'https://storage.example/scans/lan-r01-f36.tif', N'tif', N'image/tiff',
+        28450120, 5400, 3600, N'Adobe RGB', 16, 3200, N'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+        N'Noritsu HS-1800', N'EZ-Controller v6.1', N'PASSED', '2026-07-25T14:00:00', @organizer_user_id, N'High dynamic range, grain intact, zero digital artifacts.'
+    );
+
+IF NOT EXISTS (SELECT 1 FROM film.AssetMetadata WHERE frame_id = @lan_frame5_id AND asset_type_code = N'PRIMARY_SCAN')
+    INSERT INTO film.AssetMetadata
+    (
+        frame_id, asset_type_code, file_uri, file_extension, mime_type, file_size_bytes, width_px, height_px,
+        color_space, bit_depth, dpi, checksum_sha256, scanner_model, scan_software, qc_status, qc_checked_at, qc_checked_by_user_id, qc_notes
+    )
+    VALUES
+    (
+        @lan_frame5_id, N'PRIMARY_SCAN', N'https://storage.example/scans/lan-r02-f05.tif', N'tif', N'image/tiff',
+        25600480, 5400, 3600, N'sRGB', 16, 3200, N'ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb',
+        N'Noritsu HS-1800', N'EZ-Controller v6.1', N'PASSED', '2026-03-23T11:00:00', @organizer_user_id, N'Excellent monochrome graduation and sharpness.'
+    );
+
+IF NOT EXISTS (SELECT 1 FROM film.AssetMetadata WHERE frame_id = @bao_frame1_id AND asset_type_code = N'PRIMARY_SCAN')
+    INSERT INTO film.AssetMetadata
+    (
+        frame_id, asset_type_code, file_uri, file_extension, mime_type, file_size_bytes, width_px, height_px,
+        color_space, bit_depth, dpi, checksum_sha256, scanner_model, scan_software, qc_status, qc_checked_at, qc_checked_by_user_id, qc_notes
+    )
+    VALUES
+    (
+        @bao_frame1_id, N'PRIMARY_SCAN', N'https://storage.example/scans/bao-r01-f01.tif', N'tif', N'image/tiff',
+        27890100, 5400, 3600, N'sRGB', 16, 3200, N'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad',
+        N'Fuji Frontier SP-3000', N'FDL-Master v2.0', N'PASSED', '2026-07-21T16:00:00', @organizer_user_id, N'Warm color palette verified.'
+    );
 
 IF NOT EXISTS (SELECT 1 FROM submission.Submission WHERE contest_id = @contest_fall_id AND frame_id = @bao_frame1_id)
     INSERT INTO submission.Submission (registration_id, contest_id, category_id, frame_id, submission_title, submission_statement, scanned_image_uri, thumbnail_image_uri, submitted_at, submission_status)

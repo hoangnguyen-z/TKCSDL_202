@@ -1,5 +1,9 @@
 USE FilmContestDB;
 GO
+SET ANSI_NULLS ON;
+GO
+SET QUOTED_IDENTIFIER ON;
+GO
 
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_submission_Submission_contest_id_submission_status' AND object_id = OBJECT_ID(N'submission.Submission'))
     CREATE NONCLUSTERED INDEX IX_submission_Submission_contest_id_submission_status
@@ -53,4 +57,22 @@ IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_audit_AuditLog_entity
     CREATE NONCLUSTERED INDEX IX_audit_AuditLog_entity_name_entity_id_action_at
         ON audit.AuditLog (entity_name, entity_id, action_at)
         INCLUDE (action_code, actor_user_id);
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_contest_ContestTemplate_template_status' AND object_id = OBJECT_ID(N'contest.ContestTemplate'))
+    CREATE NONCLUSTERED INDEX IX_contest_ContestTemplate_template_status
+        ON contest.ContestTemplate (template_status)
+        INCLUDE (template_code, template_name);
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_contest_Contest_source_template_id' AND object_id = OBJECT_ID(N'contest.Contest'))
+    CREATE NONCLUSTERED INDEX IX_contest_Contest_source_template_id
+        ON contest.Contest (source_template_id)
+        WHERE source_template_id IS NOT NULL;
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_film_AssetMetadata_frame_id_asset_type_code' AND object_id = OBJECT_ID(N'film.AssetMetadata'))
+    CREATE NONCLUSTERED INDEX IX_film_AssetMetadata_frame_id_asset_type_code
+        ON film.AssetMetadata (frame_id, asset_type_code)
+        INCLUDE (file_size_bytes, qc_status, checksum_sha256);
 GO

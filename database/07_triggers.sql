@@ -109,3 +109,75 @@ BEGIN
     WHERE ISNULL(i.result_status, N'') <> ISNULL(d.result_status, N'');
 END;
 GO
+
+CREATE OR ALTER TRIGGER result.TR_Result_BUD_ProtectFinalized
+ON result.Result
+AFTER UPDATE, DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Block DELETE of finalized/published results
+    IF NOT EXISTS (SELECT 1 FROM inserted) AND EXISTS (
+        SELECT 1
+        FROM deleted
+        WHERE result_status IN (N'FINALIZED', N'PUBLISHED')
+    )
+    BEGIN
+        THROW 54010, 'Cannot delete a finalized or published result. Record is immutable.', 1;
+    END;
+
+    -- Block illegal modifications of finalized/published results
+    IF EXISTS (
+        SELECT 1
+        FROM deleted AS d
+        INNER JOIN inserted AS i ON i.result_id = d.result_id
+        WHERE d.result_status IN (N'FINALIZED', N'PUBLISHED')
+          AND (
+              i.category_id <> d.category_id
+              OR i.submission_id <> d.submission_id
+              OR i.final_score <> d.final_score
+              OR i.final_rank <> d.final_rank
+              OR (d.result_status = N'PUBLISHED' AND i.result_status <> N'PUBLISHED')
+              OR (d.result_status = N'FINALIZED' AND i.result_status NOT IN (N'FINALIZED', N'PUBLISHED'))
+          )
+    )
+    BEGIN
+        THROW 54011, 'Cannot modify finalized or published result scores, rank, or category. Immutability violation.', 1;
+    END;
+END;
+GO
+
+CREATE OR ALTER TRIGGER archive.TR_ArchiveItem_BUD_Immutable
+ON archive.ArchiveItem
+AFTER UPDATE, DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF EXISTS (SELECT 1 FROM deleted)
+    BEGIN
+        THROW 55010, 'ArchiveItem records are strictly immutable. Updates and deletes are prohibited.', 1;
+    END;
+END;
+GO
+
+CREATE OR ALTER TRIGGER result.TR_AwardAssignment_BIU_CheckCategoryMatch
+ON result.AwardAssignment
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF EXISTS (
+        SELECT 1
+        FROM inserted AS i
+        INNER JOIN contest.AwardDefinition AS ad ON ad.award_definition_id = i.award_definition_id
+        INNER JOIN result.Result AS r ON r.result_id = i.result_id
+        WHERE ad.category_id <> r.category_id
+    )
+    BEGIN
+        THROW 54105, 'Award category mismatch: cannot assign an award defined for one category to a result in another category.', 1;
+    END;
+END;
+GO

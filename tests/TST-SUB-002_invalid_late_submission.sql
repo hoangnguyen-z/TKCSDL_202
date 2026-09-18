@@ -4,6 +4,8 @@ GO
 PRINT 'TST-SUB-002 - Late submission should fail';
 BEGIN TRANSACTION;
 
+DECLARE @expected_failure_observed BIT = 0;
+
 BEGIN TRY
     DECLARE
         @registration_id INT = (
@@ -43,12 +45,17 @@ BEGIN TRY
         @submission_statement = N'Late submission test.',
         @scanned_image_uri = N'https://storage.example/tests/late.jpg',
         @thumbnail_image_uri = N'https://storage.example/tests/late-thumb.jpg';
-
-    ROLLBACK TRANSACTION;
-    THROW 70005, 'TST-SUB-002 failed: late submission was accepted.', 1;
 END TRY
 BEGIN CATCH
+    SET @expected_failure_observed = 1;
     PRINT 'PASS: late submission was rejected as expected.';
-    ROLLBACK TRANSACTION;
 END CATCH;
+
+IF @expected_failure_observed = 0
+BEGIN
+    ROLLBACK TRANSACTION;
+    THROW 70005, 'TST-SUB-002 failed: late submission was accepted.', 1;
+END;
+
+ROLLBACK TRANSACTION;
 GO

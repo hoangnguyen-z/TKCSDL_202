@@ -142,7 +142,9 @@ SELECT
     ai.image_uri_snapshot,
     ai.contest_snapshot,
     ai.category_snapshot,
-    ai.participant_snapshot
+    ai.participant_snapshot,
+    ai.technical_snapshot,
+    ai.judging_snapshot
 FROM archive.ArchiveItem AS ai
 INNER JOIN result.Result AS r
     ON r.result_id = ai.result_id

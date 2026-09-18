@@ -68,11 +68,98 @@ BEGIN
 END;
 GO
 
+IF OBJECT_ID(N'contest.ContestTemplate', N'U') IS NULL
+BEGIN
+    CREATE TABLE contest.ContestTemplate
+    (
+        template_id INT IDENTITY(1,1) NOT NULL,
+        template_code NVARCHAR(30) NOT NULL,
+        template_name NVARCHAR(150) NOT NULL,
+        template_description NVARCHAR(500) NULL,
+        default_rules_markdown NVARCHAR(MAX) NULL,
+        template_status NVARCHAR(20) NOT NULL CONSTRAINT DF_contest_ContestTemplate_template_status DEFAULT (N'ACTIVE'),
+        created_by_user_id INT NOT NULL,
+        created_at DATETIME2(0) NOT NULL CONSTRAINT DF_contest_ContestTemplate_created_at DEFAULT (SYSUTCDATETIME()),
+        updated_at DATETIME2(0) NOT NULL CONSTRAINT DF_contest_ContestTemplate_updated_at DEFAULT (SYSUTCDATETIME()),
+        CONSTRAINT PK_contest_ContestTemplate PRIMARY KEY CLUSTERED (template_id)
+    );
+END;
+GO
+
+IF OBJECT_ID(N'contest.TemplateCategory', N'U') IS NULL
+BEGIN
+    CREATE TABLE contest.TemplateCategory
+    (
+        template_category_id INT IDENTITY(1,1) NOT NULL,
+        template_id INT NOT NULL,
+        category_code NVARCHAR(20) NOT NULL,
+        category_name NVARCHAR(150) NOT NULL,
+        category_description NVARCHAR(500) NULL,
+        sort_order INT NOT NULL CONSTRAINT DF_contest_TemplateCategory_sort_order DEFAULT ((1)),
+        created_at DATETIME2(0) NOT NULL CONSTRAINT DF_contest_TemplateCategory_created_at DEFAULT (SYSUTCDATETIME()),
+        CONSTRAINT PK_contest_TemplateCategory PRIMARY KEY CLUSTERED (template_category_id)
+    );
+END;
+GO
+
+IF OBJECT_ID(N'contest.TemplateJudgingRound', N'U') IS NULL
+BEGIN
+    CREATE TABLE contest.TemplateJudgingRound
+    (
+        template_round_id INT IDENTITY(1,1) NOT NULL,
+        template_category_id INT NOT NULL,
+        round_number INT NOT NULL,
+        round_name NVARCHAR(100) NOT NULL,
+        round_sequence INT NOT NULL,
+        is_final_round BIT NOT NULL CONSTRAINT DF_contest_TemplateJudgingRound_is_final_round DEFAULT ((0)),
+        created_at DATETIME2(0) NOT NULL CONSTRAINT DF_contest_TemplateJudgingRound_created_at DEFAULT (SYSUTCDATETIME()),
+        CONSTRAINT PK_contest_TemplateJudgingRound PRIMARY KEY CLUSTERED (template_round_id)
+    );
+END;
+GO
+
+IF OBJECT_ID(N'contest.TemplateScoringCriterion', N'U') IS NULL
+BEGIN
+    CREATE TABLE contest.TemplateScoringCriterion
+    (
+        template_criterion_id INT IDENTITY(1,1) NOT NULL,
+        template_round_id INT NOT NULL,
+        criterion_code NVARCHAR(30) NOT NULL,
+        criterion_name NVARCHAR(150) NOT NULL,
+        criterion_description NVARCHAR(500) NULL,
+        weight_percent DECIMAL(5,2) NOT NULL,
+        score_min_value DECIMAL(5,2) NOT NULL,
+        score_max_value DECIMAL(5,2) NOT NULL,
+        sort_order INT NOT NULL CONSTRAINT DF_contest_TemplateScoringCriterion_sort_order DEFAULT ((1)),
+        created_at DATETIME2(0) NOT NULL CONSTRAINT DF_contest_TemplateScoringCriterion_created_at DEFAULT (SYSUTCDATETIME()),
+        CONSTRAINT PK_contest_TemplateScoringCriterion PRIMARY KEY CLUSTERED (template_criterion_id)
+    );
+END;
+GO
+
+IF OBJECT_ID(N'contest.TemplateAwardDefinition', N'U') IS NULL
+BEGIN
+    CREATE TABLE contest.TemplateAwardDefinition
+    (
+        template_award_id INT IDENTITY(1,1) NOT NULL,
+        template_category_id INT NOT NULL,
+        award_code NVARCHAR(30) NOT NULL,
+        award_name NVARCHAR(150) NOT NULL,
+        rank_order INT NOT NULL,
+        award_type NVARCHAR(30) NOT NULL,
+        prize_description NVARCHAR(500) NULL,
+        created_at DATETIME2(0) NOT NULL CONSTRAINT DF_contest_TemplateAwardDefinition_created_at DEFAULT (SYSUTCDATETIME()),
+        CONSTRAINT PK_contest_TemplateAwardDefinition PRIMARY KEY CLUSTERED (template_award_id)
+    );
+END;
+GO
+
 IF OBJECT_ID(N'contest.Contest', N'U') IS NULL
 BEGIN
     CREATE TABLE contest.Contest
     (
         contest_id INT IDENTITY(1,1) NOT NULL,
+        source_template_id INT NULL,
         contest_code NVARCHAR(30) NOT NULL,
         contest_title NVARCHAR(200) NOT NULL,
         contest_theme NVARCHAR(200) NULL,
@@ -305,6 +392,36 @@ BEGIN
         created_at DATETIME2(0) NOT NULL CONSTRAINT DF_film_FilmFrame_created_at DEFAULT (SYSUTCDATETIME()),
         updated_at DATETIME2(0) NOT NULL CONSTRAINT DF_film_FilmFrame_updated_at DEFAULT (SYSUTCDATETIME()),
         CONSTRAINT PK_film_FilmFrame PRIMARY KEY CLUSTERED (frame_id)
+    );
+END;
+GO
+
+IF OBJECT_ID(N'film.AssetMetadata', N'U') IS NULL
+BEGIN
+    CREATE TABLE film.AssetMetadata
+    (
+        asset_id INT IDENTITY(1,1) NOT NULL,
+        frame_id INT NOT NULL,
+        asset_type_code NVARCHAR(30) NOT NULL,
+        file_uri NVARCHAR(500) NOT NULL,
+        file_extension NVARCHAR(10) NOT NULL,
+        mime_type NVARCHAR(100) NOT NULL,
+        file_size_bytes BIGINT NOT NULL,
+        width_px INT NOT NULL,
+        height_px INT NOT NULL,
+        color_space NVARCHAR(30) NOT NULL,
+        bit_depth SMALLINT NOT NULL,
+        dpi INT NOT NULL,
+        checksum_sha256 CHAR(64) NOT NULL,
+        scanner_model NVARCHAR(100) NULL,
+        scan_software NVARCHAR(100) NULL,
+        qc_status NVARCHAR(20) NOT NULL CONSTRAINT DF_film_AssetMetadata_qc_status DEFAULT (N'PENDING'),
+        qc_checked_at DATETIME2(0) NULL,
+        qc_checked_by_user_id INT NULL,
+        qc_notes NVARCHAR(1000) NULL,
+        created_at DATETIME2(0) NOT NULL CONSTRAINT DF_film_AssetMetadata_created_at DEFAULT (SYSUTCDATETIME()),
+        updated_at DATETIME2(0) NOT NULL CONSTRAINT DF_film_AssetMetadata_updated_at DEFAULT (SYSUTCDATETIME()),
+        CONSTRAINT PK_film_AssetMetadata PRIMARY KEY CLUSTERED (asset_id)
     );
 END;
 GO

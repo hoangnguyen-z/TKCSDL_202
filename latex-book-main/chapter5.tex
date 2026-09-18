@@ -51,21 +51,21 @@ Cơ sở dữ liệu được phân chia thành 12 Schema chuyên biệt nhằm 
     \item \texttt{iam}: \texttt{UserAccount}, \texttt{Role}, \texttt{UserRole}.
     \item \texttt{participant}: \texttt{ParticipantProfile}, \texttt{Registration}.
     \item \texttt{reference}: \texttt{FilmStock}, \texttt{Camera}, \texttt{Lens}, \texttt{Lab}.
-    \item \texttt{contest}: \texttt{Contest}, \texttt{ContestCategory}, \texttt{JudgingRound}, \\ \texttt{ScoringCriterion}, \texttt{AwardDefinition}.
-    \item \texttt{film}: \texttt{FilmRoll}, \texttt{FilmFrame}.
+    \item \texttt{contest}: \texttt{Contest}, \texttt{ContestCategory}, \texttt{JudgingRound}, \texttt{ScoringCriterion}, \texttt{AwardDefinition}, \texttt{ContestTemplate}, \texttt{TemplateCategory}, \texttt{TemplateJudgingRound}, \texttt{TemplateScoringCriterion}, \texttt{TemplateAwardDefinition}.
+    \item \texttt{film}: \texttt{FilmRoll}, \texttt{FilmFrame}, \texttt{AssetMetadata}.
     \item \texttt{submission}: \texttt{Submission}.
     \item \texttt{verification}: \texttt{VerificationCase}, \texttt{AIAnalysisResult}.
     \item \texttt{judging}: \texttt{JudgeAssignment}, \texttt{Evaluation}, \texttt{EvaluationScore}.
     \item \texttt{result}: \texttt{Result}, \texttt{AwardAssignment}.
     \item \texttt{archive}: \texttt{ArchiveItem}.
     \item \texttt{audit}: \texttt{AuditLog}.
-    \item \texttt{reporting}: Chứa các khung nhìn báo cáo (\textit{Views}).
+    \item \texttt{reporting}: Chứa 5 khung nhìn báo cáo (\textit{Views}).
 \end{itemize}
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth,keepaspectratio]{figures/fig_physical_pdm.png}
-    \caption{Sơ đồ Vật lý Cơ sở Dữ liệu (Physical Database Diagram - PDM) trên Microsoft SQL Server 2022 gồm 24 bảng quan hệ}
+    \caption{Sơ đồ Vật lý Cơ sở Dữ liệu (Physical Database Diagram - PDM) trên Microsoft SQL Server 2022 gồm 32 bảng quan hệ}
     \label{fig:c5_physical_pdm}
 \end{figure}
 
@@ -110,13 +110,16 @@ Trong hệ thống quản lý cuộc thi và lưu trữ di sản nghệ thuật,
 \end{itemize}
 
 \paragraph{Ràng buộc Miền giá trị (Check Constraints)}
-Hệ thống cài đặt các ràng buộc kiểm tra giá trị toán học và logic thời gian:
+Hệ thống cài đặt các ràng buộc kiểm tra giá trị toán học, logic thời gian và định dạng kỹ thuật:
 \begin{itemize}
     \item \texttt{CK\_contest\_Contest\_dates}: \texttt{registration\_open\_at} $\leq$ \texttt{registration\_close\_at} và \texttt{submission\_open\_at} $\leq$ \texttt{submission\_close\_at}.
     \item \texttt{CK\_contest\_ScoringCriterion\_weight}: \texttt{weight\_percent} $>$ 0 và \texttt{weight\_percent} $\leq$ 100.
     \item \texttt{CK\_contest\_ScoringCriterion\_score\_range}: \texttt{score\_min\_value} $\leq$ \texttt{score\_max\_value}.
     \item \texttt{CK\_verification\_AIAnalysisResult\_confidence}: \texttt{confidence\_score} $\geq$ 0 và \texttt{confidence\_score} $\leq$ 1.
     \item \texttt{CK\_judging\_Evaluation\_total\_score}: \texttt{total\_score} $\geq$ 0.
+    \item \texttt{CK\_film\_AssetMetadata\_sha256}: \texttt{LEN(checksum\_sha256) = 64} và không chứa ký tự ngoài tập hex hợp lệ (\texttt{0-9, a-f, A-F}).
+    \item \texttt{CK\_film\_AssetMetadata\_bit\_depth}: \texttt{bit\_depth IN (8, 12, 14, 16)}.
+    \item \texttt{CK\_film\_AssetMetadata\_qc\_status}: \texttt{qc\_status IN ('PENDING', 'PASSED', 'FAILED', 'FLAGGED')}.
 \end{itemize}
 
 % ----------------------------------------------------------------------
@@ -157,24 +160,31 @@ Hệ thống đóng gói toàn bộ các luồng nghiệp vụ phức tạp vào
         \item \texttt{reporting.vw\_verification\_queue}: Hàng đợi các bài thi đang chờ Ban tổ chức duyệt kèm các cờ cảnh báo từ AI.
         \item \texttt{reporting.vw\_judge\_work\_queue}: Hàng đợi công việc của từng giám khảo theo vòng chấm.
         \item \texttt{reporting.vw\_result\_summary}: Bảng tổng kết kết quả cuộc thi và giải thưởng đã gán.
-        \item \texttt{reporting.vw\_archive\_catalog}: Danh mục tra cứu kho lưu trữ số phục vụ triển lãm.
+        \item \texttt{reporting.vw\_archive\_catalog}: Danh mục tra cứu kho lưu trữ số phục vụ triển lãm, chứa đầy đủ 5 gói snapshot JSON: \texttt{contest\_snapshot}, \texttt{category\_snapshot}, \texttt{participant\_snapshot}, \texttt{technical\_snapshot}, \texttt{judging\_snapshot}.
     \end{itemize}
     \item \textbf{Thủ tục Lưu trữ Nghiệp vụ và An toàn Giao dịch (Stored Procedures)}:
     \begin{itemize}
-        \item \textbf{Chuẩn an toàn giao dịch}: Mọi thủ tục đều kích hoạt \texttt{SET XACT\_ABORT ON;} kết hợp khối \texttt{BEGIN TRY ... BEGIN CATCH} và kiểm tra \texttt{IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;} để đảm bảo tính nguyên tử (Atomicity), tự động hoàn nguyên khi có ngoại lệ phát sinh.
+        \item \textbf{Chuẩn an toàn giao dịch}: Mọi thủ tục đều sử dụng khối \texttt{BEGIN TRY ... BEGIN CATCH} và quản lý giao dịch an toàn với kiểm tra \texttt{IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION; THROW;}, loại bỏ hoàn toàn việc phụ thuộc \texttt{SET XACT\_ABORT ON} để tránh hiện tượng \textit{doomed transaction} ảnh hưởng đến caller và các bộ kiểm thử tự động.
+        \item \texttt{contest.usp\_create\_contest\_from\_template}: Tự động nhân bản toàn bộ cây phân cấp cấu hình (hạng mục, vòng chấm, tiêu chí, giải thưởng) từ template sang cuộc thi mới trong một giao dịch nguyên tử.
+        \item \texttt{contest.usp\_publish\_contest}: Xác thực tính đầy đủ cấu hình trước khi phát hành (phải đủ category, round, criterion, award definition); ngăn chặn phát hành cuộc thi dang dở.
         \item \texttt{submission.usp\_create\_submission}: Kiểm tra toàn diện điều kiện nộp bài (thời hạn cuộc thi, quyền sở hữu khung hình, tính duy nhất trong cuộc thi) trong một giao dịch an toàn.
-        \item \texttt{verification.usp\_record\_verification\_decision}: Ghi nhận quyết định thẩm định của Ban tổ chức và đồng bộ trạng thái bài thi theo cơ chế chuyển đổi một chiều an toàn.
+        \item \texttt{verification.usp\_record\_verification\_decision}: Ghi nhận quyết định thẩm định của Ban tổ chức, đồng bộ trạng thái bài thi và bảo vệ terminal state (chặn đảo ngược quyết định khi đã \texttt{VERIFIED} hoặc \texttt{REJECTED}).
         \item \texttt{judging.usp\_submit\_evaluation}: Tiếp nhận và khóa phiếu chấm của giám khảo, ngăn chặn sửa đổi sau khi đã đệ trình.
         \item \texttt{result.usp\_finalize\_results\_for\_round}: Tự động tổng hợp điểm, xếp thứ hạng không trùng lặp và khóa kết quả chung cuộc với tính chất lũy đẳng (\textit{Idempotent}).
+        \item \texttt{result.usp\_assign\_award}: Gán giải thưởng chính thức cho kết quả đã khóa (\texttt{FINALIZED}), xác thực tính tương thích tuyệt đối giữa giải thưởng và hạng mục chuyên môn.
+        \item \texttt{archive.usp\_create\_archive\_item}: Tạo bản chụp di sản số bất biến chỉ từ kết quả đã khóa chính thức (\texttt{FINALIZED} hoặc \texttt{PUBLISHED}), từ chối các kết quả sơ bộ chưa hoàn tất.
     \end{itemize}
     \item \textbf{Hàm Tự định nghĩa (User-Defined Functions -- UDFs)}:
     \begin{itemize}
         \item \texttt{judging.fn\_round\_max\_total\_score(@round\_id INT)}: Hàm vô hướng (\textit{Scalar Function}) tính toán tổng điểm trần khả dĩ cho một vòng chấm dựa trên tổng \texttt{score\_max\_value} của các tiêu chí có trạng thái \texttt{ACTIVE}. Hàm được thiết kế an toàn đối với các tham số bất thường (trả về 0 khi truyền \texttt{NULL} hoặc ID vòng thi không tồn tại), hỗ trợ chuẩn hóa thang điểm và kiểm tra tính hợp lệ của dữ liệu chấm thi.
     \end{itemize}
-    \item \textbf{Trigger Kiểm toán và Tính toán Tự động (Triggers)}:
+    \item \textbf{Trigger Kiểm toán và Bảo vệ Tính Toàn vẹn Bất biến (Triggers)}:
     \begin{itemize}
         \item \texttt{TR\_judging\_EvaluationScore\_AIU\_RecalcEvaluation}: Tự động tính toán lại \texttt{total\_score} trong bảng \texttt{Evaluation} mỗi khi có điểm tiêu chí được thêm hoặc cập nhật.
         \item \texttt{TR\_submission\_Submission\_AU\_AuditStatus}: Tự động ghi nhật ký vào \texttt{audit.AuditLog} mỗi khi bài dự thi chuyển đổi trạng thái.
         \item \texttt{TR\_result\_Result\_AU\_AuditStatus}: Tự động lưu vết kiểm toán khi kết quả cuộc thi được khóa hoặc phát hành.
+        \item \texttt{TR\_result\_Result\_BUD\_ProtectFinalized}: Ngăn chặn mọi thao tác sửa đổi điểm số, thứ hạng hoặc xóa kết quả khi bản ghi đã ở trạng thái \texttt{FINALIZED} hoặc \texttt{PUBLISHED}.
+        \item \texttt{TR\_archive\_ArchiveItem\_BUD\_Immutable}: Bảo vệ tính bất biến của kho lưu trữ di sản số: ngăn chặn tuyệt đối mọi thao tác \texttt{UPDATE} hoặc \texttt{DELETE} trên bản ghi di sản đã lưu trữ (\texttt{ARCHIVED}).
+        \item \texttt{TR\_result\_AwardAssignment\_BIU\_CheckCategoryMatch}: Kiểm tra và ngăn chặn gán giải thưởng vào bài thi thuộc hạng mục khác với cấu hình giải thưởng.
     \end{itemize}
 \end{enumerate}

@@ -74,6 +74,11 @@
 | UserRole | `iam.UserRole` |
 | ParticipantProfile | `participant.ParticipantProfile` |
 | Contest | `contest.Contest` |
+| ContestTemplate | `contest.ContestTemplate` |
+| TemplateCategory | `contest.TemplateCategory` |
+| TemplateJudgingRound | `contest.TemplateJudgingRound` |
+| TemplateScoringCriterion | `contest.TemplateScoringCriterion` |
+| TemplateAwardDefinition | `contest.TemplateAwardDefinition` |
 | ContestCategory | `contest.ContestCategory` |
 | JudgingRound | `contest.JudgingRound` |
 | ScoringCriterion | `contest.ScoringCriterion` |
@@ -85,6 +90,7 @@
 | Lab | `reference.Lab` |
 | FilmRoll | `film.FilmRoll` |
 | FilmFrame | `film.FilmFrame` |
+| AssetMetadata | `film.AssetMetadata` |
 | Submission | `submission.Submission` |
 | VerificationCase | `verification.VerificationCase` |
 | AIAnalysisResult | `verification.AIAnalysisResult` |
@@ -187,6 +193,10 @@ Rationale:
 | `verification.usp_record_verification_decision` | Records human verification decision and syncs submission status |
 | `judging.usp_submit_evaluation` | Validates and submits a judge evaluation |
 | `result.usp_finalize_results_for_round` | Aggregates and finalizes results for a final round |
+| `archive.usp_create_archive_item` | Creates an immutable archive item from a finalized/published result |
+| `contest.usp_create_contest_from_template` | Replicates complete contest structure from a reusable template |
+| `contest.usp_publish_contest` | Validates configuration completeness before publishing a contest |
+| `result.usp_assign_award` | Assigns an award with category validation |
 
 ### 8.4 Triggers
 
@@ -195,6 +205,9 @@ Rationale:
 | `TR_judging_EvaluationScore_AIU_RecalcEvaluation` | Recalculates evaluation total after insert or update of criterion scores |
 | `TR_submission_Submission_AU_AuditStatus` | Writes audit entries when submission status changes |
 | `TR_result_Result_AU_AuditStatus` | Writes audit entries when result status changes |
+| `TR_Result_BUD_ProtectFinalized` | Blocks deletion or illegal modification of finalized/published results |
+| `TR_ArchiveItem_BUD_Immutable` | Prohibits all updates and deletes on historical archive records |
+| `TR_AwardAssignment_BIU_CheckCategoryMatch` | Enforces matching category scope between award definitions and results |
 
 ## 9. Index Strategy
 
@@ -203,6 +216,8 @@ Rationale:
 | `IX_submission_Submission_contest_id_submission_status` | Non-unique | `contest_id`, `submission_status` | `category_id`, `registration_id`, `submitted_at` | Organizer submission queue by contest and status |
 | `IX_submission_Submission_registration_id_submitted_at` | Non-unique | `registration_id`, `submitted_at` | `submission_status`, `contest_id`, `category_id` | Participant submission history |
 | `IX_film_FilmFrame_roll_id_frame_number` | Unique | `roll_id`, `frame_number` | None | Provenance lookup and uniqueness |
+| `IX_film_AssetMetadata_frame_id_asset_type` | Unique | `frame_id`, `asset_type` | None | Asset provenance lookup and uniqueness |
+| `IX_contest_Contest_source_template_id` | Filtered | `source_template_id` | None | Contests instantiated from templates |
 | `IX_verification_VerificationCase_verification_status` | Non-unique | `verification_status`, `reviewed_at` | `submission_id`, `reviewed_by_user_id` | Verification queue |
 | `IX_verification_AIAnalysisResult_submission_id_analysis_type_code` | Non-unique | `submission_id`, `analysis_type_code` | `confidence_score`, `analysis_outcome_code`, `related_submission_id` | Advisory analysis lookup |
 | `IX_judging_JudgeAssignment_judge_user_id_assignment_status` | Non-unique | `judge_user_id`, `assignment_status` | `round_id`, `assigned_at` | Judge work queue |

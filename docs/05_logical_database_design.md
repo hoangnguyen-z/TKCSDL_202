@@ -38,6 +38,12 @@ parent relation identity needed to preserve the conceptual cardinalities.
 | --- | --- | --- |
 | UserRole | user_role_id | user_id -> UserAccount; role_id -> Role; assigned_by_user_id -> UserAccount |
 | ParticipantProfile | participant_id | user_id -> UserAccount |
+| Contest | contest_id | created_by_user_id -> UserAccount; source_template_id -> ContestTemplate (optional) |
+| ContestTemplate | template_id | created_by_user_id -> UserAccount |
+| TemplateCategory | template_category_id | template_id -> ContestTemplate |
+| TemplateJudgingRound | template_round_id | template_category_id -> TemplateCategory |
+| TemplateScoringCriterion | template_criterion_id | template_round_id -> TemplateJudgingRound |
+| TemplateAwardDefinition | template_award_id | template_category_id -> TemplateCategory |
 | ContestCategory | category_id | contest_id -> Contest |
 | JudgingRound | round_id | category_id -> ContestCategory |
 | ScoringCriterion | criterion_id | round_id -> JudgingRound |
@@ -45,6 +51,7 @@ parent relation identity needed to preserve the conceptual cardinalities.
 | Registration | registration_id | contest_id -> Contest; participant_id -> ParticipantProfile; reviewed_by_user_id -> UserAccount |
 | FilmRoll | roll_id | participant_id -> ParticipantProfile; film_stock_id -> FilmStock; lab_id -> Lab |
 | FilmFrame | frame_id | roll_id -> FilmRoll; camera_id -> Camera; lens_id -> Lens |
+| AssetMetadata | asset_id | frame_id -> FilmFrame; qc_checked_by_user_id -> UserAccount |
 | Submission | submission_id | registration_id -> Registration; contest_id -> Contest; category_id -> ContestCategory; frame_id -> FilmFrame |
 | VerificationCase | verification_id | submission_id -> Submission; reviewed_by_user_id -> UserAccount |
 | AIAnalysisResult | ai_result_id | submission_id -> Submission; related_submission_id -> Submission; reviewed_by_user_id -> UserAccount |
@@ -69,7 +76,12 @@ parent relation identity needed to preserve the conceptual cardinalities.
 
 | Relation | Primary Key | Key Attributes | Notes |
 | --- | --- | --- | --- |
-| Contest | contest_id | contest_code, contest_title, contest_theme, registration_open_at, registration_close_at, submission_open_at, submission_close_at, result_publish_at, contest_status | Contest header |
+| Contest | contest_id | contest_code, contest_title, contest_theme, registration_open_at, registration_close_at, submission_open_at, submission_close_at, result_publish_at, contest_status, source_template_id | Contest event record |
+| ContestTemplate | template_id | template_code, template_name, description, default_rules, template_status | Reusable contest blueprint |
+| TemplateCategory | template_category_id | template_id, category_code, category_name, description, sort_order | Template category blueprint |
+| TemplateJudgingRound | template_round_id | template_category_id, round_number, round_name, is_final_round, round_rules | Template round blueprint |
+| TemplateScoringCriterion | template_criterion_id | template_round_id, criterion_code, criterion_name, weight_percent, score_min_value, score_max_value | Template criterion blueprint |
+| TemplateAwardDefinition | template_award_id | template_category_id, award_code, award_name, award_rank, award_type, prize_description | Template award blueprint |
 | ContestCategory | category_id | contest_id, category_code, category_name, category_status, sort_order | Category unique within contest |
 | JudgingRound | round_id | category_id, round_number, round_name, round_sequence, round_status, evaluation_open_at, evaluation_close_at, is_final_round | Round scoped to category |
 | ScoringCriterion | criterion_id | round_id, criterion_code, criterion_name, weight_percent, score_min_value, score_max_value, sort_order, criterion_status | Criteria scoped to round |
@@ -84,6 +96,11 @@ foreign keys and alternate keys:
 | --- | --- | --- |
 | `UserRole` | `user_id -> UserAccount`; `role_id -> Role` | `(user_id, role_id)` |
 | `ParticipantProfile` | `user_id -> UserAccount` | `user_id` |
+| `ContestTemplate` | `created_by_user_id -> UserAccount` | `template_code` |
+| `TemplateCategory` | `template_id -> ContestTemplate` | `(template_id, category_code)` |
+| `TemplateJudgingRound` | `template_category_id -> TemplateCategory` | `(template_category_id, round_number)` |
+| `TemplateScoringCriterion` | `template_round_id -> TemplateJudgingRound` | `(template_round_id, criterion_code)` |
+| `TemplateAwardDefinition` | `template_category_id -> TemplateCategory` | `(template_category_id, award_code)` |
 | `ContestCategory` | `contest_id -> Contest` | `(contest_id, category_code)` |
 | `Registration` | `contest_id -> Contest`; `participant_id -> ParticipantProfile` | `(contest_id, participant_id)` |
 
@@ -108,12 +125,13 @@ deferred to the physical design.
 | Lens | lens_id | brand_name, model_name, focal_description, lens_status | Reference data |
 | Lab | lab_id | lab_name, city_name, country_code, lab_status | Reference data |
 
-### 2.5 Film Provenance
+### 2.5 Film Provenance and Asset Metadata
 
 | Relation | Primary Key | Key Attributes | Notes |
 | --- | --- | --- | --- |
 | FilmRoll | roll_id | participant_id, film_stock_id, lab_id, roll_code, film_format_code, iso_setting, developed_at, scanned_at, roll_status | Participant-owned roll |
 | FilmFrame | frame_id | roll_id, camera_id, lens_id, frame_number, frame_title, captured_on, capture_location, frame_status, negative_image_uri, contact_sheet_uri | Unique frame number per roll |
+| AssetMetadata | asset_id | frame_id, asset_type, mime_type, file_extension, file_size_bytes, pixel_width, pixel_height, sha256_checksum, bit_depth, scanner_make, scanner_model, scan_resolution_dpi, scanned_date, qc_status, qc_checked_by_user_id, qc_notes | Structured technical provenance & QC evidence |
 
 ### 2.5.1 Film Provenance Relation Contract
 

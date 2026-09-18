@@ -44,6 +44,56 @@ IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_participant_Part
     ALTER TABLE participant.ParticipantProfile ADD CONSTRAINT FK_participant_ParticipantProfile_UserAccount FOREIGN KEY (user_id) REFERENCES iam.UserAccount (user_id);
 GO
 
+IF NOT EXISTS (SELECT 1 FROM sys.key_constraints WHERE name = N'UQ_contest_ContestTemplate_template_code')
+    ALTER TABLE contest.ContestTemplate ADD CONSTRAINT UQ_contest_ContestTemplate_template_code UNIQUE (template_code);
+GO
+IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = N'CK_contest_ContestTemplate_template_status')
+    ALTER TABLE contest.ContestTemplate ADD CONSTRAINT CK_contest_ContestTemplate_template_status CHECK (template_status IN (N'ACTIVE', N'INACTIVE', N'ARCHIVED'));
+GO
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_contest_ContestTemplate_CreatedByUser')
+    ALTER TABLE contest.ContestTemplate ADD CONSTRAINT FK_contest_ContestTemplate_CreatedByUser FOREIGN KEY (created_by_user_id) REFERENCES iam.UserAccount (user_id);
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.key_constraints WHERE name = N'UQ_contest_TemplateCategory_template_id_category_code')
+    ALTER TABLE contest.TemplateCategory ADD CONSTRAINT UQ_contest_TemplateCategory_template_id_category_code UNIQUE (template_id, category_code);
+GO
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_contest_TemplateCategory_ContestTemplate')
+    ALTER TABLE contest.TemplateCategory ADD CONSTRAINT FK_contest_TemplateCategory_ContestTemplate FOREIGN KEY (template_id) REFERENCES contest.ContestTemplate (template_id) ON DELETE CASCADE;
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.key_constraints WHERE name = N'UQ_contest_TemplateJudgingRound_template_category_id_round_number')
+    ALTER TABLE contest.TemplateJudgingRound ADD CONSTRAINT UQ_contest_TemplateJudgingRound_template_category_id_round_number UNIQUE (template_category_id, round_number);
+GO
+IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = N'CK_contest_TemplateJudgingRound_round_number')
+    ALTER TABLE contest.TemplateJudgingRound ADD CONSTRAINT CK_contest_TemplateJudgingRound_round_number CHECK (round_number > 0);
+GO
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_contest_TemplateJudgingRound_TemplateCategory')
+    ALTER TABLE contest.TemplateJudgingRound ADD CONSTRAINT FK_contest_TemplateJudgingRound_TemplateCategory FOREIGN KEY (template_category_id) REFERENCES contest.TemplateCategory (template_category_id) ON DELETE CASCADE;
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.key_constraints WHERE name = N'UQ_contest_TemplateScoringCriterion_template_round_id_criterion_code')
+    ALTER TABLE contest.TemplateScoringCriterion ADD CONSTRAINT UQ_contest_TemplateScoringCriterion_template_round_id_criterion_code UNIQUE (template_round_id, criterion_code);
+GO
+IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = N'CK_contest_TemplateScoringCriterion_weight_percent')
+    ALTER TABLE contest.TemplateScoringCriterion ADD CONSTRAINT CK_contest_TemplateScoringCriterion_weight_percent CHECK (weight_percent > 0 AND weight_percent <= 100);
+GO
+IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = N'CK_contest_TemplateScoringCriterion_score_range')
+    ALTER TABLE contest.TemplateScoringCriterion ADD CONSTRAINT CK_contest_TemplateScoringCriterion_score_range CHECK (score_min_value >= 0 AND score_min_value <= score_max_value);
+GO
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_contest_TemplateScoringCriterion_TemplateJudgingRound')
+    ALTER TABLE contest.TemplateScoringCriterion ADD CONSTRAINT FK_contest_TemplateScoringCriterion_TemplateJudgingRound FOREIGN KEY (template_round_id) REFERENCES contest.TemplateJudgingRound (template_round_id) ON DELETE CASCADE;
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.key_constraints WHERE name = N'UQ_contest_TemplateAwardDefinition_template_category_id_award_code')
+    ALTER TABLE contest.TemplateAwardDefinition ADD CONSTRAINT UQ_contest_TemplateAwardDefinition_template_category_id_award_code UNIQUE (template_category_id, award_code);
+GO
+IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = N'CK_contest_TemplateAwardDefinition_rank_order')
+    ALTER TABLE contest.TemplateAwardDefinition ADD CONSTRAINT CK_contest_TemplateAwardDefinition_rank_order CHECK (rank_order > 0);
+GO
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_contest_TemplateAwardDefinition_TemplateCategory')
+    ALTER TABLE contest.TemplateAwardDefinition ADD CONSTRAINT FK_contest_TemplateAwardDefinition_TemplateCategory FOREIGN KEY (template_category_id) REFERENCES contest.TemplateCategory (template_category_id) ON DELETE CASCADE;
+GO
+
 IF NOT EXISTS (SELECT 1 FROM sys.key_constraints WHERE name = N'UQ_contest_Contest_contest_code')
     ALTER TABLE contest.Contest ADD CONSTRAINT UQ_contest_Contest_contest_code UNIQUE (contest_code);
 GO
@@ -55,6 +105,9 @@ IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = N'CK_contest_Con
 GO
 IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = N'CK_contest_Contest_submission_window')
     ALTER TABLE contest.Contest ADD CONSTRAINT CK_contest_Contest_submission_window CHECK (submission_open_at <= submission_close_at);
+GO
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_contest_Contest_SourceTemplate')
+    ALTER TABLE contest.Contest ADD CONSTRAINT FK_contest_Contest_SourceTemplate FOREIGN KEY (source_template_id) REFERENCES contest.ContestTemplate (template_id);
 GO
 IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_contest_Contest_CreatedByUser')
     ALTER TABLE contest.Contest ADD CONSTRAINT FK_contest_Contest_CreatedByUser FOREIGN KEY (created_by_user_id) REFERENCES iam.UserAccount (user_id);
@@ -237,6 +290,34 @@ IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_film_FilmFrame_C
 GO
 IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_film_FilmFrame_Lens')
     ALTER TABLE film.FilmFrame ADD CONSTRAINT FK_film_FilmFrame_Lens FOREIGN KEY (lens_id) REFERENCES reference.Lens (lens_id);
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.key_constraints WHERE name = N'UQ_film_AssetMetadata_frame_id_asset_type_code')
+    ALTER TABLE film.AssetMetadata ADD CONSTRAINT UQ_film_AssetMetadata_frame_id_asset_type_code UNIQUE (frame_id, asset_type_code);
+GO
+IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = N'CK_film_AssetMetadata_file_size_bytes')
+    ALTER TABLE film.AssetMetadata ADD CONSTRAINT CK_film_AssetMetadata_file_size_bytes CHECK (file_size_bytes > 0);
+GO
+IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = N'CK_film_AssetMetadata_dimensions')
+    ALTER TABLE film.AssetMetadata ADD CONSTRAINT CK_film_AssetMetadata_dimensions CHECK (width_px > 0 AND height_px > 0);
+GO
+IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = N'CK_film_AssetMetadata_dpi')
+    ALTER TABLE film.AssetMetadata ADD CONSTRAINT CK_film_AssetMetadata_dpi CHECK (dpi > 0);
+GO
+IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = N'CK_film_AssetMetadata_bit_depth')
+    ALTER TABLE film.AssetMetadata ADD CONSTRAINT CK_film_AssetMetadata_bit_depth CHECK (bit_depth IN (8, 16, 24, 32, 48));
+GO
+IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = N'CK_film_AssetMetadata_checksum_sha256')
+    ALTER TABLE film.AssetMetadata ADD CONSTRAINT CK_film_AssetMetadata_checksum_sha256 CHECK (LEN(checksum_sha256) = 64);
+GO
+IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = N'CK_film_AssetMetadata_qc_status')
+    ALTER TABLE film.AssetMetadata ADD CONSTRAINT CK_film_AssetMetadata_qc_status CHECK (qc_status IN (N'PENDING', N'PASSED', N'FAILED', N'FLAGGED'));
+GO
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_film_AssetMetadata_FilmFrame')
+    ALTER TABLE film.AssetMetadata ADD CONSTRAINT FK_film_AssetMetadata_FilmFrame FOREIGN KEY (frame_id) REFERENCES film.FilmFrame (frame_id);
+GO
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_film_AssetMetadata_QCCheckedByUser')
+    ALTER TABLE film.AssetMetadata ADD CONSTRAINT FK_film_AssetMetadata_QCCheckedByUser FOREIGN KEY (qc_checked_by_user_id) REFERENCES iam.UserAccount (user_id);
 GO
 
 IF NOT EXISTS (SELECT 1 FROM sys.key_constraints WHERE name = N'UQ_submission_Submission_contest_id_frame_id')

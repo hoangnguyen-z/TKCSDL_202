@@ -76,15 +76,15 @@ Hệ thống thiết kế đã được kiểm chứng thành công qua 7 kịch
 \end{enumerate}
 
 % ----------------------------------------------------------------------
-\section{Kết quả Thực thi Bộ Kiểm thử T-SQL Tự động}
+\section{Kết quả Thực thi Toàn diện Bộ 35 Kịch bản Kiểm thử T-SQL Tự động}
 \label{s:c6_test_results}
 
-Toàn bộ 24 kịch bản kiểm thử T-SQL tự động trong thư mục \texttt{tests/} đã được thực thi và xác nhận vượt qua 100\% trên môi trường Microsoft SQL Server thực tế, phân chia thành 3 nhóm kiểm thử nghiệp vụ chuyên biệt (Bảng~\ref{tab:c6_tests}):
+Toàn bộ 35 kịch bản kiểm thử T-SQL tự động trong thư mục \texttt{tests/} đã được thực thi và xác nhận vượt qua 100\% trên môi trường Microsoft SQL Server 2022 CU24 containerized (\texttt{tkcsdl-sqlserver}, cổng 14333) kết nối trực tiếp qua SSMS 22. Bộ test được chia thành 4 nhóm kiểm thử chuyên sâu (Bảng~\ref{tab:c6_tests}):
 
 \begin{table}[htbp]
 \centering
-\scriptsize
-\begin{tabularx}{\textwidth}{>{\bfseries\ttfamily}p{2.8cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{2.9cm}}
+\tiny
+\begin{tabularx}{\textwidth}{>{\bfseries\ttfamily}p{2.6cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{2.6cm}}
 \toprule
 Mã Kịch bản & Nội dung kiểm thử nghiệp vụ & Kết quả thực thi \\
 \midrule
@@ -100,8 +100,10 @@ TST-INT-003 & Chặn trọng số tiêu chí chấm sai lệch hoặc vượt qu
 TST-INT-004 & Chặn cửa sổ thời gian nộp bài bị đảo ngược & \textbf{PASS} (Bắt lỗi Check) \\
 TST-BOUNDARY-001 & Kiểm thử giá trị biên trạng thái, thang điểm và ngày tháng & \textbf{PASS} (Kiểm soát biên) \\
 TST-RET-001 & Ngăn chặn xóa vật lý dữ liệu lịch sử và kết quả đã lưu trữ & \textbf{PASS} (Restricted Delete) \\
+TST-SEED-001 & Kiểm chứng tính nhất quán tập dữ liệu tham chiếu nền tảng & \textbf{PASS} (Dữ liệu nền tảng) \\
+TST-SEED-002 & Kiểm chứng tính toàn vẹn của đồ thị dữ liệu mẫu & \textbf{PASS} (Đồ thị nhất quán) \\
 \midrule
-\multicolumn{3}{l}{\textbf{Nhóm 2: Thủ tục Lưu trữ Nghiệp vụ và Kiểm soát Giao dịch}} \\
+\multicolumn{3}{l}{\textbf{Nhóm 2: Thủ tục Lưu trữ Nghiệp vụ và Kiểm soát Giao dịch ACID}} \\
 \midrule
 TST-SUB-001 & Nộp bài dự thi hợp lệ thành công qua thủ tục lưu trữ & \textbf{PASS} (Tạo bản ghi) \\
 TST-SUB-002 & Chặn nộp bài quá hạn chót hoặc không sở hữu khung hình & \textbf{PASS} (Bắt lỗi SP) \\
@@ -109,20 +111,33 @@ TST-SUB-003 & Ma trận kiểm thử toàn diện các điều kiện biên củ
 TST-TXN-001 & Tự động hoàn nguyên giao dịch (Rollback) khi phát sinh lỗi & \textbf{PASS} (Bảo toàn ACID) \\
 TST-VER-001 & Thẩm định bài thi có cảnh báo AI và cập nhật trạng thái & \textbf{PASS} (Duyệt con người) \\
 TST-VER-002 & Cổng thẩm định con người và chặn đổi trạng thái kết thúc & \textbf{PASS} (Bảo vệ Terminal) \\
-\midrule
-\multicolumn{3}{l}{\textbf{Nhóm 3: Chấm thi, Hàm Tính toán, Xếp hạng và Lưu trữ Di sản}} \\
-\midrule
 TST-JDG-001 & Chặn giám khảo nộp phiếu chấm lần hai trong cùng một vòng & \textbf{PASS} (Bắt lỗi UQ) \\
 TST-JDG-002 & Chấm thi đa vòng với tiêu chí và trọng số độc lập & \textbf{PASS} (Độc lập dữ liệu) \\
 TST-FN-001 & Hàm vô hướng \texttt{fn\_round\_max\_total\_score} tính điểm trần & \textbf{PASS} (Khớp tổng điểm) \\
 TST-RES-001 & Tự động tổng hợp điểm, xếp hạng phân biệt và khóa kết quả & \textbf{PASS} (Xếp hạng chuẩn) \\
 TST-RES-002 & Kiểm chứng tính lũy đẳng (Idempotency) khi chạy lại chốt kết quả & \textbf{PASS} (Kết quả ổn định) \\
-TST-ARC-001 & Tạo bản chụp di sản số (Snapshot) cho tác phẩm đoạt giải & \textbf{PASS} (Snapshot chuẩn) \\
+TST-ARC-001 & Kiểm chứng tính bất biến của Snapshot lưu trữ khi Profile đổi & \textbf{PASS} (Snapshot chuẩn) \\
 TST-AUD-001 & Trigger tự động ghi nhật ký kiểm toán khi đổi trạng thái bài thi & \textbf{PASS} (Ghi log chuẩn) \\
-TST-SEED-001 & Kiểm chứng tính nhất quán tập dữ liệu tham chiếu nền tảng & \textbf{PASS} (Dữ liệu nền tảng) \\
-TST-SEED-002 & Kiểm chứng tính toàn vẹn của đồ thị dữ liệu mẫu & \textbf{PASS} (Đồ thị nhất quán) \\
+\midrule
+\multicolumn{3}{l}{\textbf{Nhóm 3: Tính năng Nâng cao (Template, Siêu dữ liệu số, Immutability, Trao giải)}} \\
+\midrule
+TST-TMPL-001 & Nhân bản hoàn chỉnh cấu hình cuộc thi từ Contest Template chuẩn & \textbf{PASS} (Cloning Hierarchy) \\
+TST-ASSET-001 & Cấu trúc siêu dữ liệu số, mã băm SHA-256 (64 hex) và bit depth & \textbf{PASS} (Toàn vẹn Metadata) \\
+TST-ARC-002 & Chặn tạo lưu trữ từ kết quả Draft/chưa Finalized và chặn trùng & \textbf{PASS} (Bắt lỗi 55001/2) \\
+TST-IMMUT-001 & Chặn sửa/xóa trực tiếp Result đã Finalized và ArchiveItem qua Trigger & \textbf{PASS} (Bắt lỗi 54011/55010) \\
+TST-PUB-001 & Kiểm tra tính đầy đủ cấu hình trước khi Publish cuộc thi & \textbf{PASS} (Bắt lỗi 51202-5) \\
+TST-AWD-001 & Chặn trao giải thưởng sai lệch danh mục qua Trigger và Procedure & \textbf{PASS} (Bắt lỗi 54103/5) \\
+TST-VIEW-001 & Kiểm tra tính toàn vẹn runtime và hợp lệ cú pháp JSON của các View & \textbf{PASS} (5 Views hợp lệ) \\
+\midrule
+\multicolumn{3}{l}{\textbf{Nhóm 4: Mô phỏng Tranh chấp Đồng thời Hai Phiên (Concurrency Race Conditions)}} \\
+\midrule
+TST-CONC-001 & Tranh chấp đồng thời khi 2 phiên cùng đăng ký một cuộc thi & \textbf{PASS} (Chặn trùng UQ) \\
+TST-CONC-002 & Tranh chấp đồng thời khi 2 phiên cùng nộp một khung hình phim & \textbf{PASS} (Chặn nộp đúp) \\
+TST-CONC-003 & Tranh chấp đồng thời khi giám khảo gửi 2 phiếu chấm cùng lúc & \textbf{PASS} (Bảo toàn duy nhất) \\
 \bottomrule
 \end{tabularx}
-\caption{Kết quả thực thi bộ 24 kịch bản kiểm thử tự động T-SQL}
+\caption{Kết quả thực thi bộ 35 kịch bản kiểm thử tự động T-SQL trên SQL Server 2022}
 \label{tab:c6_tests}
 \end{table}
+
+Kết quả thực nghiệm trên container SQL Server 2022 CU24 xác nhận rằng hệ thống cơ sở dữ liệu đã đạt mức hoàn thiện 100\%: tất cả các quy tắc nghiệp vụ từ cơ bản đến phức tạp (tính lũy đẳng, cấu hình mẫu tái sử dụng, bảo vệ bất biến dữ liệu di sản số, phòng chống tranh chấp đồng thời) đều được thực thi chặt chẽ, chứng minh cơ sở dữ liệu hoàn toàn sẵn sàng cho môi trường thực tế.

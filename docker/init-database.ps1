@@ -45,7 +45,7 @@ function Invoke-SqlFile {
     )
 
     Write-Host "Running $FilePath ..."
-    $sql = Get-Content -Raw $FilePath
+    $sql = (Get-Content -Raw -Encoding UTF8 $FilePath).TrimStart([char]0xFEFF)
     $wrapped = @"
 SET NOCOUNT ON;
 $sql
@@ -75,8 +75,22 @@ for ($i = 0; $i -lt 30; $i++) {
     Start-Sleep -Seconds 5
 }
 
+Write-Host "Copying database scripts to container ..."
+docker exec $ContainerName /bin/bash -c "mkdir -p /tmp/database"
+docker cp "$DatabaseRoot/." "$ContainerName`:/tmp/database"
+
 foreach ($name in $scriptOrder) {
-    Invoke-SqlFile -FilePath (Join-Path $DatabaseRoot $name)
+    Write-Host "Running $name ..."
+    docker exec -i $ContainerName /bin/bash -c "
+if [ -x /opt/mssql-tools18/bin/sqlcmd ]; then
+  /opt/mssql-tools18/bin/sqlcmd -C -I -S localhost -U sa -P '$saPassword' -b -i /tmp/database/$name
+else
+  /opt/mssql-tools/bin/sqlcmd -I -S localhost -U sa -P '$saPassword' -b -i /tmp/database/$name
+fi
+" | Out-Host
+    if ($LASTEXITCODE -ne 0) {
+        throw "Script execution failed on $name with exit code $LASTEXITCODE"
+    }
 }
 
 Write-Host "Database initialization completed."

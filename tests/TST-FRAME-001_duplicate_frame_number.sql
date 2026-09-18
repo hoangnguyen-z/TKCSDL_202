@@ -4,6 +4,8 @@ GO
 PRINT 'TST-FRAME-001 - Duplicate frame number in same roll must fail';
 BEGIN TRANSACTION;
 
+DECLARE @expected_failure_observed BIT = 0;
+
 BEGIN TRY
     DECLARE
         @roll_id INT = (SELECT roll_id FROM film.FilmRoll WHERE roll_code = N'LAN-R01'),
@@ -28,12 +30,17 @@ BEGIN TRY
         N'Duplicate Frame',
         N'DRAFT'
     );
-
-    ROLLBACK TRANSACTION;
-    THROW 70002, 'TST-FRAME-001 failed: duplicate frame number was inserted.', 1;
 END TRY
 BEGIN CATCH
+    SET @expected_failure_observed = 1;
     PRINT 'PASS: duplicate frame number was rejected as expected.';
-    ROLLBACK TRANSACTION;
 END CATCH;
+
+IF @expected_failure_observed = 0
+BEGIN
+    ROLLBACK TRANSACTION;
+    THROW 70002, 'TST-FRAME-001 failed: duplicate frame number was inserted.', 1;
+END;
+
+ROLLBACK TRANSACTION;
 GO

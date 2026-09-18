@@ -29,6 +29,26 @@ WHERE jr.is_final_round = 1
   )
 ORDER BY jr.round_id;
 
+IF @complete_round_id IS NULL
+BEGIN
+    SELECT TOP (1)
+        @complete_round_id = jr.round_id,
+        @complete_category_id = jr.category_id
+    FROM contest.JudgingRound AS jr
+    INNER JOIN contest.ContestCategory AS cc ON cc.category_id = jr.category_id
+    INNER JOIN contest.Contest AS c ON c.contest_id = cc.contest_id
+    WHERE jr.is_final_round = 1
+      AND c.contest_code = N'FILM2026-FALL'
+      AND cc.category_code = N'PORTRAIT';
+
+    IF @complete_round_id IS NOT NULL AND @organizer_user_id IS NOT NULL
+    BEGIN
+        EXEC result.usp_finalize_results_for_round
+            @round_id = @complete_round_id,
+            @finalized_by_user_id = @organizer_user_id;
+    END;
+END;
+
 SELECT TOP (1) @incomplete_round_id = jr.round_id
 FROM contest.JudgingRound AS jr
 WHERE jr.is_final_round = 1

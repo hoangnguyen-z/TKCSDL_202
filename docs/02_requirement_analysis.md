@@ -410,6 +410,7 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 | FR-029 | The system shall maintain audit history for key operational changes and status transitions. |
 | FR-030 | The system shall support role-based access control for Administrator, Organizer, Judge, and Participant. |
 | FR-031 | The system shall support lookup and reporting views for verification queue, judge work queue, results, and archive search. |
+| FR-032 | The system shall capture structured digital asset metadata including MIME type, file size, resolution, SHA-256 checksum, scanner settings, and quality inspection evidence for submitted scans. |
 
 ## 10. Non-Functional Requirements
 
@@ -461,6 +462,12 @@ Each flow below includes trigger, precondition, main flow, alternatives, outputs
 | BR-P-016 | Proposed | Result finalization is irreversible at the data model level without administrator intervention and audit logging. | Protects publication integrity. | FR-025, FR-027 | Application-design layer + audit |
 | BR-P-017 | Proposed | Archive items store snapshot data rather than only live foreign-key traversal. | Historical integrity must survive future changes. | FR-028 | Database design decision |
 | BR-P-018 | Proposed | Deletion of contests, submissions, evaluations, results, awards, and archive items is restricted; business closure should use status changes rather than hard delete. | Protects history and traceability. | FR-029 | Database + operational policy |
+| BR-P-019 | Proposed | A contest configuration may be instantiated from a reusable template hierarchy (contest template, categories, rounds, criteria, and awards). | Speeds up competition setup and ensures consistency. | FR-001 | Database + Stored Procedure |
+| BR-P-020 | Proposed | Scanned digital assets must be registered with structured technical metadata (MIME, file size, resolution, 64-hex SHA-256 hash, scanner settings, and QC inspection evidence). | Guarantees digital asset provenance and quality. | FR-032 | Database Layer |
+| BR-P-021 | Proposed | Digital archive records must only be created from results in FINALIZED or PUBLISHED status. | Prevents archiving incomplete or draft competition results. | FR-028 | Stored Procedure |
+| BR-P-022 | Proposed | Finalized results and archived items are immutable; direct UPDATE of score/rank and DELETE operations are strictly forbidden. | Protects published ranking and historical heritage preservation. | FR-025, FR-028 | Database Triggers |
+| BR-P-023 | Proposed | A contest cannot be published until its configuration is verified complete (must contain categories, judging rounds, scoring criteria, and award definitions). | Enforces publication completeness. | FR-001 | Stored Procedure |
+| BR-P-024 | Proposed | An award can only be assigned to a result that belongs to the exact contest category for which the award is defined. | Prevents cross-category award corruption. | FR-026 | Database Trigger & Procedure |
 ### 11.1 Business Rule Coverage Matrix
 
 | Process Area | Business Rules | Related Flow | Related Use Case | Coverage Purpose |

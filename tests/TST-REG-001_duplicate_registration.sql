@@ -4,6 +4,8 @@ GO
 PRINT 'TST-REG-001 - Duplicate registration must fail';
 BEGIN TRANSACTION;
 
+DECLARE @expected_failure_observed BIT = 0;
+
 BEGIN TRY
     DECLARE
         @contest_id INT = (SELECT contest_id FROM contest.Contest WHERE contest_code = N'FILM2026-FALL'),
@@ -29,12 +31,17 @@ BEGIN TRY
         N'PENDING',
         N'PENDING'
     );
-
-    ROLLBACK TRANSACTION;
-    THROW 70001, 'TST-REG-001 failed: duplicate registration was inserted.', 1;
 END TRY
 BEGIN CATCH
+    SET @expected_failure_observed = 1;
     PRINT 'PASS: duplicate registration was rejected as expected.';
-    ROLLBACK TRANSACTION;
 END CATCH;
+
+IF @expected_failure_observed = 0
+BEGIN
+    ROLLBACK TRANSACTION;
+    THROW 70001, 'TST-REG-001 failed: duplicate registration was inserted.', 1;
+END;
+
+ROLLBACK TRANSACTION;
 GO

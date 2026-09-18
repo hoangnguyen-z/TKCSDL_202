@@ -55,6 +55,12 @@ The model covers the complete chain:
 | AwardAssignment | The linking of an award definition to a finalized result. | Records which finalized result received which award. |
 | ArchiveItem | An immutable archived snapshot of a selected finalized result. | Preserves historical meaning after live data changes. |
 | AuditLog | A business event history record for traceability. | Provides accountability for important lifecycle changes. |
+| ContestTemplate | A reusable blueprint for contest configuration (rules, schedule templates). | Enables standard contest structures to be replicated rapidly and consistently. |
+| TemplateCategory | A contest category pattern inside a contest template. | Defines category structures replicated into live contests. |
+| TemplateJudgingRound | A judging round pattern inside a template category. | Defines round progression replicated into live contests. |
+| TemplateScoringCriterion | A scoring criterion pattern inside a template judging round. | Defines evaluation dimensions and weights replicated into live contests. |
+| TemplateAwardDefinition | An award structure pattern inside a template category. | Defines prize hierarchies replicated into live contests. |
+| AssetMetadata | Structured technical metadata and QC evidence for digitized film frames. | Records MIME type, SHA-256 hash, bit depth, scanner make/model, and QC gate decisions. |
 
 ### 2.1 Entity Inventory Completeness Check
 
@@ -62,7 +68,8 @@ The model covers the complete chain:
 | --- | --- | --- |
 | Identity and RBAC | `UserAccount`, `Role`, `UserRole`, `ParticipantProfile` | Complete |
 | Contest configuration | `Contest`, `ContestCategory`, `JudgingRound`, `ScoringCriterion`, `AwardDefinition` | Complete |
-| Registration and provenance | `Registration`, `FilmStock`, `Camera`, `Lens`, `Lab`, `FilmRoll`, `FilmFrame` | Complete |
+| Reusable templates | `ContestTemplate`, `TemplateCategory`, `TemplateJudgingRound`, `TemplateScoringCriterion`, `TemplateAwardDefinition` | Complete |
+| Registration and provenance | `Registration`, `FilmStock`, `Camera`, `Lens`, `Lab`, `FilmRoll`, `FilmFrame`, `AssetMetadata` | Complete |
 | Submission and review | `Submission`, `VerificationCase`, `AIAnalysisResult` | Complete |
 | Judging and scoring | `JudgeAssignment`, `Evaluation`, `EvaluationScore` | Complete |
 | Results and historical preservation | `Result`, `AwardAssignment`, `ArchiveItem`, `AuditLog` | Complete |
@@ -105,7 +112,20 @@ its approved registration rather than storing a second participant identity.
 Contest categories remain scoped to their parent contest, so downstream
 judging and result records cannot become detached from the contest context.
 
-### 3.3 Film Provenance
+### 3.2.2 Contest Template Hierarchy
+
+1. One `ContestTemplate` must define one or many `TemplateCategory` blueprints.
+2. One `TemplateCategory` must belong to exactly one `ContestTemplate`.
+3. One `TemplateCategory` must define one or many `TemplateJudgingRound` blueprints.
+4. One `TemplateJudgingRound` must belong to exactly one `TemplateCategory`.
+5. One `TemplateJudgingRound` must define one or many `TemplateScoringCriterion` blueprints.
+6. One `TemplateScoringCriterion` must belong to exactly one `TemplateJudgingRound`.
+7. One `TemplateCategory` may define zero or many `TemplateAwardDefinition` blueprints.
+8. One `TemplateAwardDefinition` must belong to exactly one `TemplateCategory`.
+9. One `ContestTemplate` may be the source blueprint for zero, one, or many live `Contest` records.
+10. One `Contest` may optionally reference zero or one source `ContestTemplate`.
+
+### 3.3 Film Provenance and Digital Assets
 
 1. One `ParticipantProfile` may own zero or many `FilmRoll` records.
 2. One `FilmRoll` must belong to exactly one `ParticipantProfile`.
@@ -115,6 +135,8 @@ judging and result records cannot become detached from the contest context.
 6. One `FilmFrame` must belong to exactly one `FilmRoll`.
 7. One `FilmFrame` may reference zero or one `Camera`.
 8. One `FilmFrame` may reference zero or one `Lens`.
+9. One `FilmFrame` may possess zero, one, or many structured `AssetMetadata` records (e.g. RAW master, TIFF scan, JPEG thumbnail).
+10. One `AssetMetadata` must describe exactly one `FilmFrame` and carry technical provenance (SHA-256 checksum, bit depth, scanner device, QC status).
 
 ### 3.3.1 Provenance Ownership Contract
 
@@ -125,6 +147,7 @@ activity:
 | --- | --- | --- |
 | `ParticipantProfile`--`FilmRoll` | A participant owns the physical roll record. | A roll has exactly one owner. |
 | `FilmRoll`--`FilmFrame` | A roll contains its numbered frames. | A frame cannot exist without one roll; frame numbers are unique within that roll. |
+| `FilmFrame`--`AssetMetadata` | A frame contains high-resolution scan assets and QC evidence. | Asset metadata records technical provenance and quality gate validation. |
 | `FilmRoll`--`FilmStock` / `Lab` | A roll may record its stock and processing laboratory. | Reference details are optional while the roll is being prepared. |
 | `FilmFrame`--`Camera` / `Lens` | A frame may preserve capture equipment provenance. | Equipment references are optional when the source metadata is incomplete. |
 

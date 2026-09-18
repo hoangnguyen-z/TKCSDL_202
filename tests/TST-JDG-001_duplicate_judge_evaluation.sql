@@ -4,6 +4,8 @@ GO
 PRINT 'TST-JDG-001 - Duplicate judge evaluation in same round must fail';
 BEGIN TRANSACTION;
 
+DECLARE @expected_failure_observed BIT = 0;
+
 BEGIN TRY
     DECLARE
         @round_id INT = (
@@ -50,12 +52,17 @@ BEGIN TRY
         N'DRAFT',
         0
     );
-
-    ROLLBACK TRANSACTION;
-    THROW 70008, 'TST-JDG-001 failed: duplicate evaluation was inserted.', 1;
 END TRY
 BEGIN CATCH
+    SET @expected_failure_observed = 1;
     PRINT 'PASS: duplicate judge evaluation was rejected as expected.';
-    ROLLBACK TRANSACTION;
 END CATCH;
+
+IF @expected_failure_observed = 0
+BEGIN
+    ROLLBACK TRANSACTION;
+    THROW 70008, 'TST-JDG-001 failed: duplicate evaluation was inserted.', 1;
+END;
+
+ROLLBACK TRANSACTION;
 GO
