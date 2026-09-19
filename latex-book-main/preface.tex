@@ -8,28 +8,36 @@ Thực trạng hiện nay cho thấy đa số các cuộc thi ảnh phim vẫn �
 
 Đồ án \textbf{``Thiết kế cơ sở dữ liệu cho Nền tảng tổ chức và quản lý cuộc thi nhiếp ảnh phim tích hợp trí tuệ nhân tạo (AI-powered Film Photography Contest Management Platform)''} được thực hiện nhằm giải quyết triệt để các bài toán nghiệp vụ nêu trên. Trọng tâm của đồ án là xây dựng một hệ thống cơ sở dữ liệu chuẩn mực, chặt chẽ, tối ưu từ mô hình ý niệm (\textit{Conceptual}), mô hình logic (\textit{Logical}) chuẩn hóa 3NF, đến mô hình vật lý (\textit{Physical}) trên hệ quản trị Microsoft SQL Server. Đồng thời, hệ thống tích hợp các cơ chế trí tuệ nhân tạo (AI) đóng vai trò hỗ trợ thẩm định tự động (phát hiện ảnh trùng lặp, phát hiện ảnh AI, tự động gắn thẻ) theo nguyên tắc \textit{Human-in-the-loop}.
 
-Báo cáo này được cấu trúc thành 6 chương chính và 3 phụ lục theo chuẩn phân rã công việc (WBS):
+Báo cáo này được cấu trúc thành 5 phần, 7 chương chính và 3 phụ lục kỹ thuật theo chuẩn phân rã công việc (WBS):
 \begin{itemize}
-    \item \textbf{Phần I -- Tổng quan và Phân tích Yêu cầu Nghiệp vụ}: 
+    \item \textbf{Phần I -- Tổng quan và phân tích yêu cầu nghiệp vụ}: 
     \begin{itemize}
         \item \textbf{Chương 1}: Trình bày bối cảnh, vấn đề nghiệp vụ, mục tiêu, phạm vi và bảng thuật ngữ chuẩn hóa.
         \item \textbf{Chương 2}: Mô hình hóa quy trình nghiệp vụ (AS-IS, TO-BE), danh mục yêu cầu chức năng (FR), yêu cầu phi chức năng (NFR), quy tắc nghiệp vụ (BR) và đặc tả Use Case.
     \end{itemize}
-    \item \textbf{Phần II -- Thiết kế Kiến trúc Hệ thống}:
+    \item \textbf{Phần II -- Thiết kế kiến trúc hệ thống}:
     \begin{itemize}
         \item \textbf{Chương 3}: Thiết kế kiến trúc tổng thể, phân rã 11 phân hệ chức năng, kiến trúc logic, kiến trúc triển khai và thiết kế phân hệ tích hợp AI.
     \end{itemize}
-    \item \textbf{Phần III -- Thiết kế Cơ sở Dữ liệu Toàn diện}:
+    \item \textbf{Phần III -- Thiết kế cơ sở dữ liệu toàn diện}:
     \begin{itemize}
-        \item \textbf{Chương 4}: Thiết kế CSDL Cấp độ 1 \& 2 -- Mô hình Ý niệm (Conceptual ERD), Mô hình Logic (Logical ERD), chứng minh chuẩn hóa 3NF và từ điển dữ liệu logic.
-        \item \textbf{Chương 5}: Thiết kế CSDL Cấp độ 3 -- Mô hình Vật lý (Physical ERD), thiết kế ràng buộc toàn vẹn, chiến lược đánh chỉ mục hiệu năng, và lập trình CSDL (Views, Stored Procedures, Triggers).
+        \item \textbf{Chương 4}: Thiết kế CSDL cấp độ 1 \& 2 -- Mô hình ý niệm (Conceptual ERD), mô hình quan hệ logic (Logical ERD), chứng minh chuẩn hóa 3NF và từ điển dữ liệu logic.
+        \item \textbf{Chương 5}: Thiết kế CSDL cấp độ 3 -- Mô hình vật lý (Physical ERD), thiết kế ràng buộc toàn vẹn, chiến lược đánh chỉ mục hiệu năng, và lập trình CSDL (Views, Stored Procedures, Functions, Triggers).
     \end{itemize}
-    \item \textbf{Phần IV -- Kiểm chứng, Đảm bảo Chất lượng và Đóng băng Dự án}:
+    \item \textbf{Phần IV -- Kiểm chứng và đảm bảo chất lượng}:
     \begin{itemize}
-        \item \textbf{Chương 6}: Bộ ma trận kiểm chứng chất lượng (RTM, CRUD Matrix, Rule-to-Enforcement Matrix) và kiểm chứng 7 kịch bản nghiệp vụ thực tế (Scenario Walkthrough).
-        \item \textbf{Chương 7}: Nhật ký quyết định thiết kế (Design Decision Log) và báo cáo đóng băng dự án (Project Freeze).
+        \item \textbf{Chương 6}: Bộ ma trận kiểm chứng chất lượng (RTM, CRUD Matrix), kiểm chứng 7 kịch bản nghiệp vụ thực tế (Scenario Walkthrough) và kết quả thực thi 35 kịch bản kiểm thử T-SQL tự động.
     \end{itemize}
-    \item \textbf{Phụ lục}: Cung cấp toàn bộ kịch bản kiểm thử T-SQL tự động, bảng tra cứu yêu cầu chức năng và toàn văn mã nguồn DDL cơ sở dữ liệu.
+    \item \textbf{Phần V -- Tổng kết và hướng phát triển của đề tài}:
+    \begin{itemize}
+        \item \textbf{Chương 7}: Tổng kết kết quả nghiên cứu và hiện thực hóa đề tài, nhật ký quyết định thiết kế cốt lõi (Design Decision Log), bài học kinh nghiệm, hạn chế thực tế và định hướng phát triển công nghệ trong tương lai.
+    \end{itemize}
+    \item \textbf{Phụ lục kỹ thuật}:
+    \begin{itemize}
+        \item \textbf{Phụ lục A}: Kịch bản kiểm thử T-SQL tự động minh chứng khả năng bắt lỗi toàn vẹn của CSDL.
+        \item \textbf{Phụ lục B}: Danh mục tra cứu nhanh toàn văn 32 yêu cầu chức năng (FR) và 35 quy tắc nghiệp vụ (BR).
+        \item \textbf{Phụ lục C}: Toàn văn mã nguồn DDL cơ sở dữ liệu trên Microsoft SQL Server.
+    \end{itemize}
 \end{itemize}
 
 Nhóm tác giả hy vọng công trình này sẽ là một tài liệu tham khảo hoàn chỉnh, minh chứng cho phương pháp luận phân tích và thiết kế hệ thống cơ sở dữ liệu chuyên sâu, đáp ứng xuất sắc các tiêu chuẩn học thuật và thực tiễn kỹ thuật phần mềm.

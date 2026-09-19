@@ -52,6 +52,7 @@
 \usepackage[expansion=false]{microtype}
 
 % Adjust spacing in text
+\usepackage{indentfirst}
 \AtBeginDocument{\frenchspacing}
 \raggedbottom
 \setlength{\emergencystretch}{3em}
@@ -59,6 +60,7 @@
 % ---- Select color scheme ----
 
 \usepackage[x11names]{xcolor}
+\usepackage{tikz}
 
 % ---- Format header and footer ----
 
@@ -126,12 +128,17 @@
 % Remove dots for chapters
 \renewcommand{\cftchapdotsep}{\cftnodots}
 
-% Set spacing for dots
-\renewcommand{\cftdotsep}{10}
+% Set title spacing for TOC, LOT, LOF (dồn tiêu đề lên trên)
+\setlength{\cftbeforetoctitleskip}{-1.0cm}
+\setlength{\cftaftertoctitleskip}{1.2em}
+\setlength{\cftbeforelottitleskip}{-1.0cm}
+\setlength{\cftafterlottitleskip}{1.2em}
+\setlength{\cftbeforeloftitleskip}{-1.0cm}
+\setlength{\cftafterloftitleskip}{1.2em}
 
-% Set vertical spaces
-\setlength{\cftbeforepartskip}{1em}
-\setlength{\cftbeforechapskip}{0.8em}
+% Set vertical spaces between entries
+\setlength{\cftbeforepartskip}{0.6em}
+\setlength{\cftbeforechapskip}{0.4em}
 \setlength{\cftbeforesecskip}{0em}
 
 % Align all numbers
@@ -146,43 +153,121 @@
 % Customize section headings
 \usepackage{titlesec}
 
-% Format part headings
-\titleformat{\part}[display]{\Huge\bfseries\centering}{\MakeUppercase{Phần \thepart}}{0.8cm}{}[]
-\titlespacing*{\part}{0pt}{0pt}{20pt}
+% ---- Format Part & Chapter liền mạch ----
+\newif\ifafterpart
+\afterpartfalse
 
-% Format chapter headings (Chương 1, Chương 2,...)
-\titleformat{\chapter}[display]
-  {\bfseries\huge}
-  {\bfseries\Large\MakeUppercase{Chương \thechapter}}
-  {0.3ex}
-  {\bfseries\huge}
+\makeatletter
+\renewcommand\part{%
+  \if@openright
+    \cleardoublepage
+  \else
+    \clearpage
+  \fi
+  \thispagestyle{plain}%
+  \secdef\@part\@spart
+}
+
+\def\@part[#1]#2{%
+  \ifnum \c@secnumdepth >-2\relax
+    \refstepcounter{part}%
+    \addcontentsline{toc}{part}{\thepart\hspace{1em}#1}%
+  \else
+    \addcontentsline{toc}{part}{#1}%
+  \fi
+  \markboth{}{}%
+  {\centering
+   \interlinepenalty \@M
+   \normalfont
+   \vspace*{0.2cm}%
+   {\rule{\textwidth}{1.2pt}}\par\vspace{0.35cm}%
+   {\fontsize{16pt}{20pt}\selectfont\bfseries\MakeUppercase{Phần \thepart}}\par\vspace{0.25cm}%
+   {\fontsize{15pt}{19pt}\selectfont\bfseries\MakeUppercase{#2}}\par\vspace{0.35cm}%
+   {\rule{\textwidth}{1.2pt}}\par}%
+   \vspace{1.0cm}%
+   \global\afterparttrue
+   \@afterheading
+}
+
+\def\@spart#1{%
+  {\centering
+   \interlinepenalty \@M
+   \normalfont
+   \vspace*{0.2cm}%
+   {\rule{\textwidth}{1.2pt}}\par\vspace{0.35cm}%
+   {\fontsize{15pt}{19pt}\selectfont\bfseries\MakeUppercase{#1}}\par\vspace{0.35cm}%
+   {\rule{\textwidth}{1.2pt}}\par}%
+   \vspace{1.0cm}%
+   \global\afterparttrue
+   \@afterheading
+}
+
+% Định nghĩa lại \chapter để không ngắt trang nếu đi liền sau \part
+\renewcommand\chapter{%
+  \ifafterpart
+    \global\afterpartfalse
+  \else
+    \if@openright\cleardoublepage\else\clearpage\fi
+  \fi
+  \thispagestyle{plain}%
+  \global\@topnum\z@
+  \@afterindentfalse
+  \secdef\@chapter\@schapter
+}
+\makeatother
+
+% Format chapter headings: viết liền mạch trên 1 dòng: CHƯƠNG X. TÊN CHƯƠNG (Heading 1: in hoa bôi đậm)
+\titleformat{\chapter}[block]
+  {\fontsize{14pt}{18pt}\selectfont\bfseries}
+  {\MakeUppercase{\chaptertitlename\ \thechapter.}\hspace{0.5em}}
+  {0pt}
+  {\MakeUppercase}
   [\vskip 0.8ex]
 
-% Format unnumbered chapter headings (Lời cảm ơn, Danh sách thành viên, Lời nói đầu,...)
+% Format unnumbered chapter headings: Lời cảm ơn, Danh sách thành viên, Lời nói đầu,... (Heading 1: in hoa bôi đậm)
 \titleformat{name=\chapter,numberless}[block]
-  {\bfseries\huge\centering}
+  {\fontsize{15pt}{19pt}\selectfont\bfseries\centering}
   {}
   {0pt}
-  {\bfseries\huge}
+  {\MakeUppercase}
   [\vskip 1.2ex]
 
-% Adjust chapter spacing (tighten top gap at the beginning of pages)
-\titlespacing*{\chapter}{0pt}{-15pt}{18pt}
-\titlespacing*{name=\chapter,numberless}{0pt}{-15pt}{18pt}
+% Adjust chapter spacing
+\titlespacing*{\chapter}{0pt}{-10pt}{14pt}
+\titlespacing*{name=\chapter,numberless}{0pt}{-10pt}{14pt}
 
-% Format section headings
-\titleformat*{\section}{\large\bfseries}
+% Heading 2 (bậc 2: 1.1, 1.2,...): Bôi đậm, viết bình thường
+\titleformat{\section}[block]
+  {\fontsize{12pt}{16pt}\selectfont\bfseries}
+  {\thesection.\hspace{0.5em}}
+  {0pt}
+  {}
+  [\vskip 0.4ex]
 
-% Format subsection headings
-\titleformat*{\subsection}{\bfseries}
+% Heading 3 (bậc 3: 1.1.1, 1.1.2,...): Không bôi đậm, viết bình thường
+\titleformat{\subsection}[block]
+  {\fontsize{11pt}{15pt}\selectfont\normalfont}
+  {\thesubsection.\hspace{0.5em}}
+  {0pt}
+  {}
+  [\vskip 0.3ex]
+
+% Heading bậc 4: Không bôi đậm, nghiêng nhẹ
+\titleformat{\subsubsection}[block]
+  {\fontsize{11pt}{15pt}\selectfont\normalfont\itshape}
+  {\thesubsubsection.\hspace{0.5em}}
+  {0pt}
+  {}
+  [\vskip 0.2ex]
 
 % Adjust section spacing (tighten gap before and after headings)
-\titlespacing*{\section}{0pt}{1.2ex plus .2ex minus .1ex}{0.6ex plus .1ex}
+\titlespacing*{\section}{0pt}{1.2ex plus .2ex minus .1ex}{0.5ex plus .1ex}
 \titlespacing*{\subsection}{0pt}{1.0ex plus .2ex minus .1ex}{0.4ex plus .1ex}
 \titlespacing*{\subsubsection}{0pt}{0.8ex plus .1ex minus .1ex}{0.3ex plus .1ex}
 
 % Format paragraph headings
-\titleformat{\paragraph}[runin]{\itshape}{}{}{}[\@addpunct{.}\hspace{1em}]
+\titleformat{\paragraph}[runin]{\bfseries}{}{0pt}{}[.\hspace{0.8em}]
+\titlespacing*{\paragraph}{0pt}{1.0ex plus .2ex minus .1ex}{0.8em}
 
 % Add period after heading numbers
 \titlelabel{\thetitle.\hspace{1em}}
@@ -308,13 +393,13 @@
 % ---- Format appendix ----
 
 \apptocmd{\appendix}{%
-  \titleformat{\chapter}[display]
-    {\bfseries\huge}
-    {\bfseries\Large\MakeUppercase{Phụ lục \thechapter}}
-    {0.3ex}
-    {\bfseries\huge}
+  \titleformat{\chapter}[block]
+    {\fontsize{14pt}{18pt}\selectfont\bfseries}
+    {\MakeUppercase{Phụ lục\ \thechapter.}\hspace{0.5em}}
+    {0pt}
+    {\MakeUppercase}
     [\vskip 0.8ex]%
-  \titlespacing*{\chapter}{0pt}{-15pt}{18pt}%
+  \titlespacing*{\chapter}{0pt}{-10pt}{14pt}%
 }{}{}
 
 % ---- Format bibliography ----

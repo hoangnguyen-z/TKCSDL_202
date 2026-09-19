@@ -3,7 +3,7 @@
 Phụ lục này trình bày chi tiết các kịch bản kiểm thử T-SQL tiêu biểu được trích xuất từ bộ kiểm thử tự động trong thư mục \texttt{tests/}, minh chứng cho khả năng thực thi và bắt lỗi toàn vẹn của cơ sở dữ liệu trên Microsoft SQL Server.
 
 % ----------------------------------------------------------------------
-\section{Kịch bản TST-REG-001: Chặn Đăng ký Trùng lặp}
+\section{Kịch bản TST-REG-001: Chặn đăng ký trùng lặp}
 \label{a:tst_reg_001}
 
 Kịch bản kiểm thử xác minh rằng một thí sinh không thể gửi hai đơn đăng ký vào cùng một cuộc thi (\texttt{BR-P-002}):
@@ -31,7 +31,7 @@ END CATCH;
 \end{verbatim}
 
 % ----------------------------------------------------------------------
-\section{Kịch bản TST-SUB-002: Chặn Nộp Bài Quá Hạn và Trùng Khung Hình}
+\section{Kịch bản TST-SUB-002: Chặn nộp bài quá hạn và trùng khung hình}
 \label{a:tst_sub_002}
 
 Kịch bản kiểm thử thủ tục nộp bài \texttt{usp\_create\_submission} khi vi phạm khung thời gian hoặc nộp trùng khung hình (\texttt{BR-O-003, BR-P-006}):
@@ -62,7 +62,7 @@ END CATCH;
 \end{verbatim}
 
 % ----------------------------------------------------------------------
-\section{Kịch bản TST-JDG-001: Chặn Giám Khảo Chấm Điểm Hai Lần}
+\section{Kịch bản TST-JDG-001: Chặn giám khảo chấm điểm hai lần}
 \label{a:tst_jdg_001}
 
 Kịch bản kiểm tra ràng buộc duy nhất \texttt{UQ\_judging\_Evaluation\_round\_sub\_judge} (\texttt{BR-O-009}):

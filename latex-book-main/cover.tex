@@ -1,0 +1,117 @@
+% Trang bìa báo cáo tổng kết đồ án môn học Thiết kế Cơ sở Dữ liệu
+% Trường Đại học Giao thông Vận tải TP. Hồ Chí Minh (UTH)
+\begin{titlepage}
+\thispagestyle{empty}
+
+% Khung viền đôi chuẩn học thuật với hoa văn góc trang trọng UTH
+\begin{tikzpicture}[remember picture, overlay]
+  \definecolor{uthnavy}{RGB}{0, 32, 96}
+  
+  % Tọa độ khung viền ngoài (cách mép trái 2.2cm để đóng gáy, phải 1.5cm, trên 1.5cm, dưới 1.5cm)
+  \coordinate (NW_out) at ([xshift=22mm, yshift=-15mm]current page.north west);
+  \coordinate (NE_out) at ([xshift=-15mm, yshift=-15mm]current page.north east);
+  \coordinate (SW_out) at ([xshift=22mm, yshift=15mm]current page.south west);
+  \coordinate (SE_out) at ([xshift=-15mm, yshift=15mm]current page.south east);
+
+  % Tọa độ khung viền trong (cách khung ngoài 2.5mm)
+  \coordinate (NW_in) at ([xshift=2.5mm, yshift=-2.5mm]NW_out);
+  \coordinate (NE_in) at ([xshift=-2.5mm, yshift=-2.5mm]NE_out);
+  \coordinate (SW_in) at ([xshift=2.5mm, yshift=2.5mm]SW_out);
+  \coordinate (SE_in) at ([xshift=-2.5mm, yshift=2.5mm]SE_out);
+
+  % Vẽ khung viền ngoài đậm
+  \draw[line width=1.8pt, uthnavy] (NW_out) rectangle (SE_out);
+
+  % Vẽ khung viền trong mảnh
+  \draw[line width=0.6pt, uthnavy] (NW_in) rectangle (SE_in);
+
+  % ==================== HOA VĂN GÓC TRANG TRÍ (Corner Ornaments) ====================
+  % Góc trên - trái (NW)
+  \draw[line width=1.0pt, uthnavy] ([xshift=1mm, yshift=-8mm]NW_in) -- ([xshift=1mm, yshift=-1mm]NW_in) -- ([xshift=8mm, yshift=-1mm]NW_in);
+  \draw[line width=0.5pt, uthnavy] ([xshift=2.2mm, yshift=-6.5mm]NW_in) -- ([xshift=2.2mm, yshift=-2.2mm]NW_in) -- ([xshift=6.5mm, yshift=-2.2mm]NW_in);
+  \draw[line width=0.4pt, uthnavy] ([xshift=3.4mm, yshift=-5mm]NW_in) -- ([xshift=3.4mm, yshift=-3.4mm]NW_in) -- ([xshift=5mm, yshift=-3.4mm]NW_in);
+  \fill[uthnavy] ([xshift=4.5mm, yshift=-4.5mm]NW_in) circle (1.0pt);
+  \fill[uthnavy] (NW_in) circle (1.2pt);
+
+  % Góc trên - phải (NE)
+  \draw[line width=1.0pt, uthnavy] ([xshift=-1mm, yshift=-8mm]NE_in) -- ([xshift=-1mm, yshift=-1mm]NE_in) -- ([xshift=-8mm, yshift=-1mm]NE_in);
+  \draw[line width=0.5pt, uthnavy] ([xshift=-2.2mm, yshift=-6.5mm]NE_in) -- ([xshift=-2.2mm, yshift=-2.2mm]NE_in) -- ([xshift=-6.5mm, yshift=-2.2mm]NE_in);
+  \draw[line width=0.4pt, uthnavy] ([xshift=-3.4mm, yshift=-5mm]NE_in) -- ([xshift=-3.4mm, yshift=-3.4mm]NE_in) -- ([xshift=-5mm, yshift=-3.4mm]NE_in);
+  \fill[uthnavy] ([xshift=-4.5mm, yshift=-4.5mm]NE_in) circle (1.0pt);
+  \fill[uthnavy] (NE_in) circle (1.2pt);
+
+  % Góc dưới - trái (SW)
+  \draw[line width=1.0pt, uthnavy] ([xshift=1mm, yshift=8mm]SW_in) -- ([xshift=1mm, yshift=1mm]SW_in) -- ([xshift=8mm, yshift=1mm]SW_in);
+  \draw[line width=0.5pt, uthnavy] ([xshift=2.2mm, yshift=6.5mm]SW_in) -- ([xshift=2.2mm, yshift=2.2mm]SW_in) -- ([xshift=6.5mm, yshift=2.2mm]SW_in);
+  \draw[line width=0.4pt, uthnavy] ([xshift=3.4mm, yshift=5mm]SW_in) -- ([xshift=3.4mm, yshift=3.4mm]SW_in) -- ([xshift=5mm, yshift=3.4mm]SW_in);
+  \fill[uthnavy] ([xshift=4.5mm, yshift=4.5mm]SW_in) circle (1.0pt);
+  \fill[uthnavy] (SW_in) circle (1.2pt);
+
+  % Góc dưới - phải (SE)
+  \draw[line width=1.0pt, uthnavy] ([xshift=-1mm, yshift=8mm]SE_in) -- ([xshift=-1mm, yshift=1mm]SE_in) -- ([xshift=-8mm, yshift=1mm]SE_in);
+  \draw[line width=0.5pt, uthnavy] ([xshift=-2.2mm, yshift=6.5mm]SE_in) -- ([xshift=-2.2mm, yshift=2.2mm]SE_in) -- ([xshift=-6.5mm, yshift=2.2mm]SE_in);
+  \draw[line width=0.4pt, uthnavy] ([xshift=-3.4mm, yshift=5mm]SE_in) -- ([xshift=-3.4mm, yshift=3.4mm]SE_in) -- ([xshift=-5mm, yshift=3.4mm]SE_in);
+  \fill[uthnavy] ([xshift=-4.5mm, yshift=4.5mm]SE_in) circle (1.0pt);
+  \fill[uthnavy] (SE_in) circle (1.2pt);
+\end{tikzpicture}
+
+\begin{center}
+  \vspace*{-0.7cm}
+  
+  % Tên trường
+  {\fontsize{13pt}{16pt}\selectfont\bfseries TRƯỜNG ĐẠI HỌC GIAO THÔNG VẬN TẢI TP. HỒ CHÍ MINH}\par
+  \vspace{0.7cm}
+
+  % Logo trường UTH
+  \includegraphics[width=6.8cm]{figures/uth_logo.png}\par
+  \vspace{1.1cm}
+
+  % Tiêu đề chính
+  {\fontsize{23pt}{27pt}\selectfont\bfseries BÁO CÁO TỔNG KẾT}\par
+  \vspace{0.4cm}
+
+  % Dòng phụ: Môn học
+  {\fontsize{13pt}{17pt}\selectfont\bfseries MÔN HỌC: THIẾT KẾ CƠ SỞ DỮ LIỆU}\par
+  \vspace{1.1cm}
+
+  % Tên đề tài
+  \begin{minipage}{0.92\textwidth}
+    \centering
+    {\fontsize{12.5pt}{18pt}\selectfont\bfseries TÊN ĐỀ TÀI: NỀN TẢNG TỔ CHỨC VÀ QUẢN LÝ CUỘC THI\\NHIẾP ẢNH PHIM TÍCH HỢP TRÍ TUỆ NHÂN TẠO}\par
+  \end{minipage}\par
+  \vspace{0.8cm}
+
+  % Khối thông tin thành viên và giảng viên hướng dẫn (thụt lề chuẩn theo mẫu)
+  \begin{minipage}{0.84\textwidth}
+    \fontsize{11pt}{15.5pt}\selectfont
+    
+    % Dòng Mã số căn thẳng hàng với DANH SÁCH THÀNH VIÊN
+    \noindent\textbf{Mã số}\hspace{4.2cm}\textbf{:....................}\par
+    \vspace{0.35cm}
+
+    \noindent\underline{\textbf{DANH SÁCH THÀNH VIÊN:}}\par
+    \vspace{0.25cm}
+    \hspace*{1.2em}1. \textbf{Nhóm trưởng:} Nguyễn Viết Hoàng -- 044205004384\par
+    \vspace{0.12cm}
+    \hspace*{1.2em}2. \textbf{Thành viên:} Trần Trung Châu -- 049206013143\par
+    \vspace{0.12cm}
+    \hspace*{1.2em}3. \textbf{Thành viên:} Hà Thị Trâm Anh -- 079306017518\par
+    \vspace{0.12cm}
+    \hspace*{1.2em}4. \textbf{Thành viên:} Nguyễn Thị Quỳnh Giang -- 054306000298\par
+    \vspace{0.12cm}
+    \hspace*{1.2em}5. \textbf{Thành viên:} Dương Ngọc Khánh Giang -- 079306034836\par
+    \vspace{0.65cm}
+
+    \noindent\underline{\textbf{GIẢNG VIÊN HƯỚNG DẪN:}}\par
+    \vspace{0.25cm}
+    \noindent\textbf{Họ và tên, học hàm, học vị:} ThS. Nguyễn Văn Chiến\par
+  \end{minipage}\par
+
+  \vfill
+
+  % Địa danh & Thời gian
+  {\fontsize{11.5pt}{15pt}\selectfont\bfseries Thành phố Hồ Chí Minh, tháng 9 năm 2026}\par
+  \vspace{0.2cm}
+\end{center}
+
+\end{titlepage}

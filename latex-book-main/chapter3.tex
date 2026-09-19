@@ -3,7 +3,7 @@
 Chương này trình bày toàn diện kiến trúc hệ thống của nền tảng quản lý cuộc thi nhiếp ảnh phim tích hợp trí tuệ nhân tạo. Kiến trúc được xây dựng dựa trên nguyên lý hướng module (\textit{Modular Architecture}), phân định rạch ròi ranh giới dữ liệu (\textit{Data Ownership}) và tuân thủ chặt chẽ mô hình quản trị AI có con người kiểm duyệt (\textit{Human-in-the-loop}). Đây là cầu nối chiến lược chuyển hóa các yêu cầu nghiệp vụ thành cấu trúc cơ sở dữ liệu quan hệ tối ưu.
 
 % ----------------------------------------------------------------------
-\section{Ranh giới và Sơ đồ Ngữ cảnh Hệ thống (System Boundary \& Context)}
+\section{Ranh giới và sơ đồ ngữ cảnh hệ thống (System Boundary \& Context)}
 \label{s:c3_context}
 
 Hệ thống được thiết lập với ranh giới phân định rõ ràng giữa các năng lực nghiệp vụ nội bộ và các dịch vụ bên ngoài nhằm đảm bảo tính độc lập và khả năng bảo trì cao.
@@ -22,7 +22,7 @@ Mối quan hệ tương tác giữa hệ thống và các thực thể ngoại v
 \end{figure}
 
 % ----------------------------------------------------------------------
-\section{Các Nguyên lý Kiến trúc Cốt lõi (Architectural Principles)}
+\section{Các nguyên lý kiến trúc cốt lõi (Architectural Principles)}
 \label{s:c3_principles}
 
 Kiến trúc hệ thống tuân thủ nghiêm ngặt 8 nguyên lý chỉ đạo được tổng hợp tại Bảng~\ref{tab:c3_principles}:
@@ -72,7 +72,7 @@ Tích hợp bảng User-Role, cột \texttt{actor\_user\_id} và bảng \texttt{
 \end{table}
 
 % ----------------------------------------------------------------------
-\section{Phân rã Module Hệ thống và Quyền Sở hữu Dữ liệu}
+\section{Phân rã module hệ thống và quyền sở hữu dữ liệu}
 \label{s:c3_modules}
 
 Toàn bộ hệ thống được phân rã thành 11 phân hệ chức năng (\textit{Modules}) với quyền sở hữu dữ liệu (\textit{Data Ownership}) độc quyền được chi tiết trong Bảng~\ref{tab:c3_modules}:
@@ -102,10 +102,10 @@ Toàn bộ hệ thống được phân rã thành 11 phân hệ chức năng (\t
 \end{table}
 
 % ----------------------------------------------------------------------
-\section{Kiến trúc Logic Đa tầng và Kiến trúc Triển khai}
+\section{Kiến trúc logic đa tầng và kiến trúc triển khai}
 \label{s:c3_logical_deployment}
 
-\subsection{Kiến trúc Logic Đa tầng (Layered Logical Architecture)}
+\subsection{Kiến trúc logic đa tầng (Layered Logical Architecture)}
 Hệ thống được tổ chức theo mô hình kiến trúc phân tầng chuẩn mực:
 \begin{enumerate}
     \item \textbf{Tầng Khách hàng (Client Tier)}: Ứng dụng Web / Mobile phục vụ 4 nhóm tác nhân (Thí sinh, Ban tổ chức, Giám khảo, Quản trị viên).
@@ -114,7 +114,7 @@ Hệ thống được tổ chức theo mô hình kiến trúc phân tầng chu�
     \item \textbf{Tầng Cơ sở Dữ liệu (Data Tier)}: Hệ quản trị Microsoft SQL Server đóng vai trò là nguồn chân lý dữ liệu duy nhất (\textit{System of Record}).
 \end{enumerate}
 
-\subsection{Kiến trúc Triển khai Mục tiêu (Target Deployment View)}
+\subsection{Kiến trúc triển khai mục tiêu (Target Deployment View)}
 Hệ thống được đóng gói để triển khai độc lập, tái lặp và nhất quán trên nền tảng công nghệ container hóa hiện đại. Cụ thể, trên môi trường máy chủ lưu trữ (\textit{Host Server}), hệ thống vận hành nền tảng Docker Engine song song với công cụ quản trị chuyên dụng SQL Server Management Studio (SSMS 22). Dịch vụ cơ sở dữ liệu được đóng gói chuẩn mực bên trong một SQL Server Container sử dụng image chính thức \texttt{mcr.microsoft.com/mssql/\allowbreak server:\allowbreak 2022-CU24-ubuntu-22.04}, mở cổng giao tiếp TCP 1433 và ánh xạ dữ liệu trực tiếp vào phân vùng ổ đĩa gắn ngoài (\textit{Persistent Volume}), qua đó loại trừ hoàn toàn nguy cơ thất thoát dữ liệu khi container khởi động lại hoặc nâng cấp. Ngoài ra, máy chủ cơ sở dữ liệu kết nối mạng an toàn với các dịch vụ đám mây ngoại vi bao gồm Cloud Object Storage nhằm lưu trữ tệp ảnh nhị phân và AI Analysis Engine nhằm cung cấp các giao diện API thẩm định thông minh.
 
 Mô hình kiến trúc tổng thể đa tầng và cơ chế tương tác với phân hệ AI được minh họa trong Hình~\ref{fig:c3_system_architecture}:
@@ -122,12 +122,12 @@ Mô hình kiến trúc tổng thể đa tầng và cơ chế tương tác với 
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=\textwidth,keepaspectratio]{figures/fig_system_architecture.png}
-    \caption{Sơ đồ Kiến trúc Hệ thống Tổng thể (System Architecture Diagram) phân tầng và luồng xử lý AI}
+    \caption{Sơ đồ kiến trúc hệ thống tổng thể (System Architecture Diagram) phân tầng và luồng xử lý AI}
     \label{fig:c3_system_architecture}
 \end{figure}
 
 % ----------------------------------------------------------------------
-\section{Thiết kế Phân hệ Tích hợp AI (AI Module Integration Design)}
+\section{Thiết kế phân hệ tích hợp AI (AI Module Integration Design)}
 \label{s:c3_ai_design}
 
 Phân hệ AI được thiết kế giải quyết 3 bài toán đặc thù của cuộc thi nhiếp ảnh phim:

@@ -3,13 +3,13 @@
 Chương này trình bày chi tiết cấp độ thiết kế vật lý (\textit{Physical Database Design}) và hiện thực hóa lập trình cơ sở dữ liệu trên hệ quản trị Microsoft SQL Server. Toàn bộ lược đồ vật lý được cấu trúc hóa theo các schema nghiệp vụ, thiết lập hệ thống ràng buộc toàn vẹn nghiêm ngặt, chiến lược đánh chỉ mục (\textit{Indexing}) tối ưu theo các mẫu truy vấn thực tế, cùng hệ thống Views, Stored Procedures và Triggers bảo đảm an toàn giao dịch.
 
 % ----------------------------------------------------------------------
-\section{Lựa chọn Hệ Quản trị và Quy ước Đặt tên Vật lý}
+\section{Lựa chọn hệ quản trị và quy ước đặt tên vật lý}
 \label{s:c5_dbms_naming}
 
-\subsection{Căn cứ Lựa chọn Microsoft SQL Server}
+\subsection{Căn cứ lựa chọn Microsoft SQL Server}
 Hệ quản trị cơ sở dữ liệu Microsoft SQL Server (phiên bản 2022+ triển khai trên nền tảng Linux Container) được lựa chọn chính thức cho đề tài dựa trên sự kết hợp của ba căn cứ kỹ thuật then chốt. Trước hết, SQL Server cung cấp cơ chế thực thi ràng buộc toàn vẹn dữ liệu mạnh mẽ hàng đầu hiện nay, hỗ trợ toàn diện các ràng buộc phức tạp như \texttt{CHECK}, \texttt{UNIQUE} và \texttt{FOREIGN KEY} cùng cơ chế khóa giao dịch ACID tuyệt đối, bảo đảm an toàn dữ liệu trong các tình huống chấm thi đồng thời. Mặt khác, ngôn ngữ lập trình T-SQL phong phú cho phép đóng gói logic nghiệp vụ sâu vào các thủ tục lưu trữ (\textit{Stored Procedures}) và \textit{Triggers}, qua đó giảm thiểu độ trễ mạng và ngăn chặn tình trạng thao tác dữ liệu trái phép từ tầng ứng dụng. Bên cạnh đó, khả năng tương thích hoàn hảo và giám sát trực quan thông qua công cụ chuyên nghiệp SQL Server Management Studio (SSMS 22) tạo điều kiện thuận lợi tối đa cho quá trình bảo trì, phân tích kế hoạch thực thi truy vấn (\textit{Execution Plan}) và kiểm thử tự động.
 
-\subsection{Quy ước Đặt tên Đối tượng Vật lý (Naming Conventions)}
+\subsection{Quy ước đặt tên đối tượng vật lý (Naming Conventions)}
 Để đảm bảo tính chuyên nghiệp và đồng bộ, toàn bộ đối tượng CSDL tuân thủ quy tắc đặt tên tại Bảng~\ref{tab:c5_naming}:
 
 \begin{table}[!ht]
@@ -38,7 +38,7 @@ Trigger & \texttt{TR\_<Schema>\_<Table>\_<Event>} & \texttt{TR\_judging\_Evaluat
 \end{table}
 
 % ----------------------------------------------------------------------
-\section{Kiến trúc Phân vùng Schema và Lược đồ Bảng}
+\section{Kiến trúc phân vùng schema và lược đồ bảng}
 \label{s:c5_schemas}
 
 Cơ sở dữ liệu được phân chia thành 12 Schema chuyên biệt nhằm phân định ranh giới bảo mật và quản trị:
@@ -62,12 +62,12 @@ Cấu trúc vật lý của toàn bộ 32 bảng cơ sở dữ liệu trên SQL 
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=\textwidth,keepaspectratio]{figures/fig_physical_pdm.png}
-    \caption{Sơ đồ Vật lý Cơ sở Dữ liệu (Physical Database Diagram - PDM) trên Microsoft SQL Server 2022 gồm 32 bảng quan hệ}
+    \caption{Sơ đồ vật lý cơ sở dữ liệu (Physical Database Diagram - PDM) trên Microsoft SQL Server 2022 gồm 32 bảng quan hệ}
     \label{fig:c5_physical_pdm}
 \end{figure}
 
 % ----------------------------------------------------------------------
-\section{Chiến lược Kiểu Dữ liệu Vật lý (Physical Datatype Strategy)}
+\section{Chiến lược kiểu dữ liệu vật lý (Physical Datatype Strategy)}
 \label{s:c5_datatypes}
 
 Hệ thống tránh việc sử dụng tùy tiện kiểu \texttt{VARCHAR(255)} cho mọi cột, thay vào đó áp dụng chiến lược lựa chọn kiểu dữ liệu tối ưu cho bộ nhớ và tính chính xác như tổng hợp tại Bảng~\ref{tab:c5_datatypes}:
@@ -96,13 +96,13 @@ Bản chụp Snapshot & \texttt{NVARCHAR(MAX)} & Lưu trữ cấu trúc JSON b�
 \end{table}
 
 % ----------------------------------------------------------------------
-\section{Thiết kế Ràng buộc Toàn vẹn và Chính sách Khóa Ngoại}
+\section{Thiết kế ràng buộc toàn vẹn và chính sách khóa ngoại}
 \label{s:c5_constraints}
 
-\paragraph{Chính sách Khóa ngoại và Hành vi Xóa (Referential Action Policy)}
+\paragraph{Chính sách khóa ngoại và hành vi xóa (Referential Action Policy)}
 Trong hệ thống quản lý cuộc thi và lưu trữ di sản nghệ thuật, việc bảo toàn toàn vẹn dữ liệu lịch sử và phục vụ kiểm toán là yêu cầu sống còn. Do đó, hệ thống thiết lập nguyên tắc kiến trúc nghiêm ngặt: tuyệt đối không sử dụng hành vi \texttt{ON DELETE CASCADE} đối với bất kỳ bảng giao dịch nghiệp vụ trọng yếu nào (\texttt{Submission}, \texttt{Evaluation}, \texttt{Result}, \texttt{ArchiveItem}). Toàn bộ các liên kết khóa ngoại đều được thiết lập tường minh là \texttt{ON DELETE NO ACTION} (cơ chế bảo vệ mặc định của Microsoft SQL Server) nhằm ngăn chặn hiện tượng vô tình xóa dây chuyền phá hủy chuỗi dữ liệu lịch sử cuộc thi. Mọi hoạt động kết thúc, hủy bỏ hoặc đóng cuộc thi đều được xử lý thông qua cơ chế chuyển đổi trạng thái nghiệp vụ có lưu vết (\textit{Soft Status Transition}), bảo đảm không có bất kỳ bản ghi lịch sử nào bị xóa vật lý khỏi cơ sở dữ liệu.
 
-\paragraph{Ràng buộc Miền giá trị (Check Constraints)}
+\paragraph{Ràng buộc miền giá trị (Check Constraints)}
 Hệ thống cài đặt các ràng buộc kiểm tra giá trị toán học, logic thời gian và định dạng kỹ thuật:
 \begin{itemize}
     \item \texttt{CK\_contest\_Contest\_dates}: \texttt{registration\_open\_at} $\leq$ \texttt{registration\_close\_at} và \texttt{submission\_open\_at} $\leq$ \texttt{submission\_close\_at}.
@@ -116,7 +116,7 @@ Hệ thống cài đặt các ràng buộc kiểm tra giá trị toán học, lo
 \end{itemize}
 
 % ----------------------------------------------------------------------
-\section{Chiến lược Đánh Chỉ mục Hiệu năng (Indexing Strategy)}
+\section{Chiến lược đánh chỉ mục hiệu năng (Indexing Strategy)}
 \label{s:c5_indexes}
 
 Các chỉ mục phi cụm (\textit{Non-clustered Indexes}) được thiết kế có chọn lọc, gắn liền với các mẫu truy vấn (\textit{Query Access Patterns}) tần suất cao trong thực tế như thể hiện trong Bảng~\ref{tab:c5_indexes}:
@@ -141,7 +141,7 @@ Các chỉ mục phi cụm (\textit{Non-clustered Indexes}) được thiết k�
 \end{table}
 
 % ----------------------------------------------------------------------
-\section{Lập trình Cơ sở Dữ liệu: Views, Stored Procedures, Functions và Triggers}
+\section{Lập trình cơ sở dữ liệu: Views, Stored Procedures, Functions và Triggers}
 \label{s:c5_programmability}
 
 Hệ thống đóng gói toàn bộ các luồng nghiệp vụ phức tạp vào các đối tượng lập trình trong CSDL:

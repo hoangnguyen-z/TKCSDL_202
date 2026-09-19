@@ -3,7 +3,7 @@
 Thiết kế cơ sở dữ liệu là trục trung tâm của đồ án. Để đạt được chất lượng học thuật và thực tiễn kỹ thuật ở mức xuất sắc nhất, quy trình thiết kế được phân tách rạch ròi thành 3 cấp độ trừu tượng: \textbf{Mô hình Ý niệm (Conceptual Design)} $\rightarrow$ \textbf{Mô hình Logic (Logical Design)} $\rightarrow$ \textbf{Mô hình Vật lý (Physical Design)}. Chương này trình bày chi tiết hai cấp độ đầu tiên: từ các khái niệm nghiệp vụ thuần túy đến mô hình quan hệ được chuẩn hóa chặt chẽ theo dạng chuẩn 3 (3NF).
 
 % ----------------------------------------------------------------------
-\section{Phương pháp luận và Phân định 3 Cấp độ Trừu tượng}
+\section{Phương pháp luận và phân định 3 cấp độ trừu tượng}
 \label{s:c4_methodology}
 
 \paragraph{Đồng bộ hóa Tài liệu và Tính Nhất quán Khái niệm}
@@ -22,7 +22,7 @@ Trong toàn bộ tài liệu TV4, tên thực thể được chuẩn hóa như s
 Tên canonical phải được giữ nguyên trong ERD ý niệm, caption, bảng truy vết và các tham chiếu sang mô hình logic; nhãn tiếng Việt chỉ dùng để giải thích, không thay thế tên định danh chuẩn.
 
 % ----------------------------------------------------------------------
-\section{Thiết kế Cấp độ 1: Danh mục Thực thể Ý niệm (Entity Inventory)}
+\section{Thiết kế cấp độ 1: Danh mục thực thể ý niệm (Entity Inventory)}
 \label{s:c4_conceptual_entities}
 
 Mô hình ý niệm bao phủ trọn vẹn chuỗi giá trị từ tài khoản người dùng đến lưu trữ di sản số:
@@ -81,7 +81,7 @@ Danh mục chi tiết 32 thực thể ý niệm và vai trò tương ứng đư�
 \end{tabularx}
 \end{table}
 
-\subsection{Kiểm tra Độ đầy đủ Danh mục Thực thể}
+\subsection{Kiểm tra độ đầy đủ danh mục thực thể}
 Danh mục thực thể bao phủ đầy đủ các năng lực nghiệp vụ cốt lõi mà không tạo
 thêm thực thể Judge trùng với tài khoản người dùng:
 \begin{itemize}
@@ -99,12 +99,12 @@ Mối quan hệ tổng thể giữa 32 thực thể được biểu diễn trự
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=\textwidth,keepaspectratio]{figures/fig_conceptual_erd.png}
-    \caption{Sơ đồ Thực thể Liên kết Ý niệm (Conceptual ERD) chuẩn hóa 32 thực thể}
+    \caption{Sơ đồ thực thể liên kết ý niệm (Conceptual ERD) chuẩn hóa 32 thực thể}
     \label{fig:c4_conceptual_erd}
 \end{figure}
 
 % ----------------------------------------------------------------------
-\section{Bản số (Cardinality) và Ràng buộc Quan hệ Ý niệm}
+\section{Bản số (Cardinality) và ràng buộc quan hệ ý niệm}
 \label{s:c4_cardinalities}
 
 Mỗi mối quan hệ được xác lập bằng bản số chuẩn (\textit{Cardinality}):
@@ -184,10 +184,10 @@ Kết quả & \texttt{Submission}--\texttt{Result}--\texttt{ArchiveItem} & Resul
 \end{table}
 
 % ----------------------------------------------------------------------
-\section{Thiết kế Cấp độ 2: Mô hình Quan hệ Logic và Giải quyết Quan hệ \texorpdfstring{$N:M$}{N:M}}
+\section{Thiết kế cấp độ 2: Mô hình quan hệ logic và giải quyết quan hệ \texorpdfstring{$N:M$}{N:M}}
 \label{s:c4_logical_model}
 
-\subsection{Phân loại Quy tắc và Ranh giới Quyết định}
+\subsection{Phân loại quy tắc và ranh giới quyết định}
 Ranh giới quyết định giữa các quy tắc chính thức và quy tắc đề xuất được phân loại trong Bảng~\ref{tab:c4_rule_boundary}:
 
 \begin{table}[!ht]
@@ -261,7 +261,7 @@ Mô hình quan hệ logic đạt chuẩn 3NF sau khi giải quyết các quan h�
 \end{figure}
 
 % ----------------------------------------------------------------------
-\section{Chứng minh Chuẩn hóa Dữ liệu (Normalization Proof to 3NF)}
+\section{Chứng minh chuẩn hóa dữ liệu (Normalization Proof to 3NF)}
 \label{s:c4_normalization}
 
 Để chứng minh tính đúng đắn khoa học, các quan hệ trọng yếu trong hệ thống được phân tích phụ thuộc hàm (\textit{Functional Dependencies - FD}) và chứng minh đạt dạng chuẩn 3 (3NF):
@@ -323,7 +323,7 @@ Mô hình quan hệ logic đạt chuẩn 3NF sau khi giải quyết các quan h�
     \item \textbf{Chứng minh 3NF}: Tên tiêu chí, thang điểm min/max và trọng số được lưu tại \texttt{ScoringCriterion}, không bị lặp lại trong \texttt{EvaluationScore}. Bảng chỉ lưu giá trị điểm và nhận xét ứng với từng tiêu chí cụ thể. $\Rightarrow$ \textbf{Đạt 3NF}.
 \end{itemize}
 
-\subsection{Quan hệ Result (Kết quả Xếp hạng và Công bố)}
+\subsection{Quan hệ Result (Kết quả xếp hạng và công bố)}
 \begin{itemize}
     \item \textbf{Tập thuộc tính}:
     \begin{center}
@@ -343,7 +343,7 @@ Mô hình quan hệ logic đạt chuẩn 3NF sau khi giải quyết các quan h�
 \end{itemize}
 
 % ----------------------------------------------------------------------
-\section{Chiến lược Phi Chuẩn hóa có Kiểm soát cho Kho Lưu trữ Số}
+\section{Chiến lược phi chuẩn hóa có kiểm soát cho kho lưu trữ số}
 \label{s:c4_archive_denormalization}
 
 Trong toàn bộ kiến trúc cơ sở dữ liệu của hệ thống, quan hệ \texttt{ArchiveItem} là trường hợp ngoại lệ duy nhất được cố tình thiết kế theo chiến lược \textbf{Phi chuẩn hóa có kiểm soát (\textit{Controlled Denormalization})}. Cụ thể, thay vì chỉ lưu trữ các khóa ngoại sống (\texttt{result\_id}, \texttt{submission\_id}) tham chiếu động về các bảng giao dịch đang vận hành, thực thể \texttt{ArchiveItem} được cấu trúc hóa để lưu trữ trực tiếp các bản chụp JSON bất biến bao gồm: \texttt{contest\_snapshot}, \texttt{category\_snapshot}, \texttt{participant\_snapshot}, \texttt{technical\_snapshot} và \texttt{judging\_snapshot}.
@@ -351,7 +351,7 @@ Trong toàn bộ kiến trúc cơ sở dữ liệu của hệ thống, quan hệ
 Quyết định thiết kế này bắt nguồn từ bản chất nghiệp vụ và yêu cầu bảo tồn di sản số trong thế giới thực. Mục tiêu tối thượng của kho lưu trữ di sản không phải là tối ưu hóa thao tác cập nhật thường xuyên, mà là bảo tồn nguyên vẹn giá trị lịch sử và bằng chứng nghệ thuật tại chính xác thời điểm tác phẩm được vinh danh trao giải. Nếu hệ thống áp dụng chuẩn hóa thuần túy bằng việc trỏ khóa ngoại sống, thì trong tương lai khi tài khoản thí sinh thay đổi thông tin cá nhân, hoặc cấu hình cuộc thi gốc bị điều chỉnh, đóng lại hay ẩn đi, dữ liệu của tác phẩm đoạt giải sẽ bị biến dạng theo. Do đó, việc đóng băng toàn bộ ngữ cảnh tại thời điểm trao giải thành các bản chụp JSON độc lập là giải pháp kỹ thuật tối ưu nhất, vừa bảo đảm tính trung thực lịch sử tuyệt đối cho công tác triển lãm và nghiên cứu, vừa ngăn ngừa hoàn toàn các tác động tiêu cực từ các thao tác cập nhật dữ liệu sống trong tương lai.
 
 % ----------------------------------------------------------------------
-\section{Từ điển Dữ liệu Logic (Logical Data Dictionary)}
+\section{Từ điển dữ liệu logic (Logical Data Dictionary)}
 \label{s:c4_data_dictionary}
 
 Bảng~\ref{tab:c4_data_dictionary} hệ thống hóa từ điển dữ liệu logic cho các thuộc tính nghiệp vụ cốt lõi, xác lập rõ ranh giới ngữ nghĩa và vòng đời dữ liệu giữa các phân hệ:
@@ -386,7 +386,7 @@ AssetMetadata.\allowbreak checksum\_sha256 & Mã băm SHA-256 64 ký tự hex ki
 \end{table}
 
 % ----------------------------------------------------------------------
-\section{Vòng đời Trạng thái của các Thực thể Cốt lõi (Entity Lifecycle)}
+\section{Vòng đời trạng thái của các thực thể cốt lõi (Entity Lifecycle)}
 \label{s:c4_lifecycles}
 
 Sự vận hành của cơ sở dữ liệu được định hướng bởi các máy trạng thái hữu hạn (\textit{Finite State Machines}) chặt chẽ. Bảng~\ref{tab:c4_lifecycles} tổng kết chuỗi chuyển đổi trạng thái hợp lệ của các thực thể trung tâm:

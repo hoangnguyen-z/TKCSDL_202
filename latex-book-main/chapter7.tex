@@ -3,7 +3,7 @@
 Chương này tổng kết toàn diện các kết quả đạt được của đề tài trong việc nghiên cứu và hiện thực hóa cơ sở dữ liệu cho nền tảng quản lý cuộc thi nhiếp ảnh phim tích hợp trí tuệ nhân tạo. Đồng thời, chương hệ thống hóa nhật ký các quyết định thiết kế cốt lõi (\textit{Design Decision Log}), đúc kết các bài học kinh nghiệm kiến trúc và phân tích các hạn chế thực tế cùng định hướng phát triển công nghệ trong tương lai.
 
 % ----------------------------------------------------------------------
-\section{Tổng kết Kết quả Nghiên cứu và Hiện thực hóa Đề tài}
+\section{Tổng kết kết quả nghiên cứu và hiện thực hóa đề tài}
 \label{s:c7_research_summary}
 
 Đề tài đã giải quyết trọn vẹn và triệt để bài toán quản lý đặc thù của nhiếp ảnh phim trong bối cảnh chuyển đổi số, hoàn thành xuất sắc các mục tiêu nghiệp vụ (\textbf{BO-01} đến \textbf{BO-05}) và vượt qua toàn bộ các tiêu chuẩn thành công kỹ thuật (\textbf{TC-01} đến \textbf{TC-04}) đã xác lập tại Chương~\ref{c:problem_objectives}. Cụ thể:
@@ -16,7 +16,7 @@ Chương này tổng kết toàn diện các kết quả đạt được của �
 \end{itemize}
 
 % ----------------------------------------------------------------------
-\section{Nhật ký Quyết định Thiết kế và Bài học Kinh nghiệm}
+\section{Nhật ký quyết định thiết kế và bài học kinh nghiệm}
 \label{s:c7_decision_log}
 
 Trong suốt quá trình phân tích và thiết kế, mọi quyết định kiến trúc CSDL đều được cân nhắc kỹ lưỡng giữa các phương án thay thế nhằm đạt được sự cân bằng tối ưu giữa tính toàn vẹn dữ liệu, hiệu năng truy vấn và khả năng mở rộng lâu dài. Toàn bộ các quyết định thiết kế cốt lõi được tổng hợp chi tiết trong Bảng~\ref{tab:c7_decision_log}:
@@ -49,7 +49,7 @@ Qua quá trình thực thi các quyết định trên, nhóm nghiên cứu đã 
 \end{itemize}
 
 % ----------------------------------------------------------------------
-\section{Hạn chế của Đề tài và Hướng Phát triển Mở rộng}
+\section{Hạn chế của đề tài và hướng phát triển mở rộng}
 \label{s:c7_limitations_future}
 
 Mặc dù đã đạt được những kết quả toàn diện về mặt kiến trúc và chuẩn hóa dữ liệu, đề tài vẫn ghi nhận một số hạn chế nhất định xuất phát từ phạm vi nghiên cứu của một đồ án chuyên sâu về Thiết kế Cơ sở Dữ liệu. Cụ thể, hệ thống hiện tập trung nguồn lực tối đa vào việc phân tích nghiệp vụ, mô hình hóa dữ liệu ba cấp độ và hiện thực hóa tầng cơ sở dữ liệu trên Microsoft SQL Server; do đó các ứng dụng phía máy khách (Web và Mobile) cùng các dịch vụ suy luận trí tuệ nhân tạo chuyên sâu mới dừng lại ở mức đặc tả kiến trúc tích hợp, giao diện tương tác và các hợp đồng dữ liệu chuẩn hóa. Bên cạnh đó, cơ chế lưu trữ tệp nhị phân hiện giả định kết nối với dịch vụ lưu trữ đối tượng đám mây thông qua đường dẫn URI tham chiếu và chuỗi băm kiểm tra tính toàn vẹn SHA-256, mà chưa trực tiếp cài đặt hạ tầng lưu trữ phân tán hoặc cơ chế đồng bộ hóa dữ liệu đa vùng địa lý trong giai đoạn hiện tại.

@@ -3,7 +3,7 @@
 Chương này cung cấp bộ công cụ kiểm chứng chất lượng và tính nhất quán toàn diện của đồ án. Bằng cách thiết lập Ma trận Truy vết Yêu cầu (\textit{Requirement Traceability Matrix - RTM}), Ma trận Quyền hạn Thao tác Dữ liệu (\textit{CRUD Matrix}), Ma trận Thực thi Quy tắc Nghiệp vụ (\textit{Rule-to-Enforcement Matrix}) và diễn giải 7 kịch bản nghiệp vụ thực tế (\textit{Scenario Walkthrough}), đồ án chứng minh rằng 100\% các yêu cầu và quy tắc nghiệp vụ đều được hiện thực hóa và bảo vệ toàn vẹn trong cơ sở dữ liệu.
 
 % ----------------------------------------------------------------------
-\section{Ma trận Truy vết Yêu cầu Toàn diện (Requirement Traceability Matrix)}
+\section{Ma trận truy vết yêu cầu toàn diện (Requirement Traceability Matrix)}
 \label{s:c6_rtm}
 
 Ma trận RTM (Bảng~\ref{tab:c6_rtm}) liên kết xuyên suốt từ Yêu cầu chức năng / Quy tắc nghiệp vụ $\rightarrow$ Luồng nghiệp vụ $\rightarrow$ Phân hệ kiến trúc $\rightarrow$ Thực thể ý niệm $\rightarrow$ Bảng vật lý và Ràng buộc kiểm thử:
@@ -31,7 +31,7 @@ FR-030, BR-P-001 & All & Identity & \texttt{UserAccount}, \texttt{UserRole} & \t
 \end{table}
 
 % ----------------------------------------------------------------------
-\section{Ma trận Quyền hạn Thao tác Dữ liệu (CRUD Matrix)}
+\section{Ma trận quyền hạn thao tác dữ liệu (CRUD Matrix)}
 \label{s:c6_crud}
 
 Ma trận CRUD (Bảng~\ref{tab:c6_crud}) phân định quyền Tạo mới (C), Đọc (R), Cập nhật (U), Xóa (D) của từng phân hệ đối với các bảng CSDL:
@@ -60,7 +60,7 @@ Ma trận CRUD (Bảng~\ref{tab:c6_crud}) phân định quyền Tạo mới (C),
 \end{table}
 
 % ----------------------------------------------------------------------
-\section{Kiểm chứng 7 Kịch bản Nghiệp vụ Thực tế (Scenario Walkthrough)}
+\section{Kiểm chứng 7 kịch bản nghiệp vụ thực tế (Scenario Walkthrough)}
 \label{s:c6_scenarios}
 
 Hệ thống thiết kế đã được kiểm chứng thành công qua 7 kịch bản nghiệp vụ phức tạp:
@@ -76,7 +76,7 @@ Hệ thống thiết kế đã được kiểm chứng thành công qua 7 kịch
 \end{enumerate}
 
 % ----------------------------------------------------------------------
-\section{Kết quả Thực thi Toàn diện Bộ 35 Kịch bản Kiểm thử T-SQL Tự động}
+\section{Kết quả thực thi toàn diện bộ 35 kịch bản kiểm thử T-SQL tự động}
 \label{s:c6_test_results}
 
 Toàn bộ 35 kịch bản kiểm thử T-SQL tự động trong thư mục \texttt{tests/} đã được thực thi và xác nhận vượt qua 100\% trên môi trường Microsoft SQL Server 2022 CU24 containerized (\texttt{tkcsdl-sqlserver}, cổng 14333) kết nối trực tiếp qua SSMS 22. Bộ test được chia thành 4 nhóm kiểm thử chuyên sâu (Bảng~\ref{tab:c6_tests}):
